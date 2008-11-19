@@ -104,14 +104,14 @@ my $data3  = {
                                                        F3 => 'fink',
                                                        F4 => 'star',
                                                      },
-                                              FFF => { 'animal value' } }
+                                              FFF => 'interesting value' }
                                  },
                                  { 'DDD' => { EEE => { F1 => 'bla',
                                                        F2 => 'bli',
                                                        F3 => 'blu',
                                                        F4 => 'blo',
                                                      },
-                                              FFF => { 'boring value' } }
+                                              FFF => 'boring value' }
                                  },
                                 ],
              };
@@ -121,16 +121,25 @@ my $data3  = {
 
 # parent step
 @resultlist = $data3 ~~ dpath '//DDD/EEE/F1[$_ eq "affe"]/../FFF'; # the DDD/FFF where the neighbor DDD/EEE/F1 == "affe"
-# ( 'animal value' )
+# ( 'interesting value' )
 
 # filter expressions can directly or indirectly follow a step (without or with slash), so this is the same
 @resultlist = $data3 ~~ dpath '//DDD/EEE/F1/[$_ eq "affe"]/../FFF';
+# ( 'interesting value' )
+
+# same via direct access
+@resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
+# ( 'interesting value' )
 
 
 
 # ----- END SYNOPSIS ----------------------------------------
 
+# ::Tree
+#   ::Node   (references to current expressions)
+#     :: NodeSet   (collection of ::Node's)
 # ::Context
+#      same as ::NodeSet (?)
 # ::Step
 #       ::Step::Hashkey
 #       ::Step::Any
