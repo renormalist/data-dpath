@@ -1,0 +1,45 @@
+Data-DPath
+
+DPath is not XPath.
+
+Originally started as XML::XPath fork, later decided to start from
+scratch, by saving some ideas.
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Build.PL
+	./Build
+	./Build test
+	./Build install
+
+SUPPORT AND DOCUMENTATION
+
+After installing, you can find documentation for this module with the
+perldoc command.
+
+    perldoc Data::DPath
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Data-DPath
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/Data-DPath
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/Data-DPath
+
+    Search CPAN
+        http://search.cpan.org/dist/Data-DPath
+
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2008 Steffen Schwigon
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
