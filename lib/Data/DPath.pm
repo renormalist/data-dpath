@@ -154,6 +154,8 @@ my $data3  = {
 #      ::Joins (path1 | path2)
 #      ::LocationPath vs. Path (first is a basic block, second the whole)
 
+# Note, that hashes don't have an order, as they would have in XML documents.
+
 
 =pod
 
