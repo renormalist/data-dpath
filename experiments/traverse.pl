@@ -27,7 +27,16 @@ my $struct = [ 1,
                7,
                8
              ];
+
 traverse {
-          print "ARRAY: $a\n" if /ARRAY/;
-          print "HASH:  $a => $b\n" if /HASH/
+          print "ARRAY: ".(\$a)."\n" if /ARRAY/;
+          print "HASH:  ".(\$a)." => ".(\$b)."\n" if /HASH/;
          } $struct;
+
+traverse {
+          print "ARRAY: ".(\$a)."\n" if /ARRAY/;
+          print "HASH:  $a (".(\$a).") => $b (".(\$b).")\n" if /HASH/;
+         } $struct;
+
+# Do I get the references into the structure? No.
+# Change the code to it.
