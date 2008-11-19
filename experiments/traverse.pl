@@ -16,7 +16,12 @@ my $struct = [ 1,
                  4,
                  [ 5,
                    6,
-                   { bar => 43 }
+                   { bar => 43 },
+                   { baz => {
+                             AAA => { BBB => { CCC => [ qw/UUU VVV WWW XXX YYY ZZZ/ ] } },
+                             one => { more => { level => { AAA => { BBB => { CCC => [ qw/111 222 333 444/ ] } } } } },
+                            },
+                   }
                  ]
                ],
                7,
@@ -26,9 +31,3 @@ traverse {
           print "ARRAY: $a\n" if /ARRAY/;
           print "HASH:  $a => $b\n" if /HASH/
          } $struct;
-
-my $struct2 = "single value";
-traverse {
-          print "ARRAY: $a\n" if /ARRAY/;
-          print "HASH:  $a => $b\n" if /HASH/
-         } $struct2;
