@@ -3,16 +3,13 @@ use MooseX::Declare;
 use warnings;
 use strict;
 
-class Data::DPath {
+use Data::DPath::Path;
+use Data::DPath::Context;
 
-        our $VERSION = '0.01';
-
-        use Data::DPath::Path;
-        use Data::DPath::Context;
+class Data::DPath extends Exporter {
 
         has 'path' => ( isa => "Str", is  => "rw" );
 
-        # not a method!
         method get_context (Any $data, Str $path)
         {
                 return Data::DPath::Context->new(path => $path);
@@ -23,20 +20,22 @@ class Data::DPath {
                 my $dpath = new Data::DPath::Path(path => $path);
                 return $dpath->match($data);
         }
+
+        # ------------------------------
+
+        our @EXPORT_OK   = qw(dpath);
+        our %EXPORT_TAGS = ( all => [qw(dpath)] );
+        sub dpath {
+                my ($path) = @_;
+                return Data::DPath::Path->new(path => $path);
+        }
 }
 
-# old school non-Moose subs and exports
+# ------------------------------------------------------------
 
-package Data::DPath;
-
-use parent 'Exporter';
-our @EXPORT_OK   = qw(dpath);
-our %EXPORT_TAGS = ( all => [qw(dpath)] );
-
-sub dpath($) {
-        my ($path) = @_;
-        return Data::DPath::Path->new(path => $path);
-}
+# old school way so Module::Build can extract VERSION
+# must be after class {} declaration above, else it doubles the namespace.
+package Data::DPath; our $VERSION = '0.01';
 
 1;
 
