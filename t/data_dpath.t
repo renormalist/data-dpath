@@ -74,20 +74,18 @@ is_deeply(\@resultlist, [ 'ZZZ' ] );
 
 @resultlist = $data ~~ dpath '/strange_keys/DD DD/EE\/E/CCC';
 @resultlist = $data ~~ dpath '/strange_keys/"DD DD"/"EE/E"/CCC';
-#@resultlist = $data ~~ dpathx '.', '.strange_keys.DD DD.EE/E.CCC'; # allow different step separator, rivals parent step ".."
 # ( 'zomtec' )
 is_deeply(\@resultlist, [ 'zomtec' ] );
 
 # context objects for incremental searches
 $context = Data::DPath->get_context($data, '//AAA/*/CCC');
-$context->find_all();
+$context->all();
 # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ] );
 
-# dpath inside context, same as: Data::DPath->find($data, '//AAA/*/CCC/*[2]')
-$context->find_all('/*[2]');
+# dpath inside context, same as: Data::DPath->match($data, '//AAA/*/CCC/*[2]')
+$context->search('/*[2]');
 $context ~~ dpath '/*[2]';
-#$context ~~ dpathx '.', '.*[2]';
 # ( 'ZZZ' )
 is_deeply(\@resultlist, [ 'ZZZ' ] );
 

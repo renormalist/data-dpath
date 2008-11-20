@@ -13,3 +13,28 @@ sub match
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Data::DPath::Path
+
+Abstraction for a DPath.
+
+Take a string description, parse it, bundle class with overloading,
+etc.
+
+=head2 all
+
+Returns all values covered by current context.
+
+=head2 search
+
+Return new context with path relative to current context.
+
+=head2 match
+
+Same as search()->all();
+
+=cut

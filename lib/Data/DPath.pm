@@ -18,6 +18,7 @@ use Data::DPath::Context;
 
 has path => ( isa => "Str", is  => "rw" );
 
+# not a method!
 sub dpath($)
 {
         my ($path) = @_;
@@ -26,13 +27,13 @@ sub dpath($)
 
 sub get_context($)
 {
-        my ($path) = @_;
+        my ($self, $path) = @_;
         return Data::DPath::Context->new(path => $path);
 }
 
 sub match
 {
-        my ($data, $path) = @_;
+        my ($self, $data, $path) = @_;
         my $p = new Data::DPath::Path(path => $path);
         return $p->match($data);
 }
@@ -68,11 +69,34 @@ Data::DPath - DPath is not XPath!
 
 =head1 SYNOPSIS
 
- use Data::DPath 'dpath';
- my $dpath = dpath('//AAA/*/CCC');
- my $data  = { AAA => 
+    use Data::DPath 'dpath';
+    my $data  = {
+                 AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
+                 some => { where => { else => {
+                                               AAA => { BBB => { CCC => 'affe' } },
+                                              } } },
+                };
+    @resultlist = $data ~~ dpath '//AAA/*/CCC';
 
-=cut
+
+=head1 FUNCTIONS
+
+=head2 dpath
+
+Meant as B<the> front end function for everyday use of Data::DPath. It
+takes a path string and returns a Data::DPath::Path object for which
+smart matching (C<~~>) is overloaded. See SYNOPSIS.
+
+=head1 METHODS
+
+=head2 match($data, $path)
+
+Returns all values in B<data> that match the B<path> as an array.
+
+=head2 get_context($path)
+
+Returns a Data::DPath::Context object that matches the path and can be
+used to incrementally dig into it.
 
 
 =head1 AUTHOR
