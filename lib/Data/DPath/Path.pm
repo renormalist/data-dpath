@@ -5,11 +5,12 @@ use warnings;
 
 use 5.010;
 
-use Mouse;
+use Moose;
 
 sub match
 {
-        return ('affe', 'zomtec');
+        #return ('affe', 'zomtec');
+        return ( ['XXX', 'YYY', 'ZZZ'] );
 }
 
 1;

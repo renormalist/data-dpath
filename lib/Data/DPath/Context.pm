@@ -5,7 +5,7 @@ use warnings;
 
 use 5.010;
 
-use Mouse;
+use Moose;
 
 sub all
 {

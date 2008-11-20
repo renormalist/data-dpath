@@ -1,43 +1,46 @@
-package Data::DPath;
+use MooseX::Declare;
 
 use warnings;
 use strict;
 
-use Mouse;
+class Data::DPath {
 
-our $VERSION = '0.01';
+        our $VERSION = '0.01';
+
+        use Data::DPath::Path;
+        use Data::DPath::Context;
+
+        has 'path' => ( isa => "Str", is  => "rw" );
+
+        # not a method!
+        method get_context (Any $data, Str $path)
+        {
+                return Data::DPath::Context->new(path => $path);
+        }
+
+        method match (Any $data, Str $path)
+        {
+                my $dpath = new Data::DPath::Path(path => $path);
+                return $dpath->match($data);
+        }
+}
+
+# old school non-Moose subs and exports
+
+package Data::DPath;
 
 use parent 'Exporter';
-our @EXPORT_OK = qw(dpath);
-our %EXPORT_TAGS = (
-                    all => [qw(dpath)]
-                   );
+our @EXPORT_OK   = qw(dpath);
+our %EXPORT_TAGS = ( all => [qw(dpath)] );
 
-use Data::DPath::Path;
-use Data::DPath::Context;
-
-has path => ( isa => "Str", is  => "rw" );
-
-# not a method!
-sub dpath($)
-{
+sub dpath($) {
         my ($path) = @_;
         return Data::DPath::Path->new(path => $path);
 }
 
-sub get_context($)
-{
-        my ($self, $path) = @_;
-        return Data::DPath::Context->new(path => $path);
-}
+1;
 
-sub match
-{
-        my ($self, $data, $path) = @_;
-        my $p = new Data::DPath::Path(path => $path);
-        return $p->match($data);
-}
-
+__END__
 
 # ::Tree
 #   ::Node   (references to current expressions)
@@ -154,4 +157,4 @@ it under the same terms as Perl itself.
 
 =cut
 
-1; # End of Data::DPath
+# End of Data::DPath
