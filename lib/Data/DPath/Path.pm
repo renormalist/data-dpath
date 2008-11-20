@@ -1,16 +1,19 @@
-package Data::DPath::Path;
+use MooseX::Declare;
 
 use strict;
 use warnings;
 
 use 5.010;
 
-use Moose;
+class Data::DPath::Path {
 
-sub match
-{
-        #return ('affe', 'zomtec');
-        return ( ['XXX', 'YYY', 'ZZZ'] );
+        has 'path' => ( isa => "Str", is  => "rw" );
+
+        sub match
+        {
+                #return ('affe', 'zomtec');
+                return ( ['XXX', 'YYY', 'ZZZ'] );
+        }
 }
 
 1;

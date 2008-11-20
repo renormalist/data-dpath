@@ -13,4 +13,3 @@ t/boilerplate.t
 t/data_dpath.t
 t/pod-coverage.t
 t/pod.t
-META.yml

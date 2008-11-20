@@ -8,8 +8,6 @@ use Data::DPath::Context;
 
 class Data::DPath extends Exporter {
 
-        has 'path' => ( isa => "Str", is  => "rw" );
-
         method get_context (Any $data, Str $path)
         {
                 return Data::DPath::Context->new(path => $path);
@@ -35,7 +33,8 @@ class Data::DPath extends Exporter {
 
 # old school way so Module::Build can extract VERSION
 # must be after class {} declaration above, else it doubles the namespace.
-package Data::DPath; our $VERSION = '0.01';
+package Data::DPath;
+our $VERSION = '0.01';
 
 1;
 
