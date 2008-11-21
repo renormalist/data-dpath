@@ -7,7 +7,18 @@ use 5.010;
 
 class Data::DPath::Path {
 
-        has 'path' => ( isa => "Str", is  => "rw" );
+        has 'path'   => ( isa => "Str",      is  => "rw" );
+        has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+
+        method get_steps { $self->_steps }
+        method _build__steps {
+                $self->_steps( [ split(qr[/], $self->path) ] );
+                say "_build__steps: ".join(", ", $self->_steps);
+        }
+
+        method _clear__steps {
+                say "_clear__steps: ".join(", ", $self->_steps);
+        }
 
         sub match
         {

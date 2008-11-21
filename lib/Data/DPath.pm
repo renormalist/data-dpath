@@ -58,6 +58,7 @@ __END__
 # ::Grammar --> ::Step::(Hashkey, Any, Grep, ArrayIndex)
 #      ::Joins (path1 | path2)
 #      ::LocationPath vs. Path (first is a basic block, second the whole)
+#      // is just an empty step, make that empty step special, not the path string
 
 # Note, that hashes don't have an order, as they would have in XML documents.
 
