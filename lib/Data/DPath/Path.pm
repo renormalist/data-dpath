@@ -1,30 +1,46 @@
-use MooseX::Declare;
+package Data::DPath::Path;
 
 use strict;
 use warnings;
 
 use 5.010;
 
-class Data::DPath::Path {
+use Moose;
+use MooseX::Method::Signatures;
 
-        has 'path'   => ( isa => "Str",      is  => "rw" );
-        has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+use Data::DPath::Step;
+use Data::Dumper;
 
-        method get_steps { $self->_steps }
-        method _build__steps {
-                $self->_steps( [ split(qr[/], $self->path) ] );
-                say "_build__steps: ".join(", ", $self->_steps);
+has 'path'   => ( isa => "Str",      is  => "rw" );
+has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1); # , lazy_build => 1 );
+
+# essentially the Path parser
+method _build__steps {
+        $self->_steps([]);
+        my @parts = split qr[/], $self->path;
+        foreach (@parts) {
+                my ($part, $filter) =
+                    m/
+                        ([^\[]*)         # part
+                            (\[.*\])     # part filter
+                                /x;
+                my $kind;
+                given ($part) {
+                        when ('*') { $kind = 'ARRAY' }
+                        default    { $kind = 'HASH' }
+                }
+                $self->_steps ( [ $self->_steps,
+                                  new Data::DPath::Step( part   => $_,
+                                                         kind   => $kind,
+                                                         filter => $filter )
+                                ]);
         }
+}
 
-        method _clear__steps {
-                say "_clear__steps: ".join(", ", $self->_steps);
-        }
-
-        sub match
-        {
-                #return ('affe', 'zomtec');
-                return ( ['XXX', 'YYY', 'ZZZ'] );
-        }
+sub match
+{
+        #return ('affe', 'zomtec');
+        return ( ['XXX', 'YYY', 'ZZZ'] );
 }
 
 1;

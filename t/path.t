@@ -6,7 +6,6 @@ use Test::More tests => 2;
 
 use 5.010;
 
-use Data::DPath::Path;
 use Data::Dumper;
 
 BEGIN {
@@ -21,6 +20,8 @@ my $data  = {
              strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
             };
 my $path = new Data::DPath::Path(path => '/AAA/BBB/CCC');
-say Dumper( $path->get_steps );
+$path->_build__steps;
+say "_steps: ";
+say Dumper( [ $path->_steps ] );
 
 ok(1, "dummy");

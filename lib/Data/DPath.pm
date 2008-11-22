@@ -3,10 +3,10 @@ use MooseX::Declare;
 use warnings;
 use strict;
 
-use Data::DPath::Path;
-use Data::DPath::Context;
-
 class Data::DPath extends Exporter {
+
+        use Data::DPath::Path;
+        use Data::DPath::Context;
 
         method get_context (Any $data, Str $path)
         {
