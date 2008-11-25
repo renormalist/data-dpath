@@ -16,7 +16,6 @@ has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build =>
 
 # essentially the Path parser
 method _build__steps {
-        $self->_steps([split qr[/], $self->path ]);
         my @parts = split qr[/], $self->path;
 
         my @steps;
@@ -24,24 +23,25 @@ method _build__steps {
                 my ($part, $filter) =
                     m/
                              ([^\[]*)     # part
-                             (\[.*\])     # part filter
+                             (\[.*\])?     # part filter
                      /x;
                 my $kind;
                 given ($part) {
-                        when ('*') { $kind = 'ARRAY' }
-                        default    { $kind = 'HASH' }
+                        when ('*')  { $kind = 'ARRAY' } # all child elements
+                        when ('..') { $kind = 'ARRAY' } # many childs below parent (aka. neighbors, including current element)
+                        default     { $kind = 'HASH'  }
                 }
-                push @steps, new Data::DPath::Step( part   => $_,
+                push @steps, new Data::DPath::Step( part   => $part,
                                                     kind   => $kind,
                                                     filter => $filter );
         }
         $self->_steps( \@steps );
 }
 
-sub match
+method match($data)
 {
-        #return ('affe', 'zomtec');
-        return ( ['XXX', 'YYY', 'ZZZ'] );
+        my $context = new Data::DPath::Context( current_points => [ \$data ] );
+        return $context->match($self);
 }
 
 1;

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 21;
+use Test::More tests => 22;
 
 use 5.010;
 
@@ -27,7 +27,7 @@ my $context;
 # trivial matching
 
 @resultlist = dpath('/AAA/BBB/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "plain hash" );
 
 
 TODO: {
@@ -78,13 +78,19 @@ TODO: {
         # ( 'ZZZ' )
         is_deeply(\@resultlist, [ 'ZZZ' ] );
 
-        @resultlist = $data ~~ dpath '/strange_keys/DD DD/EE\/E/CCC';
+        @resultlist = $data ~~ dpath '/strange_keys/DD DD/"EE/E"/CCC';
         @resultlist = $data ~~ dpath '/strange_keys/"DD DD"/"EE/E"/CCC';
         # ( 'zomtec' )
         is_deeply(\@resultlist, [ 'zomtec' ] );
 
         # context objects for incremental searches
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
+        $context->all();
+        # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
+        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ] );
+
+        # is '*/..[0]' the same as ''?
+        $context = Data::DPath->get_context($data, '//AAA/*/..[0]/CCC');
         $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
         is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ] );

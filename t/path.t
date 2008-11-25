@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More tests => 8;
 
 use 5.010;
 
@@ -12,17 +12,21 @@ BEGIN {
 	use_ok( 'Data::DPath::Path' );
 }
 
-my $data  = {
-             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
-             some => { where => { else => {
-                                           AAA => { BBB => { CCC => 'affe' } },
-                                          } } },
-             strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
-            };
-my $path = new Data::DPath::Path(path => '/AAA/BBB/CCC');
-say "path: ";
-say Dumper( [ $path->path ] );
-say "_steps: ";
-say Dumper( [ $path->_steps ] );
+my $path;
+my @kinds;
+my @parts;
+my @filters;
+my @refs;
 
-ok(1, "dummy");
+$path    = new Data::DPath::Path( path => '/AAA/*[0]/CCC' );
+@kinds   = map { $_->{kind}   } $path->_steps;
+@parts   = map { $_->{part}   } $path->_steps;
+@filters = map { $_->{filter} } $path->_steps;
+@refs    = map { ref $_       } $path->_steps;
+print Dumper($path->_steps);
+print Dumper(\@kinds);
+is_deeply(\@kinds, [qw/HASH HASH ARRAY HASH/],       "kinds");
+is_deeply(\@parts, ['', qw/AAA * CCC/],              "parts");
+is_deeply(\@filters, [ undef, undef, '[0]', undef ], "filters");
+is($_, 'Data::DPath::Step', "kinds") foreach @refs;
+
