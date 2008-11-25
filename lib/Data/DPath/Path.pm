@@ -12,29 +12,30 @@ use Data::DPath::Step;
 use Data::Dumper;
 
 has 'path'   => ( isa => "Str",      is  => "rw" );
-has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1); # , lazy_build => 1 );
+has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
 
 # essentially the Path parser
 method _build__steps {
-        $self->_steps([]);
+        $self->_steps([split qr[/], $self->path ]);
         my @parts = split qr[/], $self->path;
+
+        my @steps;
         foreach (@parts) {
                 my ($part, $filter) =
                     m/
-                        ([^\[]*)         # part
-                            (\[.*\])     # part filter
-                                /x;
+                             ([^\[]*)     # part
+                             (\[.*\])     # part filter
+                     /x;
                 my $kind;
                 given ($part) {
                         when ('*') { $kind = 'ARRAY' }
                         default    { $kind = 'HASH' }
                 }
-                $self->_steps ( [ $self->_steps,
-                                  new Data::DPath::Step( part   => $_,
-                                                         kind   => $kind,
-                                                         filter => $filter )
-                                ]);
+                push @steps, new Data::DPath::Step( part   => $_,
+                                                    kind   => $kind,
+                                                    filter => $filter );
         }
+        $self->_steps( \@steps );
 }
 
 sub match

@@ -20,7 +20,8 @@ my $data  = {
              strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
             };
 my $path = new Data::DPath::Path(path => '/AAA/BBB/CCC');
-$path->_build__steps;
+say "path: ";
+say Dumper( [ $path->path ] );
 say "_steps: ";
 say Dumper( [ $path->_steps ] );
 
