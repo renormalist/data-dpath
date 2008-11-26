@@ -80,11 +80,13 @@ Data::DPath - DPath is not XPath!
                          },
                 };
     @resultlist = dpath('/AAA/BBB/CCC')->match($data);
-    ( ['XXX', 'YYY', 'ZZZ'] )
+    # ( ['XXX', 'YYY', 'ZZZ'] )
+    
     @resultlist = dpath('/AAA/*/CCC')->match($data);
     # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+    
     @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
-    ( { EEE => [ qw/ uuu vvv www / ] } )
+    # ( { EEE => [ qw/ uuu vvv www / ] } )
 
 See currently working paths in B<t/data_dpath.t>.
 
@@ -100,8 +102,8 @@ See currently working paths in B<t/data_dpath.t>.
 =head2 dpath
 
 Meant as B<the> front end function for everyday use of Data::DPath. It
-takes a path string and returns a Data::DPath::Path object for which
-smart matching (C<~~>) is overloaded. See SYNOPSIS.
+takes a path string and returns a Data::DPath::Path object on which
+the match method can be called with data structures. See SYNOPSIS.
 
 =head1 METHODS
 
