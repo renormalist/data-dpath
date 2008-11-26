@@ -88,6 +88,13 @@ Data::DPath - DPath is not XPath!
 
 See currently working paths in B<t/data_dpath.t>.
 
+=head1 INSTALLATION
+
+ perl Makefile.PL
+ make
+ make test
+ make install
+
 =head1 FUNCTIONS
 
 =head2 dpath

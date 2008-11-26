@@ -1,52 +1,85 @@
-Data-DPath
+NAME
+    Data::DPath - DPath is not XPath!
 
-DPath is not XPath.
+SYNOPSIS
+        use Data::DPath 'dpath';
+        my $data  = {
+                     AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                               RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                               DDD => { EEE  => [ qw/ uuu vvv www / ] },
+                             },
+                    };
+        @resultlist = dpath('/AAA/BBB/CCC')->match($data);
+        ( ['XXX', 'YYY', 'ZZZ'] )
+        @resultlist = dpath('/AAA/*/CCC')->match($data);
+        # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+        @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
+        ( { EEE => [ qw/ uuu vvv www / ] } )
 
-Originally started as XML::XPath fork, later decided to start from
-scratch, by saving some ideas.
+    See currently working paths in t/data_dpath.t.
 
 INSTALLATION
+     perl Makefile.PL
+     make
+     make test
+     make install
 
-To install this module, run the following commands:
+FUNCTIONS
+  dpath
+    Meant as the front end function for everyday use of Data::DPath. It
+    takes a path string and returns a Data::DPath::Path object for which
+    smart matching ("~~") is overloaded. See SYNOPSIS.
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+METHODS
+  match($data, $path)
+    Returns all values in data that match the path as an array.
 
-SUPPORT AND DOCUMENTATION
+  get_context($path)
+    Returns a Data::DPath::Context object that matches the path and can be
+    used to incrementally dig into it.
 
-After installing, you can find documentation for this module with the
-perldoc command.
+AUTHOR
+    Steffen Schwigon, "<schwigon at cpan.org>"
 
-    perldoc Data::DPath
+BUGS
+    Please report any bugs or feature requests to "bug-data-dpath at
+    rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath>. I will be
+    notified, and then you'll automatically be notified of progress on your
+    bug as I make changes.
 
-You can also look for information at:
+SUPPORT
+    You can find documentation for this module with the perldoc command.
 
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Data-DPath
+        perldoc Data::DPath
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Data-DPath
+    You can also look for information at:
 
-    CPAN Ratings
-        http://cpanratings.perl.org/d/Data-DPath
+    *   RT: CPAN's request tracker
 
-    Search CPAN
-        http://search.cpan.org/dist/Data-DPath
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Data-DPath>
 
+    *   AnnoCPAN: Annotated CPAN documentation
+
+        <http://annocpan.org/dist/Data-DPath>
+
+    *   CPAN Ratings
+
+        <http://cpanratings.perl.org/d/Data-DPath>
+
+    *   Search CPAN
+
+        <http://search.cpan.org/dist/Data-DPath>
 
 REPOSITORY
+    The public repository is hosted on github:
 
-The public repository is hosted on github:
+      git clone git://github.com/renormalist/data-dpath.git
 
-  git clone git://github.com/renormalist/data-dpath.git
+ACKNOWLEDGEMENTS
+COPYRIGHT & LICENSE
+    Copyright 2008 Steffen Schwigon, all rights reserved.
 
-
-COPYRIGHT AND LICENCE
-
-Copyright (C) 2008 Steffen Schwigon
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
 

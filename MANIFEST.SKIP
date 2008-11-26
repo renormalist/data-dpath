@@ -1,3 +1,8 @@
-META.yml
-Data-DPath-*.tar.gz
-
+^\.
+build\b
+blib\b
+\.(?:bak|o|c|bs)$
+^Makefile$
+^Makefile.old$
+^Debian
+^Data-DPath-
