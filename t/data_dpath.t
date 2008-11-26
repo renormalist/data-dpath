@@ -51,7 +51,10 @@ is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + K
 @resultlist = dpath('/')->match($data);
 is_deeply(\@resultlist, [ $data ], "ROOT" );
 
-# classic calls
+@resultlist = dpath('/AAA/*/CCC')->match($data);
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
+
+# repeated, via intermediate Context
 @resultlist = dpath('/AAA/*/CCC')->match($data);
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
 

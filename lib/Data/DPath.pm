@@ -76,14 +76,17 @@ Data::DPath - DPath is not XPath!
 
     use Data::DPath 'dpath';
     my $data  = {
-                 AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
-                           DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                 AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                           RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                           DDD => { EEE  => [ qw/ uuu vvv www / ] },
                          },
                 };
     @resultlist = dpath('/AAA/BBB/CCC')->match($data);
     ( ['XXX', 'YYY', 'ZZZ'] )
     @resultlist = dpath('/AAA/*/CCC')->match($data);
-    # ( ['XXX', 'YYY', 'ZZZ'] )
+    # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+    @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
+    ( { EEE => [ qw/ uuu vvv www / ] } )
 
 See currently working paths in B<t/data_dpath.t>.
 
