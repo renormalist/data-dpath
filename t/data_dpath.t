@@ -7,6 +7,9 @@ use Test::More tests => 8;
 use 5.010;
 
 use Data::DPath 'dpath';
+use Data::DPath::Path;
+
+#local $Data::DPath::DEBUG = 1;
 
 BEGIN {
 	use_ok( 'Data::DPath' );
@@ -14,6 +17,7 @@ BEGIN {
 
 my $data  = {
              AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
                        DDD   => { EEE  => [ qw/ uuu vvv www / ] },
                      },
              some => { where => { else => {
@@ -37,6 +41,7 @@ is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
 is_deeply(\@resultlist, [
                          {
                           BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
+                          RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
                           DDD => { EEE => [ qw/ uuu vvv www / ] },
                          }
                         ], "KEYs + PARENT + PARENT" );
@@ -49,7 +54,7 @@ is_deeply(\@resultlist, [ $data ], "ROOT" );
 
 # classic calls
 @resultlist = dpath('/AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs + ANY" );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
 
 TODO: {
         local $TODO = 'work in progress';
