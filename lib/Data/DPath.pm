@@ -152,6 +152,13 @@ L<http://search.cpan.org/dist/Data-DPath>
 =back
 
 
+=head1 REPOSITORY
+
+The public repository is hosted on github:
+
+  git clone git://github.com/renormalist/data-dpath.git
+
+
 =head1 ACKNOWLEDGEMENTS
 
 
