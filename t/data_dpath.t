@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 
 use Data::DPath 'dpath';
@@ -48,13 +48,12 @@ is_deeply(\@resultlist, [
 @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
 is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
 
+@resultlist = dpath('/AAA/*/CCC/../../DDD')->match($data);
+is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANY + PARENT + KEY no double results" );
+
 @resultlist = dpath('/')->match($data);
 is_deeply(\@resultlist, [ $data ], "ROOT" );
 
-@resultlist = dpath('/AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
-
-# repeated, via intermediate Context
 @resultlist = dpath('/AAA/*/CCC')->match($data);
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
 

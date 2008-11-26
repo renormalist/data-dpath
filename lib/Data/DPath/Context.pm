@@ -8,13 +8,16 @@ class Data::DPath::Context {
 
         use Data::DPath::Point;
         use Data::Dumper;
+        use List::MoreUtils 'uniq';
 
         # Points are the collected pointers into the datastructure
-        # maybe not just the refs, but a hash, where the ref is in, plus a context like which parent it had, so later ".." is easy
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
 
         method all {
-                return map { ${$_->ref} } $self->current_points;
+                return
+                    map { $$_ }
+                        uniq
+                            map { $_->ref } $self->current_points;
         }
 
         method search($path) {
@@ -29,24 +32,24 @@ class Data::DPath::Context {
                         {
                                 when ('ROOT')
                                 {
-                                # the root node
-                                # (only makes sense at first step, but currently not asserted)
+                                        # the root node
+                                        # (only makes sense at first step, but currently not asserted)
                                         push @new_points, @current_points;
                                 }
                                 when ('ANYWHERE')
                                 {
-                                # all parent nodes of a data tree
+                                        # all parent nodes of a data tree
                                         my @all_points = ();
                                         push @new_points, @all_points;
                                 }
                                 when ('KEY')
                                 {
-                                # the value of a key
+                                        # the value of a key
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                                # take point as array as hash, skip undefs
+                                                # take point as hash, skip undefs
                                                 push @new_points, map {
                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                       } ( ${$point->ref}->{$step->part} || () );
@@ -55,7 +58,7 @@ class Data::DPath::Context {
                                 }
                                 when ('ANY')
                                 {
-                                # all leaves of a data tree
+                                        # all leaves of a data tree
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 # take point as array
@@ -79,7 +82,7 @@ class Data::DPath::Context {
                                 }
                                 when ('PARENT')
                                 {
-                                # the parent
+                                        # the parent
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 push @new_points, $point->parent;

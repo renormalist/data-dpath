@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
                                                          'Moose'                      => 0,
                                                          'MooseX::Declare'            => 0,
                                                          'MooseX::Method::Signatures' => 0,
+                                                         'List::MoreUtils'            => 0,
                                                         },
                                  add_to_cleanup      => [ 'Data-DPath-*' ],
                                 );
