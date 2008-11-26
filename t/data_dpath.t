@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use 5.010;
 
@@ -13,7 +13,9 @@ BEGIN {
 }
 
 my $data  = {
-             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
+             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                     },
              some => { where => { else => {
                                            AAA => { BBB => { CCC => 'affe' } },
                                           } } },
@@ -29,7 +31,12 @@ my $context;
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "hash KEY steps" );
 
 @resultlist = dpath('/AAA/BBB/CCC/..')->match($data);
-is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "hash KEY steps" );
+is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "hash KEY steps and parent" );
+
+@resultlist = dpath('/AAA/BBB/CCC/../..')->match($data);
+is_deeply(\@resultlist, [ { BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
+                            DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                          } ], "hash KEY steps and parent parent" );
 
 @resultlist = dpath('/')->match($data);
 is_deeply(\@resultlist, [ $data ], "root" );
