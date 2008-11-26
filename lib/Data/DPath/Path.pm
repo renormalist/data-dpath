@@ -11,6 +11,14 @@ class Data::DPath::Path {
         has path   => ( isa => "Str",      is  => "rw" );
         has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
 
+        use overload '~~' => sub { return ( qw/affe tiger fink star/ ) };
+
+#         method op_match($data) {
+#                 say "op_match, wantarray = ", Dumper( { wantarray => wantarray });
+#                 #say Dumper({ self => $self, data => $data });
+#                 return ( qw/affe tiger fink star/ );
+#         }
+
         # essentially the Path parser
         method _build__steps {
 
@@ -48,6 +56,9 @@ class Data::DPath::Path {
         }
 
         method match($data) {
+                say "match, wantarray = ", Dumper( { wantarray => wantarray });
+                #say Dumper({ self => $self, data => $data });
+
                 my $context = new Data::DPath::Context( current_points => [ new Data::DPath::Point ( ref => \$data )] );
                 return $context->match($self);
         }
