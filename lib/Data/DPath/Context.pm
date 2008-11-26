@@ -12,51 +12,78 @@ use MooseX::Method::Signatures;
 
 use Data::Dumper;
 
+# Points are the collected pointers into the datastructure
 # maybe not just the refs, but a hash, where the ref is in, plus a context like which parent it had, so later ".." is easy
-has 'current_points' => ( is  => "rw", isa => "ArrayRef" );
+has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
 
 method all {
-        return ( $self->current_points );
+        return map { $$_ } $self->current_points;
 }
 
 method search($path) {
-        say "::Context.match:";
+        say "Context.match:";
         say "    path == ", Dumper($path->path);
-        my $current_points = $self->current_points;
+        my @current_points = $self->current_points;
         foreach my $step ($path->_steps)
         {
-                next unless $step->part;
+                say "    ", $step->kind, " ==> ", $step->part;
+                say "    current_points: ", Dumper(\@current_points);
+                my @new_points = ();
                 given ($step->kind)
                 {
-                        when ('HASH')
+                        when ('ROOT')
+                        {
+                                push @new_points, @current_points; # only makes sense at first step
+                        }
+                        when ('ANYWHERE')
+                        {
+                                # collect *all* points
+                                my @all_points = ();
+                                push @new_points, @all_points;
+                        }
+                        when ('KEY')
                         {
                                 # follow the hash key
-                                foreach my $point (@$current_points) {
+                                foreach my $point (@current_points) {
+                                        say "    ,-----------------------------------";
                                         print "    point: ", Dumper($point);
                                         print "    step: ", Dumper($step);
                                         # take point as array as hash, skip undefs
-                                        push @$current_points, ( ($$point)->{$step->part} || () );
-                                        say "    ...";
+                                        push @new_points, map {
+                                                               #new Data::DPath::Point( ref => \$_, parent => $point )
+                                                               \$_
+                                                              } ( $$point->{$step->part} || () );
+                                        say "    `-----------------------------------";
                                 }
-                                say "    ---";
                         }
-                        when ('ARRAY')
+                        when ('ANY')
                         {
-                                foreach my $point (@$current_points) {
-                                        if ($step->part eq '*')
-                                        {
-                                                # take point as array
-                                                push @$current_points, @$point;
+                                foreach my $point (@current_points) {
+                                        say "    ,-----------------------------------";
+                                        # take point as array
+                                        say "    *** ", ref($$point);
+                                        given (ref $$point) {
+                                                when ('HASH')  { push @new_points, map { \$_ } values %$$point }
+                                                when ('ARRAY') { push @new_points, map { \$_ } @$point        }
                                         }
-                                        elsif ( 1 == 2 ) # handle parent steps '..'
-                                        {
-                                                # TODO
-                                        }
+                                        say "    `-----------------------------------";
+                                }
+                        }
+                        when ('PARENT')
+                        {
+                                foreach my $point (@current_points) {
+                                        say "    ,-----------------------------------";
+                                        # take point as array
+                                        push @new_points, map { \$_ } @$point;
+                                        say "    `-----------------------------------";
                                 }
                         }
                 }
+                print "    newpoints: ", Dumper(\@new_points);
+                @current_points = @new_points;
+                say "    ______________________________________________________________________";
         }
-        $self->current_points( $current_points );
+        $self->current_points( \@current_points );
         return $self;
 }
 

@@ -11,25 +11,37 @@ use MooseX::Method::Signatures;
 use Data::DPath::Step;
 use Data::Dumper;
 
-has 'path'   => ( isa => "Str",      is  => "rw" );
-has '_steps' => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+has path   => ( isa => "Str",      is  => "rw" );
+has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
 
 # essentially the Path parser
 method _build__steps {
-        my @parts = split qr[/], $self->path;
 
         my @steps;
+
+        my $path = $self->path;
+        my ($start) = $path =~ m,^(//?),;
+        $path =~ s,^(//?),,;
+
+        given ($start) {
+                when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
+                when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
+        }
+        say "       lazy ... (start:          $start)";
+        say "       lazy ... (remaining path: $path)";
+
+        my @parts = split qr[/], $path;
         foreach (@parts) {
                 my ($part, $filter) =
                     m/
-                             ([^\[]*)     # part
+                             ([^\[]*)      # part
                              (\[.*\])?     # part filter
                      /x;
                 my $kind;
                 given ($part) {
-                        when ('*')  { $kind = 'ARRAY' } # all child elements
-                        when ('..') { $kind = 'ARRAY' } # many childs below parent (aka. neighbors, including current element)
-                        default     { $kind = 'HASH'  }
+                        when ('*')  { $kind = 'ANY'    }
+                        when ('..') { $kind = 'PARENT' }
+                        default     { $kind = 'KEY'    }
                 }
                 push @steps, new Data::DPath::Step( part   => $part,
                                                     kind   => $kind,

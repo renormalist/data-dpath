@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use Data::Traverse qw(traverse);
+use Data::Dumper::Simple;
 
 my $struct = [ 1,
                2,
@@ -28,14 +29,16 @@ my $struct = [ 1,
                8
              ];
 
+print Dumper($struct);
+
 traverse {
-          print "ARRAY: ".(\$a)."\n" if /ARRAY/;
-          print "HASH:  ".(\$a)." => ".(\$b)."\n" if /HASH/;
+          print "ARRAY: ".(Dumper(\$a))."\n" if /ARRAY/;
+          print "HASH:  ".(Dumper(\$a))." => ".(\$b)."\n" if /HASH/;
          } $struct;
 
 traverse {
-          print "ARRAY: ".(\$a)."\n" if /ARRAY/;
-          print "HASH:  $a (".(\$a).") => $b (".(\$b).")\n" if /HASH/;
+          print "ARRAY: ".(Dumper(\$a))."\n" if /ARRAY/;
+          print "HASH:  $a (".(Dumper(\$a)).") => $b (".(Dumper(\$b)).")\n" if /HASH/;
          } $struct;
 
 # Do I get the references into the structure? No.

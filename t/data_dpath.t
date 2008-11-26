@@ -12,7 +12,6 @@ BEGIN {
 	use_ok( 'Data::DPath' );
 }
 
-my $dpath = dpath('//AAA/*/CCC');
 my $data  = {
              AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
              some => { where => { else => {
@@ -27,12 +26,25 @@ my $context;
 # trivial matching
 
 @resultlist = dpath('/AAA/BBB/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "plain hash" );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "hash KEY steps" );
 
+@resultlist = dpath('/')->match($data);
+is_deeply(\@resultlist, [ $data ], "root" );
+
+# classic calls
+@resultlist = dpath('/AAA/*/CCC')->match($data);
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "hash KEY steps with ANY" );
+
+@resultlist = dpath('//AAA/*/CCC')->match($data);
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "hash KEY steps with ANYWHERE" );
+
+exit 0;
 
 TODO: {
 
         local $TODO = 'spec only';
+
+        my $dpath = dpath('//AAA/*/CCC');
 
         # classic calls
         @resultlist = $dpath->match($data);
@@ -114,6 +126,9 @@ TODO: {
         @resultlist = $data2 ~~ dpath '/*'; # /*
         # ( 'UUU', 'VVV', 'WWW', { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } )
         is_deeply(\@resultlist, [ 'UUU', 'VVV', 'WWW', { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } ] );
+
+        @resultlist = $data2 ~~ dpath '/';
+        is_deeply(\@resultlist, $data2, "root" );
 
         @resultlist = $data2 ~~ dpath '/*[2]';
         # ( 'WWW' )

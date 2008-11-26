@@ -8,9 +8,11 @@ use 5.010;
 use Moose;
 use MooseX::Method::Signatures;
 
-has 'kind'   => ( isa => "Str", is  => "rw" );
-has 'part'   => ( isa => "Str", is  => "rw" );
-has 'filter' => ( isa => "Any", is  => "rw" ); # Str
+# explicite undefs make Data::Dumper'ed structures more consistently readable
+
+has kind   => ( isa => "Str", is  => "rw", default => sub { undef } );
+has part   => ( isa => "Str", is  => "rw", default => sub { undef } );
+has filter => ( isa => "Any", is  => "rw", default => sub { undef } );
 
 1;
 
