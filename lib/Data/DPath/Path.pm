@@ -1,59 +1,63 @@
-package Data::DPath::Path;
+use MooseX::Declare;
 
+use 5.010;
 use strict;
 use warnings;
 
-use 5.010;
-
-use Moose;
-use MooseX::Method::Signatures;
-
 use Data::DPath::Step;
 use Data::DPath::Point;
-use Data::Dumper;
+class Data::DPath::Path {
 
-has path   => ( isa => "Str",      is  => "rw" );
-has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+        # use Moose;
+        # use MooseX::Method::Signatures;
 
-# essentially the Path parser
-method _build__steps {
+        use Data::DPath::Step;
+        use Data::DPath::Point;
+        use Data::Dumper;
 
-        my @steps;
+        has path   => ( isa => "Str",      is  => "rw" );
+        has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
 
-        my $path = $self->path;
-        my ($start) = $path =~ m,^(//?),;
-        $path =~ s,^(//?),,;
+        # essentially the Path parser
+        method _build__steps {
 
-        given ($start) {
-                when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
-                when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
-        }
-        say "       lazy ... (start:          $start)";
-        say "       lazy ... (remaining path: $path)";
+                my @steps;
 
-        my @parts = split qr[/], $path;
-        foreach (@parts) {
-                my ($part, $filter) =
-                    m/
-                             ([^\[]*)      # part
-                             (\[.*\])?     # part filter
-                     /x;
-                my $kind;
-                given ($part) {
-                        when ('*')  { $kind = 'ANY'    }
-                        when ('..') { $kind = 'PARENT' }
-                        default     { $kind = 'KEY'    }
+                my $path = $self->path;
+                my ($start) = $path =~ m,^(//?),;
+                $path =~ s,^(//?),,;
+
+                given ($start) {
+                        when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
+                        when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
                 }
-                push @steps, new Data::DPath::Step( part   => $part,
-                                                    kind   => $kind,
-                                                    filter => $filter );
-        }
-        $self->_steps( \@steps );
-}
+                $Data::DPath::DEBUG && say "       lazy ... (start:          $start)";
+                $Data::DPath::DEBUG && say "       lazy ... (remaining path: $path)";
 
-method match($data) {
-        my $context = new Data::DPath::Context( current_points => [ new Data::DPath::Point ( ref => \$data )] );
-        return $context->match($self);
+                my @parts = split qr[/], $path;
+                foreach (@parts) {
+                        my ($part, $filter) =
+                            m/
+                                     ([^\[]*)      # part
+                                     (\[.*\])?     # part filter
+                             /x;
+                        my $kind;
+                        given ($part) {
+                                when ('*')  { $kind = 'ANY'    }
+                                when ('..') { $kind = 'PARENT' }
+                                default     { $kind = 'KEY'    }
+                        }
+                        push @steps, new Data::DPath::Step( part   => $part,
+                                                            kind   => $kind,
+                                                            filter => $filter );
+                }
+                $self->_steps( \@steps );
+        }
+
+        method match($data) {
+                my $context = new Data::DPath::Context( current_points => [ new Data::DPath::Point ( ref => \$data )] );
+                return $context->match($self);
+        }
 }
 
 1;

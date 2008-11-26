@@ -1,18 +1,14 @@
-package Data::DPath::Step;
+use MooseX::Declare;
 
+use 5.010;
 use strict;
 use warnings;
 
-use 5.010;
-
-use Moose;
-use MooseX::Method::Signatures;
-
-# explicite undefs make Data::Dumper'ed structures more consistently readable
-
-has kind   => ( isa => "Str", is  => "rw", default => sub { undef } );
-has part   => ( isa => "Str", is  => "rw", default => sub { undef } );
-has filter => ( isa => "Any", is  => "rw", default => sub { undef } );
+class Data::DPath::Step {
+        has kind   => ( isa => "Str", is  => "rw", default => sub { undef } );
+        has part   => ( isa => "Str", is  => "rw", default => sub { undef } );
+        has filter => ( isa => "Any", is  => "rw", default => sub { undef } );
+}
 
 1;
 

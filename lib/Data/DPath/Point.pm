@@ -1,17 +1,13 @@
-package Data::DPath::Point;
+use MooseX::Declare;
 
+use 5.010;
 use strict;
 use warnings;
 
-use 5.010;
-
-use Moose;
-use MooseX::Method::Signatures;
-
-# explicite undefs make Data::Dumper'ed structures more consistently readable
-
-has parent => ( is  => "rw", default => sub { undef } );
-has ref    => ( is  => "rw", default => sub { undef } );
+class Data::DPath::Point {
+        has parent => ( is  => "rw", default => sub { undef } );
+        has ref    => ( is  => "rw", default => sub { undef } );
+}
 
 1;
 

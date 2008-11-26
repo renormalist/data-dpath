@@ -1,20 +1,24 @@
 use MooseX::Declare;
 
-use warnings;
+use 5.010;
 use strict;
+use warnings;
+
+use Data::DPath::Path;
+use Data::DPath::Context;
 
 class Data::DPath extends Exporter {
+
+        our $DEBUG = 0;
 
         use Data::DPath::Path;
         use Data::DPath::Context;
 
-        method get_context (Any $data, Str $path)
-        {
+        method get_context (Any $data, Str $path) {
                 return Data::DPath::Context->new(path => $path);
         }
 
-        method match (Any $data, Str $path)
-        {
+        method match (Any $data, Str $path) {
                 my $dpath = new Data::DPath::Path(path => $path);
                 return $dpath->match($data);
         }
