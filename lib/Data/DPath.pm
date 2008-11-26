@@ -78,8 +78,10 @@ Data::DPath - DPath is not XPath!
                                                AAA => { BBB => { CCC => 'affe' } },
                                               } } },
                 };
-    @resultlist = $data ~~ dpath '//AAA/*/CCC';
+    @resultlist = dpath('/AAA/*/CCC')->match($data);
+    # ( ['XXX', 'YYY', 'ZZZ'] )
 
+See currently working paths in B<t/data_dpath.t>.
 
 =head1 FUNCTIONS
 
