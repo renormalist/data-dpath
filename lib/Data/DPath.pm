@@ -12,7 +12,7 @@ class Data::DPath {
                                       groups  => { all  => [ 'dpath' ] },
                                     };
 
-        sub dpath {
+        sub dpath($) {
                 my ($path) = @_;
                 return Data::DPath::Path->new(path => $path);
         }
