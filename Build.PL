@@ -11,11 +11,12 @@ my $builder = Module::Build->new(
                                                          'Test::More' => 0,
                                                         },
                                  requires            => {
-                                                         'perl'            => 5.010,
-                                                         'Test::More'      => 0,
-                                                         'parent'          => 0,
-                                                         'Moose'           => 0,
-                                                         'MooseX::Declare' => 0,
+                                                         'perl'                       => 5.010,
+                                                         'Test::More'                 => 0,
+                                                         'parent'                     => 0,
+                                                         'Moose'                      => 0,
+                                                         'MooseX::Declare'            => 0,
+                                                         'MooseX::Method::Signatures' => 0,
                                                         },
                                  add_to_cleanup      => [ 'Data-DPath-*' ],
                                 );

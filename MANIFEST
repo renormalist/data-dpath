@@ -1,6 +1,7 @@
 .gitignore
 Build.PL
 ChangeLog
+Data-DPath-0.01.tar.gz
 experiments/traverse.pl
 experiments/visitor.pl
 experiments/visitor2.pl
@@ -10,6 +11,7 @@ lib/Data/DPath/Path.pm
 lib/Data/DPath/Point.pm
 lib/Data/DPath/Step.pm
 MANIFEST
+META.yml
 README
 t/00-load.t
 t/boilerplate.t
@@ -17,4 +19,3 @@ t/data_dpath.t
 t/path.t
 t/pod-coverage.t
 t/pod.t
-META.yml
