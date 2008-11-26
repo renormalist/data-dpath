@@ -1,15 +1,15 @@
 package Data::DPath::Context;
 
-# Method::Signatures: open brace needs to be on same line as "method" keyword
+# MooseX::Method::Signatures: open brace needs to be on same line as "method" keyword
+
+use 5.010;
 
 use strict;
 use warnings;
 
-use 5.010;
-
 use Moose;
 use MooseX::Method::Signatures;
-
+use Data::DPath::Point;
 use Data::Dumper;
 
 # Points are the collected pointers into the datastructure
@@ -17,7 +17,7 @@ use Data::Dumper;
 has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
 
 method all {
-        return map { $$_ } $self->current_points;
+        return map { ${$_->ref} } $self->current_points;
 }
 
 method search($path) {
@@ -33,48 +33,60 @@ method search($path) {
                 {
                         when ('ROOT')
                         {
-                                push @new_points, @current_points; # only makes sense at first step
+                                # the root node
+                                # (only makes sense at first step, but currently not asserted)
+                                push @new_points, @current_points;
                         }
                         when ('ANYWHERE')
                         {
-                                # collect *all* points
+                                # all parent nodes of a data tree
                                 my @all_points = ();
                                 push @new_points, @all_points;
                         }
                         when ('KEY')
                         {
-                                # follow the hash key
+                                # the value of a key
                                 foreach my $point (@current_points) {
                                         say "    ,-----------------------------------";
                                         print "    point: ", Dumper($point);
                                         print "    step: ", Dumper($step);
                                         # take point as array as hash, skip undefs
                                         push @new_points, map {
-                                                               #new Data::DPath::Point( ref => \$_, parent => $point )
-                                                               \$_
-                                                              } ( $$point->{$step->part} || () );
+                                                               new Data::DPath::Point( ref => \$_, parent => $point )
+                                                              } ( ${$point->ref}->{$step->part} || () );
                                         say "    `-----------------------------------";
                                 }
                         }
                         when ('ANY')
                         {
+                                # all leaves of a data tree
                                 foreach my $point (@current_points) {
                                         say "    ,-----------------------------------";
                                         # take point as array
-                                        say "    *** ", ref($$point);
-                                        given (ref $$point) {
-                                                when ('HASH')  { push @new_points, map { \$_ } values %$$point }
-                                                when ('ARRAY') { push @new_points, map { \$_ } @$point        }
+                                        say "    *** ", ref(${$point->ref});
+                                        given (ref ${$point->ref}) {
+                                                when ('HASH')
+                                                {
+                                                        push @new_points, map {
+                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                              } values %${$point->ref};
+                                                }
+                                                when ('ARRAY')
+                                                {
+                                                        push @new_points, map {
+                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                              } @{$point->ref}
+                                                }
                                         }
                                         say "    `-----------------------------------";
                                 }
                         }
                         when ('PARENT')
                         {
+                                # the parent
                                 foreach my $point (@current_points) {
                                         say "    ,-----------------------------------";
-                                        # take point as array
-                                        push @new_points, map { \$_ } @$point;
+                                        push @new_points, $point->parent;
                                         say "    `-----------------------------------";
                                 }
                         }

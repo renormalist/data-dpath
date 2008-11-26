@@ -9,6 +9,7 @@ use Moose;
 use MooseX::Method::Signatures;
 
 use Data::DPath::Step;
+use Data::DPath::Point;
 use Data::Dumper;
 
 has path   => ( isa => "Str",      is  => "rw" );
@@ -50,9 +51,8 @@ method _build__steps {
         $self->_steps( \@steps );
 }
 
-method match($data)
-{
-        my $context = new Data::DPath::Context( current_points => [ \$data ] );
+method match($data) {
+        my $context = new Data::DPath::Context( current_points => [ new Data::DPath::Point ( ref => \$data )] );
         return $context->match($self);
 }
 
