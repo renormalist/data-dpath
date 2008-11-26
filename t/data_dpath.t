@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use 5.010;
 
@@ -28,28 +28,33 @@ my $context;
 # trivial matching
 
 @resultlist = dpath('/AAA/BBB/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "hash KEY steps" );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
 
 @resultlist = dpath('/AAA/BBB/CCC/..')->match($data);
-is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "hash KEY steps and parent" );
+is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
 
 @resultlist = dpath('/AAA/BBB/CCC/../..')->match($data);
-is_deeply(\@resultlist, [ { BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
-                            DDD   => { EEE  => [ qw/ uuu vvv www / ] },
-                          } ], "hash KEY steps and parent parent" );
+is_deeply(\@resultlist, [
+                         {
+                          BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
+                          DDD => { EEE => [ qw/ uuu vvv www / ] },
+                         }
+                        ], "KEYs + PARENT + PARENT" );
+
+@resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
+is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
 
 @resultlist = dpath('/')->match($data);
-is_deeply(\@resultlist, [ $data ], "root" );
+is_deeply(\@resultlist, [ $data ], "ROOT" );
 
 # classic calls
 @resultlist = dpath('/AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "hash KEY steps with ANY" );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs + ANY" );
 
 TODO: {
-
         local $TODO = 'work in progress';
         @resultlist = dpath('//AAA/*/CCC')->match($data);
-        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "hash KEY steps with ANYWHERE" );
+        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs + ANY" );
 }
 
 exit 0;
