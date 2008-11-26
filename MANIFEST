@@ -1,5 +1,3 @@
-Build
-Build.PL
 ChangeLog
 experiments/traverse.pl
 experiments/visitor.pl

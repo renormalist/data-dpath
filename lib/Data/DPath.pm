@@ -169,7 +169,7 @@ The public repository is hosted on github:
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 Steffen Schwigon, all rights reserved.
+Copyright 2008 Steffen Schwigon.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
