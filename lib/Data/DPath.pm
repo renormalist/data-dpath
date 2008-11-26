@@ -2,7 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath extends Exporter {
+class Data::DPath {
 
         our $DEBUG = 0;
 
