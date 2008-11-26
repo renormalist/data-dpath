@@ -1,13 +1,12 @@
 #! /usr/bin/env perl
 
+use 5.010;
 use strict;
 use warnings;
 use Test::More tests => 8;
 
-use 5.010;
 
 use Data::DPath 'dpath';
-use Data::DPath::Path;
 
 #local $Data::DPath::DEBUG = 1;
 

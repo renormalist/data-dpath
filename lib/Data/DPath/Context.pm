@@ -6,11 +6,6 @@ use warnings;
 
 class Data::DPath::Context {
 
-        # MooseX::Method::Signatures: open brace needs to be on same line as "method" keyword
-
-        # use Moose;
-        # use MooseX::Method::Signatures;
-
         use Data::DPath::Point;
         use Data::Dumper;
 

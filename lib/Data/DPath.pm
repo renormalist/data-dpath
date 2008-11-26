@@ -4,15 +4,20 @@ use 5.010;
 use strict;
 use warnings;
 
-use Data::DPath::Path;
-use Data::DPath::Context;
-
 class Data::DPath extends Exporter {
 
         our $DEBUG = 0;
 
         use Data::DPath::Path;
         use Data::DPath::Context;
+        use Sub::Exporter -setup => { exports =>           [ 'dpath' ],
+                                      groups  => { all  => [ 'dpath' ] },
+                                    };
+
+        sub dpath {
+                my ($path) = @_;
+                return Data::DPath::Path->new(path => $path);
+        }
 
         method get_context (Any $data, Str $path) {
                 return Data::DPath::Context->new(path => $path);
@@ -23,20 +28,12 @@ class Data::DPath extends Exporter {
                 return $dpath->match($data);
         }
 
-        # ------------------------------
-
-        our @EXPORT_OK   = qw(dpath);
-        our %EXPORT_TAGS = ( all => [qw(dpath)] );
-        sub dpath {
-                my ($path) = @_;
-                return Data::DPath::Path->new(path => $path);
-        }
 }
 
 # ------------------------------------------------------------
 
 # old school way so Module::Build can extract VERSION
-# must be after class {} declaration above, else it doubles the namespace.
+# must be after class {} declaration above, else namespaces double and universes collapse.
 package Data::DPath;
 our $VERSION = '0.01';
 

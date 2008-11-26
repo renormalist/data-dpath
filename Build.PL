@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
                                                          'Test::More' => 0,
                                                         },
                                  requires            => {
+                                                         'Sub::Exporter'              => 0,
                                                          'perl'                       => 5.010,
                                                          'Test::More'                 => 0,
                                                          'parent'                     => 0,
