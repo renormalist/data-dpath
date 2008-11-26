@@ -1,7 +1,11 @@
-2008-11-19  Steffen Schwigon  <ss5@renormalist.net>
+2008-11-26  Steffen Schwigon  <ss5@renormalist.net>
 
 	* 0.01
 
 	* initial version
+
+	* basic paths, parents, placeholders
+
+	* Moose'ified fun
 
 
