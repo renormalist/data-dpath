@@ -44,6 +44,8 @@ our $VERSION = '0.01';
 
 __END__
 
+# Idea collection
+#
 # ::Tree
 #   ::Node   (references to current expressions)
 #     :: NodeSet   (collection of ::Node's)
