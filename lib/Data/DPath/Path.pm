@@ -1,19 +1,12 @@
 use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
-use Data::DPath::Step;
-use Data::DPath::Point;
 class Data::DPath::Path {
 
-        # use Moose;
-        # use MooseX::Method::Signatures;
-
+        use Data::Dumper;
         use Data::DPath::Step;
         use Data::DPath::Point;
-        use Data::Dumper;
 
         has path   => ( isa => "Str",      is  => "rw" );
         has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );

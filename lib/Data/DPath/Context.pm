@@ -1,13 +1,11 @@
 use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
 class Data::DPath::Context {
 
-        use Data::DPath::Point;
         use Data::Dumper;
+        use Data::DPath::Point;
         use List::MoreUtils 'uniq';
 
         # Points are the collected pointers into the datastructure

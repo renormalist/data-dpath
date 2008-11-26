@@ -1,8 +1,6 @@
 use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
 class Data::DPath::Step {
         has kind   => ( isa => "Str", is  => "rw", default => sub { undef } );
