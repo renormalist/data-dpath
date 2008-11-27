@@ -88,7 +88,7 @@ Data::DPath - DPath is not XPath!
     @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
     # ( { EEE => [ qw/ uuu vvv www / ] } )
 
-See currently working paths in B<t/data_dpath.t>.
+See currently working paths in C<t/data_dpath.t>.
 
 =head1 INSTALLATION
 
@@ -99,23 +99,22 @@ See currently working paths in B<t/data_dpath.t>.
 
 =head1 FUNCTIONS
 
-=head2 dpath
+=head2 dpath( $path )
 
-Meant as B<the> front end function for everyday use of Data::DPath. It
-takes a path string and returns a Data::DPath::Path object on which
+Meant as the front end function for everyday use of Data::DPath. It
+takes a path string and returns a C<Data::DPath::Path> object on which
 the match method can be called with data structures. See SYNOPSIS.
 
 =head1 METHODS
 
-=head2 match($data, $path)
+=head2 match( $data, $path )
 
-Returns all values in B<data> that match the B<path> as an array.
+Returns an array of all values in C<$data> that match the C<$path>.
 
-=head2 get_context($path)
+=head2 get_context( $path )
 
-Returns a Data::DPath::Context object that matches the path and can be
-used to incrementally dig into it.
-
+Returns a C<Data::DPath::Context> object that matches the path and can
+be used to incrementally dig into it.
 
 =head1 AUTHOR
 

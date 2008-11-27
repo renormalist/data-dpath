@@ -107,20 +107,29 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Context
-
-Abstraction for a current context that enables incremental searches.
+Data::DPath::Context - Abstraction for a current context that enables incremental searches.
 
 =head2 all
 
 Returns all values covered by current context.
 
-=head2 search
+=head2 search( $path )
 
 Return new context with path relative to current context.
 
-=head2 match
+=head2 match( $path )
 
-Same as search()->all();
+Same as C<< search($path)->all() >>;
+
+=head1 AUTHOR
+
+Steffen Schwigon, C<< <schwigon at cpan.org> >>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2008 Steffen Schwigon.
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut

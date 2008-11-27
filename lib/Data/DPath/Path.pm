@@ -70,23 +70,23 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Path
+Data::DPath::Path - Abstraction for a DPath.
 
-Abstraction for a DPath.
+Take a string description, parse it, provide frontend methods.
 
-Take a string description, parse it, bundle class with overloading,
-etc.
+=head2 match( $data )
 
-=head2 all
+Returns an array of all values in C<$data> that match the Path object.
 
-Returns all values covered by current context.
+=head1 AUTHOR
 
-=head2 search
+Steffen Schwigon, C<< <schwigon at cpan.org> >>
 
-Return new context with path relative to current context.
+=head1 COPYRIGHT & LICENSE
 
-=head2 match
+Copyright 2008 Steffen Schwigon.
 
-Same as search()->all();
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
