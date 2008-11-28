@@ -14,16 +14,15 @@ class Data::DPath {
 
         sub dpath($) {
                 my ($path) = @_;
-                return Data::DPath::Path->new(path => $path);
+                new Data::DPath::Path(path => $path);
         }
 
         method get_context (Any $data, Str $path) {
-                return Data::DPath::Context->new(path => $path);
+                new Data::DPath::Context(path => $path);
         }
 
         method match (Any $data, Str $path) {
-                my $dpath = new Data::DPath::Path(path => $path);
-                return $dpath->match($data);
+                Data::DPath::Path->new(path => $path)->match($data);
         }
 
 }

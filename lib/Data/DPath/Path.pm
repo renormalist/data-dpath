@@ -57,9 +57,8 @@ class Data::DPath::Path {
 
         method match($data) {
                 say "match, wantarray = ", Dumper( { wantarray => wantarray });
-                #say Dumper({ self => $self, data => $data });
 
-                my $context = new Data::DPath::Context( current_points => [ new Data::DPath::Point ( ref => \$data )] );
+                my $context = new Data::DPath::Context ( current_points => [ new Data::DPath::Point ( ref => \$data )] );
                 return $context->match($self);
         }
 }
