@@ -217,13 +217,17 @@ Now put quotes around that to use it as DPath hash key:
   "\"EE\E5\\\""
 
 and if you specify this in a Perl program you need to additionally
-escape the the even number of successing backslashes:
+escape the backslashes (i.e., double their count):
 
 
-  "\"EE\E5\\\\\""
+  "\"EE\E5\\\\\\""
 
-Strange, isn't it? At least it's (hopefully) consistent with something
-you know (Perl, Shell, etc.).
+As you can see, strangely, this backslash escaping is only needed on
+backslashes that are not standing alone. The first backslash before
+the first escaped double-quote is ok to be a single backslash.
+
+All strange, isn't it? At least it's (hopefully) consistent with
+something you know (Perl, Shell, etc.).
 
 =back
 
