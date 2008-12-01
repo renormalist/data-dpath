@@ -133,8 +133,8 @@ be used to incrementally dig into it.
 
 =head2 Special characters
 
-There are 4 special characters: the slash C</>, the double-quote C<">,
-the backslash C<\> and paired brackets C<[]>. They are needed and
+There are 4 special characters: the slash C</>, paired brackets C<[]>,
+the double-quote C<"> and the backslash C<\>. They are needed and
 explained in a logical order.
 
 Path parts are divided by the slash </>.
@@ -148,9 +148,11 @@ quotes C<">.
 To contain double-quotes in hash keys they can be escaped with
 backslash C<\>.
 
-Backslashes in path parts don't need to be escaped. (The only
-challenge is how to create them in Perl due to their special handling
-in string interpolation.)
+Backslashes in path parts don't need to be escaped. (B<Bug warning>:
+This is how it B<should> be. I think the normal handling of
+backslashes is currently broken. And another challenge is how to
+create backslashes in Perl due to their special handling in string
+interpolation.)
 
 Filters of parts are already sufficiently divided by the brackets
 C<[]>. There is no need to handle special characters in them, not even
@@ -179,9 +181,30 @@ Steffen Schwigon, C<< <schwigon at cpan.org> >>
 
 Please report any bugs or feature requests to C<bug-data-dpath at
 rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath>.  I will
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath>. I will
 be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
+
+=head2 Backslash handling
+
+I think it is somewhat difficult to create a backslash directly before
+a quoted double-quote. That's maybe due to Perl's special backslash
+handling. The following key does not get parsed correctly (where the
+inner double-quotes are meant as part of the key and the seemingly
+doble backslash is in fact only a single backslash followed by the
+second inner escaped double-quote):
+
+  /"\"EE\E5\\""/
+
+So you need to backslash the backslashes again:
+
+  /"\"EE\E5\\\\\""/
+
+to mean what you want, i.e.:
+
+ "EE\E5\"
+
+as the plain key.
 
 =head1 SUPPORT
 

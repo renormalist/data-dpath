@@ -22,7 +22,14 @@ use Text::Balanced qw (
 #     - wrong:   /"EEE3""[isa() eq \"Zomtec\"]"/
 #     - correct: /"EEE3"[isa() eq "Zomtec"]/
 
-my $text = '//A1/A2/A3/AAA/"BB BB"/"CC CC"["foo bar"]/"DD / DD"/EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+# not that backslashes are already handled special in Perl when it creates that string
+# is it ok or tactically wise to allow "BB2 BB2" without quoting?
+my $text = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+# my $text = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5';
+# $text .= '\\';
+# $text .= '\"';
+# $text .= '"[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+say $text;
 
 my ($extracted, $remainder);
 my @parts;
@@ -40,18 +47,13 @@ sub part_and_filter {
         my $filter;
 	($plain_part) = $extracted =~ /.(.*)/g;
 
-#         # completely quoted, take whole inner
-#         if ($plain_part =~ m/^"(.*)"$/) {
-#                 say "\n\n\n\n**************************************************** PLOPP\n\n\n";
-#                 $plain_part = $1;
-#         }
-
         if ($plain_part =~ m/\[/) {
                 ($plain_part, $filter) = $plain_part =~ m/^(.*?)(\[.*\])$/g;
         }
-        say "A: $plain_part";
-        $plain_part =~ s/[\\]"/"/g if $plain_part;
-        say "B: $plain_part";
+        say "A: ".($plain_part||'');
+        $plain_part =~ s/\\"/"/g if $plain_part;
+        $plain_part =~ s/\\{2}/\\/g if $plain_part;
+        say "B: ".($plain_part||'');
 
         return ($plain_part, $filter);
 }
@@ -69,6 +71,9 @@ while ($extracted and $remainder) {
 
                 my $extracted2;
                 ($extracted2, $remainder) = extract_delimited($remainder,'"');
+                say "extracted2: $extracted2";
+                say "remainder: $remainder";
+
                 $extracted .= $extracted2; # == part
 
                 # plain part
@@ -85,7 +90,11 @@ while ($extracted and $remainder) {
                         $filter = $extracted2;
                 }
 
-                $plain_part =~ s/[\\]"/"/g if $plain_part;
+                say "AA: ".($plain_part||'');
+                $plain_part =~ s/\\"/"/g if $plain_part;
+                $plain_part =~ s/\\{2}/\\/g if $plain_part;
+               say "BB: ".($plain_part||'');
+
                 my $step = { part => $plain_part, filter => $filter};
                 push @steps, $step;
                 say "* ".Dumper($step, $remainder);
@@ -116,7 +125,7 @@ while ($extracted and $remainder) {
 }
 
 say  $text;
-say foreach map { $_->{part}."                        ".($_->{filter}||'') } @steps;
+say foreach map { ($_->{part} || '')."                        ".($_->{filter}||'') } @steps;
 
 print <<EOL;
 
