@@ -115,17 +115,41 @@ be used to incrementally dig into it.
 
 =head2 Synopsis
 
+... TODO ...
+
 =head2 Special elements
 
 =over 4
 
 =item * C<//>
 
+(not yet implemented)
+
+Anchors to any hash or array inside the data structure relative to the
+current step (or the root). Typically used at the start of a path:
+
+  //FOO/BAR
+
+but can also happen inside paths to skip middle parts:
+
+ /AAA/BBB//FARAWAY
+
+This allows any way between C<BBB> and C<FARAWAY>.
+
 =item * C<*>
+
+(only partially implemented)
+
+Matches one steps of any value relative to the current step (or the
+root). This step might be any hash key or all values of an array in
+the step before.
 
 =back
 
-=head2 Different ways for the filter: C</part[filter]> vs. C</path/[filter]>.
+=head2 Difference between C</part[filter]> vs. C</path/[filter]> and
+especially it's variants C</*[2]> vs. C</*/[2]>
+
+... TODO ...
 
 =head2 Special characters
 
@@ -144,11 +168,9 @@ quotes C<">.
 To contain double-quotes in hash keys they can be escaped with
 backslash C<\>.
 
-Backslashes in path parts don't need to be escaped. (B<Bug warning>:
-This is how it B<should> be. I think the normal handling of
-backslashes is currently broken. And another challenge is how to
-create backslashes in Perl due to their special handling in string
-interpolation.)
+Backslashes in path parts don't need to be escaped, except before
+escaped quotes (but see below on L<Backslash handling|Backslash
+handling>).
 
 Filters of parts are already sufficiently divided by the brackets
 C<[]>. There is no need to handle special characters in them, not even
@@ -167,6 +189,42 @@ So this is the order how to create paths:
 
 =item 4. separate several path parts with slashes
 
+=head2 Backslash handling
+
+I think it is somewhat difficult to create a backslash directly before
+a quoted double-quote.
+
+Inside the DPath language the typical backslash rules of apply that
+you already know from Perl B<single quoted> strings. The challenge is
+to specify such strings inside Perl programs where another layer of
+this backslashing applies.
+
+Without quotes it's all easy. Both a single backslash C<\> and a
+double backslash C<\\> get evaluated to a single backslash C<\>.
+
+Extreme edge case by example: To specify a plain hash key like this:
+
+  "EE\E5\"
+
+where the quotes are part of the key, you need to escape the quotes
+and the backslash:
+
+
+  \"EE\E5\\\"
+
+Now put quotes around that to use it as DPath hash key:
+
+  "\"EE\E5\\\""
+
+and if you specify this in a Perl program you need to additionally
+escape the the even number of successing backslashes:
+
+
+  "\"EE\E5\\\\\""
+
+Strange, isn't it? At least it's (hopefully) consistent with something
+you know (Perl, Shell, etc.).
+
 =back
 
 =head1 AUTHOR
@@ -180,27 +238,6 @@ rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath>. I will
 be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
-
-=head2 Backslash handling
-
-I think it is somewhat difficult to create a backslash directly before
-a quoted double-quote. That's maybe due to Perl's special backslash
-handling. The following key does not get parsed correctly (where the
-inner double-quotes are meant as part of the key and the seemingly
-doble backslash is in fact only a single backslash followed by the
-second inner escaped double-quote):
-
-  /"\"EE\E5\\""/
-
-So you need to backslash the backslashes again:
-
-  /"\"EE\E5\\\\\""/
-
-to mean what you want, i.e.:
-
- "EE\E5\"
-
-as the plain key.
 
 =head1 SUPPORT
 
