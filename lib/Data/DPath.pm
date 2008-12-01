@@ -5,6 +5,7 @@ use 5.010;
 class Data::DPath {
 
         our $DEBUG = 0;
+        our $VERSION = '0.02';
 
         use Data::DPath::Path;
         use Data::DPath::Context;
@@ -28,11 +29,6 @@ class Data::DPath {
 }
 
 # ------------------------------------------------------------
-
-# old school way so Module::Build can extract VERSION
-# must be after class {} declaration above, else namespaces double and universes collapse.
-package Data::DPath;
-our $VERSION = '0.01';
 
 1;
 
