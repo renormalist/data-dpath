@@ -115,6 +115,62 @@ Returns an array of all values in C<$data> that match the C<$path>.
 Returns a C<Data::DPath::Context> object that matches the path and can
 be used to incrementally dig into it.
 
+=head1 THE DPATH LANGUAGE
+
+=head2 Synopsis
+
+=head2 Special elements
+
+=over 4
+
+=item * C<//>
+
+=item * C<*>
+
+=back
+
+=head2 Different ways for the filter: C</part[filter]> vs. C</path/[filter]>.
+
+=head2 Special characters
+
+There are 4 special characters: the slash C</>, the double-quote C<">,
+the backslash C<\> and paired brackets C<[]>. They are needed and
+explained in a logical order.
+
+Path parts are divided by the slash </>.
+
+A path part can be extended by a filter with appending an expression
+in brackets C<[]>.
+
+To contain slashes in hash keys, they can be surrounded by double
+quotes C<">.
+
+To contain double-quotes in hash keys they can be escaped with
+backslash C<\>.
+
+Backslashes in path parts don't need to be escaped. (The only
+challenge is how to create them in Perl due to their special handling
+in string interpolation.)
+
+Filters of parts are already sufficiently divided by the brackets
+C<[]>. There is no need to handle special characters in them, not even
+double-quotes. The filter expression just needs to be balanced on the
+brackets.
+
+So this is the order how to create paths:
+
+=over 4
+
+=item 1. backslash double-quotes that are part of the key
+
+=item 2. put double-quotes around the resulting key
+
+=item 3. append the filter expression after the key
+
+=item 4. separate several path parts with slashes
+
+=back
+
 =head1 AUTHOR
 
 Steffen Schwigon, C<< <schwigon at cpan.org> >>
