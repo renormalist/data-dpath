@@ -24,112 +24,83 @@ use Text::Balanced qw (
 
 # not that backslashes are already handled special in Perl when it creates that string
 # is it ok or tactically wise to allow "BB2 BB2" without quoting?
-my $text = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"/EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+my $text = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
 # my $text = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5';
 # $text .= '\\';
 # $text .= '\"';
 # $text .= '"[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
-say $text;
+#say $text;
 
 my ($extracted, $remainder);
 my @parts;
 my @cleaned_parts;
 
-say $text;
-say Dumper($text);
+# say $text;
+# say Dumper($text);
 
-say "-"x 60, "extract_delimited";
+#say "-"x 60, "extract_delimited";
 
-sub part_and_filter {
-        my $part = shift;
+sub unescaped {
+        my ($str) = @_;
 
-        my $plain_part;
-        my $filter;
-
-        # ignore leading slash
-	($plain_part) = $part =~ /^.(.*)$/g;
-
-        # divide part from filter
-        ($plain_part, $filter) = $plain_part =~ m/^(.*?)(\[.*\])$/g if $plain_part =~ m/\[/;
-
-        # unescape quotes
-        $plain_part =~ s/(?<!\\)\\"/"/g    if $plain_part;
-        #$plain_part =~ s/\\"/"/g    if $plain_part;
-
-        # unescape escapes
-        $plain_part =~ s/\\{2}/\\/g if $plain_part;
-
-        return ($plain_part, $filter);
+        return unless defined $str;
+        $str =~ s/(?<!\\)\\"/"/g;
+        $str =~ s/\\{2}/\\/g;
+        return $str;
+}
+sub unquoted {
+        my ($str) = @_;
+        $str =~ s/^"(.*)"$/$1/g;
+        return $str;
 }
 
-my @steps = ();
+sub quoted { shift =~ m,^/",; }
 
-($extracted, $remainder) = ('unused', $text);
-while ($extracted and $remainder) {
+sub path_to_steps {
+        my ($remaining_path) = @_;
 
-        my ($plain_part, $filter);
+        my @steps;
+        my $extracted;
 
-        if ($remainder =~ m,^/",)                             # " fix highlighting
+        while ($remaining_path)
         {
-                # --- handle quoted paths ---
-
-                # single step, first the quoted part, then the filter
-
-                my $extracted2;
-
-                $extracted = '/';
-                $remainder =~ s/^.//g;
-                ($extracted2, $remainder) = extract_delimited($remainder,'"');
-                $extracted .= $extracted2;
-
-                # plain part
-                ($plain_part) = $extracted =~ /."?(.*?)"?$/g;
-                #($plain_part)  = $extracted =~ /.(.*)/g;    # plain part
-                #$plain_part    = $1 if $plain_part =~ m/^"(.*)"$/;  # completely quoted, take whole inner
-
-                # extract filter
-                if ($remainder =~ /^\[/) {
-                        ($extracted2, $remainder) = extract_bracketed($remainder);
-                        $filter = $extracted2;
-                }
-
-                # unescape quotes
-                $plain_part =~ s/(?<!\\)\\"/"/g    if $plain_part;
-                #$plain_part =~ s/\\"/"/g    if $plain_part;
-                # unescape escapes
-                $plain_part =~ s/\\{2}/\\/g        if $plain_part;
-
-                my $step = { part => $plain_part, filter => $filter};
-                push @steps, $step;
-                say "* ".Dumper($step, $remainder);
-                next;
-        }
-        else {
-
-                # --- handle unquoted paths ---
-
-                ($extracted, $remainder) = extract_delimited($remainder,'/');
-
-                if (not defined $extracted and defined $remainder)
+                my ($plain_part, $filter);
+                given ($remaining_path)
                 {
-                        # the last path part
-                        $extracted = $remainder;
-                        $remainder = undef;
-                }
-                else
-                {
-                        # put back the closing '/' on extracted in front of the remainder
-                        $remainder = (chop $extracted) . $remainder ;
-                }
+                        when ( \&quoted ) {
+                                ($plain_part, $remaining_path) = extract_delimited($remaining_path,'"', "/");
+                                ($filter,     $remaining_path) = extract_bracketed($remaining_path);
+                                $plain_part                    = unescaped unquoted $plain_part;
+                                push @steps, {
+                                              part   => $plain_part,
+                                              filter => $filter
+                                             };
+                        }
+                        default {
+                                ($extracted, $remaining_path) = extract_delimited($remaining_path,'/');
 
-                ($plain_part, $filter) = part_and_filter($extracted);
+                                if (not $extracted) {
+                                        ($extracted, $remaining_path) = ($remaining_path, undef); # END OF PATH
+                                } else {
+                                        $remaining_path = (chop $extracted) . $remaining_path;
+                                }
 
-                my $step = { part => $plain_part, filter => $filter};
-                push @steps, $step;
-                say "+ ".Dumper($step, $remainder);
-                #sleep 2;
+                                ($plain_part, $filter) = $extracted =~ m,^/              # leading /
+                                                                         (.*?)           # path part
+                                                                         (\[.*\])?$      # optional filter
+                                                                        ,xg;
+                                $plain_part = unescaped $plain_part;
+                                push @steps, {
+                                              part   => $plain_part,
+                                              filter => $filter
+                                             };
+                        }
+                }
         }
+
+        say foreach map { ($_->{part} || '<EMPTYSTEP>')."                        ".($_->{filter}||'') } @steps;
+        return @steps;
 }
 
 say  $text;
-say foreach map { ($_->{part} || '')."                        ".($_->{filter}||'') } @steps;
+path_to_steps($text);
