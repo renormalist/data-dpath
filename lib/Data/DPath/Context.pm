@@ -36,7 +36,8 @@ class Data::DPath::Context {
                                 }
                                 when ('ANYWHERE')
                                 {
-                                        # all parent nodes of a data tree
+                                        # '//'
+                                        # all hash/array nodes of a data structure
                                         my @all_points = ();
                                         push @new_points, @all_points;
                                 }
@@ -54,8 +55,9 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
-                                when ('ANY')
+                                when ('ANYSTEP')
                                 {
+                                        # '*'
                                         # all leaves of a data tree
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
@@ -80,6 +82,7 @@ class Data::DPath::Context {
                                 }
                                 when ('PARENT')
                                 {
+                                        # '..'
                                         # the parent
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";

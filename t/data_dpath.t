@@ -49,18 +49,19 @@ is_deeply(\@resultlist, [
 is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
 
 @resultlist = dpath('/AAA/*/CCC/../../DDD')->match($data);
-is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANY + PARENT + KEY no double results" );
+is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
 
 @resultlist = dpath('/')->match($data);
+use Data::Dumper;
 is_deeply(\@resultlist, [ $data ], "ROOT" );
 
 @resultlist = dpath('/AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANY" );
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANYSTEP" );
 
 TODO: {
         local $TODO = 'work in progress';
         @resultlist = dpath('//AAA/*/CCC')->match($data);
-        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs + ANY" );
+        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs + ANYSTEP" );
 }
 
 exit 0;

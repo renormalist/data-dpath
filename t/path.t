@@ -26,7 +26,7 @@ my @steps = $path->_steps;
 @refs    = map { ref $_       } @steps;
 print Dumper(@steps);
 print Dumper(\@kinds);
-is_deeply(\@kinds, [qw/ROOT KEY ANY KEY/],       "kinds");
+is_deeply(\@kinds, [qw/ROOT KEY ANYSTEP KEY/],       "kinds");
 is_deeply(\@parts, [qw{ / AAA * CCC } ],             "parts");
 is_deeply(\@filters, [ undef, undef, '[0]', undef ], "filters");
 is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs");
