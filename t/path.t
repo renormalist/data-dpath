@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 use 5.010;
 
@@ -37,6 +37,101 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs");
 # -------------------- really strange DPath with lots of hardcore quoting --------------------
 
 my $strange_path = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       ANYWHERE
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       KEY
+                       ANYSTEP
+                       ANYSTEP
+                       KEY
+                       KEY
+                       KEY
+                      /],
+          "kinds2");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    'A2',
+                    'A3',
+                    'AAA',
+                    'BB BB',
+                    'BB2 BB2',
+                    'CC CC',
+                    'DD / DD',
+                    'DD2\DD2',
+                    '',
+                    'EEE',
+                    '"EE E2"',
+                    '"EE E3"[1]',
+                    '"EE E4"',
+                    '"EE\E5\\\\"',
+                    '"FFF"',
+                    'GGG[foo == bar]',
+                    '*',
+                    '*',
+                    'XXX',
+                    'YYY',
+                    'ZZZ'
+                   ],
+          "parts2");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                      '["foo bar"]',
+                      undef,
+                      undef,
+                      undef,
+                      '[ isa() eq "Foo::Bar" ]',
+                      '[ "\"affe\"" eq "Foo2::Bar2" ]',
+                      undef,
+                      '[1]', '[1]',
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters2");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
+
+# -------------------- same again but with other quote characters --------------------
+
+$strange_path = q!//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ!;
+
+# "
 
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = $dpath->_steps;

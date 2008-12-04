@@ -27,7 +27,7 @@ class Data::DPath::Path {
                 my ($str) = @_;
 
                 return unless defined $str;
-                $str =~ s/(?<!\\)\\"/"/g;
+                $str =~ s/(?<!\\)\\(["'])/$1/g;          # "
                 $str =~ s/\\{2}/\\/g;
                 return $str;
         }
@@ -38,7 +38,7 @@ class Data::DPath::Path {
                 return $str;
         }
 
-        sub quoted { shift =~ m,^/",; }                                             # "
+        sub quoted { shift =~ m,^/["'],; }                                             # "
 
         # essentially the Path parser
         method _build__steps {
@@ -59,7 +59,7 @@ class Data::DPath::Path {
                         given ($remaining_path)
                         {
                                 when ( \&quoted ) {
-                                        ($plain_part, $remaining_path) = extract_delimited($remaining_path,'"', "/");
+                                        ($plain_part, $remaining_path) = extract_delimited($remaining_path, q/'"/, "/"); # '
                                         ($filter,     $remaining_path) = extract_bracketed($remaining_path);
                                         $plain_part                    = unescape unquote $plain_part;
                                 }
