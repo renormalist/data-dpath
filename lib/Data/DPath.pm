@@ -82,6 +82,22 @@ Data::DPath - DPath is not XPath!
     
     @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
     # ( { EEE => [ qw/ uuu vvv www / ] } )
+    
+    # The '~~' operator is overloaded,
+    # it returns array refs and works commutative.
+    # So the same paths as above can be written this way:
+    
+    $resultlist = dpath '/AAA/BBB/CCC' ~~ $data;
+    $resultlist = $data ~~ dpath '/AAA/BBB/CCC';
+    # [ ['XXX', 'YYY', 'ZZZ'] ]
+    
+    $resultlist = dpath '/AAA/*/CCC' ~~ $data;
+    $resultlist = $data ~~ dpath '/AAA/*/CCC';
+    # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
+    
+    $resultlist = dpath '/AAA/BBB/CCC/../../DDD' ~~ $data;
+    $resultlist =  $data ~~ dpath '/AAA/BBB/CCC/../../DDD';
+    # [ { EEE => [ qw/ uuu vvv www / ] } ]
 
 See currently working paths in C<t/data_dpath.t>.
 
@@ -189,7 +205,12 @@ So this is the order how to create paths:
 
 =item 4. separate several path parts with slashes
 
+=back
+
 =head2 Backslash handling
+
+If you know backslash in Perl strings, skip this paragraph, it should
+be the same.
 
 I think it is somewhat difficult to create a backslash directly before
 a quoted double-quote.
@@ -209,7 +230,6 @@ Extreme edge case by example: To specify a plain hash key like this:
 where the quotes are part of the key, you need to escape the quotes
 and the backslash:
 
-
   \"EE\E5\\\"
 
 Now put quotes around that to use it as DPath hash key:
@@ -228,8 +248,6 @@ the first escaped double-quote is ok to be a single backslash.
 
 All strange, isn't it? At least it's (hopefully) consistent with
 something you know (Perl, Shell, etc.).
-
-=back
 
 =head1 AUTHOR
 

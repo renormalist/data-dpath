@@ -145,9 +145,37 @@ Data::DPath::Path - Abstraction for a DPath.
 
 Take a string description, parse it, provide frontend methods.
 
+=head1 PUBLIC METHODS
+
 =head2 match( $data )
 
 Returns an array of all values in C<$data> that match the Path object.
+
+=head1 INTERNAL METHODS
+
+=head2 op_match( $self, $data )
+
+This sub/method is bound as the overloading function for C<~~>. It's
+not implemented as method due to a strange "Odd number of elements in
+hash assignment" warning.
+
+=head2 quoted
+
+Checks whether a path part starts with quotes.
+
+=head2 unquote
+
+Removes surrounding quotes.
+
+=head2 unescape
+
+Converts backslashed characters into their non-backslashed form.
+
+=head2 _build__steps
+
+This method is essentially the DPath parser as it tokenizes the path
+into single steps whose later execution is the base functionality of
+the whole DPath module.
 
 =head1 AUTHOR
 
