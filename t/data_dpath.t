@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 16;
 
 
 use Data::DPath 'dpath';
@@ -57,6 +57,24 @@ is_deeply(\@resultlist, [ $data ], "ROOT" );
 
 @resultlist = dpath('/AAA/*/CCC')->match($data);
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANYSTEP" );
+
+# --- same with operator ---
+
+is_deeply(dpath('/AAA/BBB/CCC') ~~ $data,    [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
+is_deeply(dpath('/AAA/BBB/CCC/..') ~~ $data, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
+is_deeply(dpath('/AAA/BBB/CCC/../..') ~~ $data, [
+                                                 {
+                                                  BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
+                                                  RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                                                  DDD => { EEE => [ qw/ uuu vvv www / ] },
+                                                 }
+                                                ], "KEYs + PARENT + PARENT" );
+is_deeply(dpath('/AAA/BBB/CCC/../../DDD') ~~ $data, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
+is_deeply(dpath('/AAA/*/CCC/../../DDD') ~~ $data, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
+is_deeply(dpath('/') ~~ $data, [ $data ], "ROOT" );
+is_deeply(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANYSTEP" );
+
+# --- ---
 
 TODO: {
         local $TODO = 'work in progress';

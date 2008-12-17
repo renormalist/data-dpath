@@ -15,19 +15,18 @@ class Data::DPath::Path {
         has path   => ( isa => "Str",      is  => "rw" );
         has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
 
-#        use overload '~~' => sub { return ( qw/affe tiger fink star/ ) };
+        use overload '~~' => \&op_match;
 
-#         method op_match($data) {
-#                 say "op_match, wantarray = ", Dumper( { wantarray => wantarray });
-#                 #say Dumper({ self => $self, data => $data });
-#                 return ( qw/affe tiger fink star/ );
-#         }
+        sub op_match {  # not a method for ~~, due to "Odd number of elements in hash assignment"
+                my ($self, $data) = @_;
+                return [ $self->match( $data ) ];
+        }
 
         sub unescape {
                 my ($str) = @_;
 
                 return unless defined $str;
-                $str =~ s/(?<!\\)\\(["'])/$1/g;          # "
+                $str =~ s/(?<!\\)\\(["'])/$1/g;          # '"$
                 $str =~ s/\\{2}/\\/g;
                 return $str;
         }

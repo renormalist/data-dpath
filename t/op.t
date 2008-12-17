@@ -21,17 +21,10 @@ my $data  = {
              strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
             };
 
-my @resultlist;
+my $resultlist;
 my $context;
 
 # trivial matching
 
-@resultlist = $data ~~ dpath '/AAA/BBB/CCC';
-say "resultlist == ", Dumper(\@resultlist);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
-
-# commutative?
-@resultlist = dpath '/AAA/BBB/CCC' ~~ $data;
-say "resultlist == ", Dumper(\@resultlist);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
-
+is_deeply($data ~~ dpath '/AAA/BBB/CCC', [ ['XXX', 'YYY', 'ZZZ'] ], "data ~~ dpath" );
+is_deeply(dpath '/AAA/BBB/CCC' ~~ $data, [ ['XXX', 'YYY', 'ZZZ'] ], "dpath ~~ data (commutative)" );
