@@ -93,42 +93,6 @@ class Data::DPath::Path {
                 $self->_steps( \@steps );
         }
 
-#         # essentially the Path parser
-#         method x_build__steps {
-
-#                 my @steps;
-
-#                 my $path = $self->path;
-#                 my ($start) = $path =~ m,^(//?),;
-#                 $path =~ s,^(//?),,;
-
-#                 given ($start) {
-#                         when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
-#                         when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
-#                 }
-#                 $Data::DPath::DEBUG && say "       lazy ... (start:          $start)";
-#                 $Data::DPath::DEBUG && say "       lazy ... (remaining path: $path)";
-
-#                 my @parts = split qr[/], $path;
-#                 foreach (@parts) {
-#                         my ($part, $filter) =
-#                             m/
-#                                      ([^\[]*)      # part
-#                                      (\[.*\])?     # part filter
-#                              /x;
-#                         my $kind;
-#                         given ($part) {
-#                                 when ('*')  { $kind = 'ANYSTEP'    }
-#                                 when ('..') { $kind = 'PARENT' }
-#                                 default     { $kind = 'KEY'    }
-#                         }
-#                         push @steps, new Data::DPath::Step( part   => $part,
-#                                                             kind   => $kind,
-#                                                             filter => $filter );
-#                 }
-#                 $self->_steps( \@steps );
-#         }
-
         method match($data) {
                 my $context = new Data::DPath::Context ( current_points => [ new Data::DPath::Point ( ref => \$data )] );
                 return $context->match($self);
