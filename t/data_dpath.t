@@ -230,4 +230,9 @@ TODO: {
         # ( 'interesting value' )
         is_deeply(\@resultlist, [ 'interesting value' ] );
 
+        # just filters
+        @resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
+        # ( 'interesting value' )
+        is_deeply(\@resultlist, [ 'interesting value' ] );
+
 }
