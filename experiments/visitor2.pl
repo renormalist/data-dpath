@@ -12,7 +12,7 @@ use warnings;
 use Mouse;
 use Data::Dumper;
 
-extends qw(Data::Visitor);
+extends 'Data::Visitor';
 
 # --------------------
 
@@ -44,11 +44,27 @@ extends qw(Data::Visitor);
 
 # --------------------
 
-sub visit_no_rec_check {
+sub visit_ref {
         my ( $self, $data ) = @_;
-        print \$data, ": no_rec_check: ", Dumper($data);
-        return $data;
+        print \$data, ": ref: ", Dumper($data);
+        $self->SUPER ($data);
 }
+
+# --------------------
+
+# sub visit_seen {
+#         my ( $self, $data ) = @_;
+#         print \$data, ": ref: ", Dumper($data);
+#         return $data;
+# }
+
+# --------------------
+
+# sub visit_no_rec_check {
+#         my ( $self, $data ) = @_;
+#         print \$data, ": no_rec_check: ", Dumper($data);
+#         return $data;
+# }
 
 # --------------------
 
@@ -59,6 +75,7 @@ my $data  = {
                                            AAA => { BBB => { CCC => 'affe' } },
                                           } } },
              strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
+             foo => { 'bar' => { 'baz' => { brueller => [ qw/affe tiger fink star/] } } },
             };
 say Dumper($data);
 $counter->visit( $data );
