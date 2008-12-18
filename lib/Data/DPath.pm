@@ -98,7 +98,8 @@ See currently working paths in C<t/data_dpath.t>.
 
 Meant as the front end function for everyday use of Data::DPath. It
 takes a path string and returns a C<Data::DPath::Path> object on which
-the match method can be called with data structures. See SYNOPSIS.
+the match method can be called with data structures and the operator
+C<~~> is overloaded. See SYNOPSIS.
 
 =head1 METHODS
 
@@ -110,6 +111,18 @@ Returns an array of all values in C<$data> that match the C<$path>.
 
 Returns a C<Data::DPath::Context> object that matches the path and can
 be used to incrementally dig into it.
+
+=head1 OPERATOR
+
+=head2 ~~
+
+Does a C<match> of a dpath against a data structure.
+
+Due to the B<matching> nature of DPath the operator C<~~> should make
+your code more readable. It works commutative (meaning C<data ~~
+dpath> is the same as C<dpath ~~ data>).
+
+
 
 =head1 THE DPATH LANGUAGE
 
@@ -146,10 +159,71 @@ the step before.
 
 =back
 
-=head2 Difference between C</part[filter]> vs. C</path/[filter]> and
-especially it's variants C</*[2]> vs. C</*/[2]>
+=head2 Difference between C</part[filter]> vs. C</part/[filter]>
+vs. C</part/*[filter]>
 
 ... TODO ...
+
+=head2 Filters
+
+(not yet implemented)
+
+Filters are conditions in brackets. They apply to all elements that
+are directly found by the path part to which the filter is appended.
+
+Internally the filter condition is part of a C<grep> construct
+(exception: single integers, they choose array elements). See below.
+
+Examples:
+
+=over 4
+
+=item C</*[2]/>
+
+A single integer as filter means choose an element from an array. So
+the C<*> finds all subelements on current step and the C<[2]> reduces
+them to only the third element (index starts at 0).
+
+=item C</FOO[ref eq 'ARRAY']/>
+
+The C<FOO> is a step that matches a hash key C<FOO> and the filter
+only takes the element if it is an 'ARRAY'.
+
+=back
+
+See L<Filter functions|Filter functions> for more functions like
+C<isa> and C<ref>.
+
+=head2 Filter functions
+
+(not yet implemented)
+
+The filter condition is internally part of a C<grep> over the current
+subset of values. So you can also use the variable C<$_> in it:
+
+  /*[$_->isa eq 'Some::Class']/
+
+Additional filter functions are available that are usually prototyped
+to take $_ by default:
+
+=over 4
+
+=item C<index>
+
+The index of an element. So these two filters are equivalent:
+
+ /*[2]/
+ /*[index == 2]/
+
+=item C<ref>
+
+Perl's C<ref>.
+
+=item C<isa>
+
+Perl's C<isa>.
+
+=back
 
 =head2 Special characters
 
