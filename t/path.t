@@ -36,7 +36,7 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs");
 
 # -------------------- really strange DPath with lots of hardcore quoting --------------------
 
-my $strange_path = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
+my $strange_path = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ $_->isa("Foo::Bar") ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
 
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = $dpath->_steps;
@@ -112,7 +112,7 @@ is_deeply(\@filters, [
                       undef,
                       undef,
                       undef,
-                      '[ isa() eq "Foo::Bar" ]',
+                      '[ $_->isa("Foo::Bar") ]',
                       '[ "\"affe\"" eq "Foo2::Bar2" ]',
                       undef,
                       '[1]', '[1]',
@@ -129,7 +129,7 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
 
 # -------------------- same again but with other quote characters --------------------
 
-$strange_path = q!//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ isa() eq "Foo::Bar" ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ!;
+$strange_path = q!//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ $_->isa("Foo::Bar") ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ!;
 
 # "
 
@@ -207,7 +207,7 @@ is_deeply(\@filters, [
                       undef,
                       undef,
                       undef,
-                      '[ isa() eq "Foo::Bar" ]',
+                      '[ $_->isa("Foo::Bar") ]',
                       '[ "\"affe\"" eq "Foo2::Bar2" ]',
                       undef,
                       '[1]', '[1]',
