@@ -28,3 +28,4 @@ my $context;
 
 is_deeply($data ~~ dpath '/AAA/BBB/CCC', [ ['XXX', 'YYY', 'ZZZ'] ], "data ~~ dpath" );
 is_deeply(dpath '/AAA/BBB/CCC' ~~ $data, [ ['XXX', 'YYY', 'ZZZ'] ], "dpath ~~ data (commutative)" );
+
