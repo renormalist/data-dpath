@@ -16,6 +16,6 @@ requires 'Data::Visitor'   => "0.22";
 test_requires 'Test::More';
 tests_recursive;
 
-makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath.pm > README' } ;
+#makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath.pm > README' } ;
 
 WriteAll;

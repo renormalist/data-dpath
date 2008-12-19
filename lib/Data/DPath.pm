@@ -354,9 +354,6 @@ The public repository is hosted on github:
   git clone git://github.com/renormalist/data-dpath.git
 
 
-=head1 ACKNOWLEDGEMENTS
-
-
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2008 Steffen Schwigon.
