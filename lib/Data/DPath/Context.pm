@@ -7,6 +7,7 @@ class Data::DPath::Context {
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
+        use Data::Visitor::Callback;
 
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
@@ -38,8 +39,28 @@ class Data::DPath::Context {
                                 {
                                         # '//'
                                         # all hash/array nodes of a data structure
-                                        my @all_points = ();
-                                        push @new_points, @all_points;
+                                        $Data::DPath::DEBUG && print "current_points: ".Dumper(\@current_points);
+                                        foreach my $point (@current_points) {
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                $Data::DPath::DEBUG && print "    point: ", Dumper($point);
+                                                $Data::DPath::DEBUG && print "    step: ", Dumper($step);
+                                                # take point as hash, skip undefs
+                                                my @all_refs = ();
+                                                my $v = Data::Visitor::Callback->new(
+                                                                                     ignore_return_values => 1,
+                                                                                     ref => sub {
+                                                                                                 my ( $visitor, $data ) = @_;
+                                                                                                 push @all_refs, $data
+                                                                                                }
+                                                                                    );
+                                                $Data::DPath::DEBUG && print "point-ref: ".Dumper( ${$point->ref} ); # " ;
+                                                $v->visit( ${$point->ref} ); # }$
+                                                push @new_points, map {
+                                                                       $Data::DPath::DEBUG && print "all-new-ref: ".Dumper( $_ ); # " ;
+                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                      } @all_refs;
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        }
                                 }
                                 when ('KEY')
                                 {

@@ -76,11 +76,9 @@ is_deeply(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2',
 
 # --- ---
 
-TODO: {
-        local $TODO = 'work in progress';
-        @resultlist = dpath('//AAA/*/CCC')->match($data);
-        is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs + ANYSTEP" );
-}
+# WATCH OUT: the order of results is not defined!
+@resultlist = dpath('//AAA/*/CCC')->match($data);
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "ANYWHERE + KEYs + ANYSTEP" );
 
 exit 0;
 
