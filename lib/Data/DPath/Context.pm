@@ -45,6 +45,7 @@ class Data::DPath::Context {
                                 {
                                         # the value of a key
                                         foreach my $point (@current_points) {
+                                                next unless ref ${$point->ref} eq 'HASH';
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
