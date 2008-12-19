@@ -74,13 +74,8 @@ Data::DPath - DPath is not XPath!
                            DDD => { EEE  => [ qw/ uuu vvv www / ] },
                          },
                 };
-    @resultlist = dpath('/AAA/*/CCC')->match($data);
-    # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
-    
-    $resultlist = $data ~~ dpath '/AAA/*/CCC';
-    # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
-    
-    print Dumper($_) foreach @{$data ~~ dpath '/AAA/*/CCC'};
+    @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+    $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
 
 See currently working paths in C<t/data_dpath.t>.

@@ -9,13 +9,8 @@ SYNOPSIS
                                DDD => { EEE  => [ qw/ uuu vvv www / ] },
                              },
                     };
-        @resultlist = dpath('/AAA/*/CCC')->match($data);
-        # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
-        
-    $resultlist = $data ~~ dpath '/AAA/*/CCC';
-        # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
-        
-    print Dumper($_) foreach @{$data ~~ dpath '/AAA/*/CCC'};
+        @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+        $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
     See currently working paths in "t/data_dpath.t".
 
@@ -57,9 +52,11 @@ THE DPATH LANGUAGE
 
         (not yet implemented)
 
-        Anchors to any hash or array inside the data structure relative to
-        the current step (or the root). Typically used at the start of a
-        path:
+        Anchors to any hash or array inside the data structure below the
+        current step (or the root).
+
+        Typically used at the start of a path to anchor the path anywhere
+        instead of only the root node:
 
           //FOO/BAR
 
@@ -73,7 +70,7 @@ THE DPATH LANGUAGE
 
         (only partially implemented)
 
-        Matches one steps of any value relative to the current step (or the
+        Matches one step of any value relative to the current step (or the
         root). This step might be any hash key or all values of an array in
         the step before.
 
@@ -161,8 +158,8 @@ vs. "/part/*[filter]"
     If you know backslash in Perl strings, skip this paragraph, it should be
     the same.
 
-    I think it is somewhat difficult to create a backslash directly before a
-    quoted double-quote.
+    It is somewhat difficult to create a backslash directly before a quoted
+    double-quote.
 
     Inside the DPath language the typical backslash rules of apply that you
     already know from Perl single quoted strings. The challenge is to
