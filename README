@@ -9,16 +9,15 @@ SYNOPSIS
                                DDD => { EEE  => [ qw/ uuu vvv www / ] },
                              },
                     };
-        @resultlist = dpath('/AAA/BBB/CCC')->match($data);
-        # ( ['XXX', 'YYY', 'ZZZ'] )
-        
-    @resultlist = dpath('/AAA/*/CCC')->match($data);
+        @resultlist = dpath('/AAA/*/CCC')->match($data);
         # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
         
-    @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
-        # ( { EEE => [ qw/ uuu vvv www / ] } )
+    $resultlist = $data ~~ dpath '/AAA/*/CCC';
+        # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
+        
+    print Dumper($_) foreach @{$data ~~ dpath '/AAA/*/CCC'};
 
-    See currently working paths in t/data_dpath.t.
+    See currently working paths in "t/data_dpath.t".
 
 INSTALLATION
      perl Makefile.PL
@@ -27,18 +26,176 @@ INSTALLATION
      make install
 
 FUNCTIONS
-  dpath
+  dpath( $path )
     Meant as the front end function for everyday use of Data::DPath. It
-    takes a path string and returns a Data::DPath::Path object on which the
-    match method can be called with data structures. See SYNOPSIS.
+    takes a path string and returns a "Data::DPath::Path" object on which
+    the match method can be called with data structures and the operator
+    "~~" is overloaded. See SYNOPSIS.
 
 METHODS
-  match($data, $path)
-    Returns all values in data that match the path as an array.
+  match( $data, $path )
+    Returns an array of all values in $data that match the $path.
 
-  get_context($path)
-    Returns a Data::DPath::Context object that matches the path and can be
+  get_context( $path )
+    Returns a "Data::DPath::Context" object that matches the path and can be
     used to incrementally dig into it.
+
+OPERATOR
+  ~~
+    Does a "match" of a dpath against a data structure.
+
+    Due to the matching nature of DPath the operator "~~" should make your
+    code more readable. It works commutative (meaning "data ~~ dpath" is the
+    same as "dpath ~~ data").
+
+THE DPATH LANGUAGE
+  Synopsis
+    ... TODO ...
+
+  Special elements
+    *   "//"
+
+        (not yet implemented)
+
+        Anchors to any hash or array inside the data structure relative to
+        the current step (or the root). Typically used at the start of a
+        path:
+
+          //FOO/BAR
+
+        but can also happen inside paths to skip middle parts:
+
+         /AAA/BBB//FARAWAY
+
+        This allows any way between "BBB" and "FARAWAY".
+
+    *   "*"
+
+        (only partially implemented)
+
+        Matches one steps of any value relative to the current step (or the
+        root). This step might be any hash key or all values of an array in
+        the step before.
+
+  Difference between "/part[filter]" vs. "/part/[filter]"
+vs. "/part/*[filter]"
+    ... TODO ...
+
+  Filters
+    (not yet implemented)
+
+    Filters are conditions in brackets. They apply to all elements that are
+    directly found by the path part to which the filter is appended.
+
+    Internally the filter condition is part of a "grep" construct
+    (exception: single integers, they choose array elements). See below.
+
+    Examples:
+
+    "/*[2]/"
+        A single integer as filter means choose an element from an array. So
+        the "*" finds all subelements on current step and the "[2]" reduces
+        them to only the third element (index starts at 0).
+
+    "/FOO[ref eq 'ARRAY']/"
+        The "FOO" is a step that matches a hash key "FOO" and the filter
+        only takes the element if it is an 'ARRAY'.
+
+    See Filter functions for more functions like "isa" and "ref".
+
+  Filter functions
+    (not yet implemented)
+
+    The filter condition is internally part of a "grep" over the current
+    subset of values. So you can also use the variable $_ in it:
+
+      /*[$_->isa eq 'Some::Class']/
+
+    Additional filter functions are available that are usually prototyped to
+    take $_ by default:
+
+    "index"
+        The index of an element. So these two filters are equivalent:
+
+         /*[2]/
+         /*[index == 2]/
+
+    "ref"
+        Perl's "ref".
+
+    "isa"
+        Perl's "isa".
+
+  Special characters
+    There are 4 special characters: the slash "/", paired brackets "[]", the
+    double-quote """ and the backslash "\". They are needed and explained in
+    a logical order.
+
+    Path parts are divided by the slash </>.
+
+    A path part can be extended by a filter with appending an expression in
+    brackets "[]".
+
+    To contain slashes in hash keys, they can be surrounded by double quotes
+    """.
+
+    To contain double-quotes in hash keys they can be escaped with backslash
+    "\".
+
+    Backslashes in path parts don't need to be escaped, except before
+    escaped quotes (but see below on Backslash handling).
+
+    Filters of parts are already sufficiently divided by the brackets "[]".
+    There is no need to handle special characters in them, not even
+    double-quotes. The filter expression just needs to be balanced on the
+    brackets.
+
+    So this is the order how to create paths:
+
+    1. backslash double-quotes that are part of the key
+    2. put double-quotes around the resulting key
+    3. append the filter expression after the key
+    4. separate several path parts with slashes
+
+  Backslash handling
+    If you know backslash in Perl strings, skip this paragraph, it should be
+    the same.
+
+    I think it is somewhat difficult to create a backslash directly before a
+    quoted double-quote.
+
+    Inside the DPath language the typical backslash rules of apply that you
+    already know from Perl single quoted strings. The challenge is to
+    specify such strings inside Perl programs where another layer of this
+    backslashing applies.
+
+    Without quotes it's all easy. Both a single backslash "\" and a double
+    backslash "\\" get evaluated to a single backslash "\".
+
+    Extreme edge case by example: To specify a plain hash key like this:
+
+      "EE\E5\"
+
+    where the quotes are part of the key, you need to escape the quotes and
+    the backslash:
+
+      \"EE\E5\\\"
+
+    Now put quotes around that to use it as DPath hash key:
+
+      "\"EE\E5\\\""
+
+    and if you specify this in a Perl program you need to additionally
+    escape the backslashes (i.e., double their count):
+
+      "\"EE\E5\\\\\\""
+
+    As you can see, strangely, this backslash escaping is only needed on
+    backslashes that are not standing alone. The first backslash before the
+    first escaped double-quote is ok to be a single backslash.
+
+    All strange, isn't it? At least it's (hopefully) consistent with
+    something you know (Perl, Shell, etc.).
 
 AUTHOR
     Steffen Schwigon, "<schwigon at cpan.org>"

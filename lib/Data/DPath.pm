@@ -138,8 +138,11 @@ dpath> is the same as C<dpath ~~ data>).
 
 (not yet implemented)
 
-Anchors to any hash or array inside the data structure relative to the
-current step (or the root). Typically used at the start of a path:
+Anchors to any hash or array inside the data structure below the
+current step (or the root).
+
+Typically used at the start of a path to anchor the path anywhere
+instead of only the root node:
 
   //FOO/BAR
 
@@ -153,7 +156,7 @@ This allows any way between C<BBB> and C<FARAWAY>.
 
 (only partially implemented)
 
-Matches one steps of any value relative to the current step (or the
+Matches one step of any value relative to the current step (or the
 root). This step might be any hash key or all values of an array in
 the step before.
 
@@ -270,8 +273,8 @@ So this is the order how to create paths:
 If you know backslash in Perl strings, skip this paragraph, it should
 be the same.
 
-I think it is somewhat difficult to create a backslash directly before
-a quoted double-quote.
+It is somewhat difficult to create a backslash directly before a
+quoted double-quote.
 
 Inside the DPath language the typical backslash rules of apply that
 you already know from Perl B<single quoted> strings. The challenge is
