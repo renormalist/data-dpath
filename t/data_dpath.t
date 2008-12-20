@@ -3,8 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 52;
-
+use Test::More tests => 56;
 
 use Data::DPath 'dpath';
 
@@ -89,7 +88,23 @@ is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe'
 @resultlist = Data::DPath->match($data, '///AAA/*/CCC');
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP as function" );
 
-# via Perl 5.10 smart matching
+# from now on more via Perl 5.10 smart matching
+
+# --------------------
+
+$resultlist = $data ~~ dpath '/some//CCC';
+is_deeply($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHERE + KEY" );
+
+$resultlist = $data ~~ dpath '//some//CCC';
+is_deeply($resultlist, [ 'affe' ], "ANYWHERE + KEY + ANYWHERE + KEY" );
+
+$resultlist = $data ~~ dpath '/some//else//CCC';
+is_deeply($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHEREs + KEY" );
+
+$resultlist = $data ~~ dpath '//some//else//CCC';
+is_deeply($resultlist, [ 'affe' ], "ANYWHERE + KEYs + ANYWHEREs" );
+
+# --------------------
 
 my $dpath = dpath('//AAA/*/CCC');
 $resultlist = $data ~~ $dpath;
