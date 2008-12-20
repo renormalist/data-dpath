@@ -19,8 +19,40 @@ class Data::DPath::Context {
                             map { $_->ref } $self->current_points;
         }
 
+        sub filter_points_index {
+                my ($self, $index, @points) = @_;
+                return @points ? ($points[$index]) : ();
+        }
+
+        sub filter_points_eval {
+                my ($self, $filter, @points) = @_;
+                say "Context.filter_points_eval: $filter";
+                #return ( $points[$filter] );
+                return @points;
+        }
+
+        sub filter_points {
+                my ($self, $step, @points) = @_;
+
+                return () unless @points;
+
+                my $filter = $step->filter;
+                return @points unless defined $filter;
+
+                $filter =~ s/^\[(.*)\]$/$1/;
+                given ($filter)
+                {
+                        when (/^\d+$/) {
+                                return $self->filter_points_index($filter, @points);
+                        }
+                        default {
+                                return $self->filter_points_eval($filter, @points);
+                        }
+                }
+        }
+
         method search($path) {
-                $Data::DPath::DEBUG && say "Context.match:";
+                $Data::DPath::DEBUG && say "Context.search:";
                 $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
                 $Data::DPath::DEBUG && say "    \$path.path == ", Dumper($path->path);
                 my @current_points = $self->current_points;
@@ -114,12 +146,14 @@ class Data::DPath::Context {
                                         }
                                 }
                         }
-                $Data::DPath::DEBUG && print "    newpoints: ", Dumper(\@new_points);
-                @current_points = @new_points;
-                $Data::DPath::DEBUG && say "    ______________________________________________________________________";
-        }
+                        $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
+                        @new_points = $self->filter_points($step, @new_points);
+                        $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
+                        @current_points = @new_points;
+                        $Data::DPath::DEBUG && say "    ______________________________________________________________________";
+                }
                 $self->current_points( \@current_points );
-        return $self;
+                return $self;
         }
 
         method match($path) {
