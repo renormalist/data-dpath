@@ -21,7 +21,8 @@ class Data::DPath::Context {
 
         method search($path) {
                 $Data::DPath::DEBUG && say "Context.match:";
-                $Data::DPath::DEBUG && say "    path == ", Dumper($path->path);
+                $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
+                $Data::DPath::DEBUG && say "    \$path.path == ", Dumper($path->path);
                 my @current_points = $self->current_points;
                 foreach my $step ($path->_steps) {
                         $Data::DPath::DEBUG && say "    ", $step->kind, " ==> ", $step->part;
