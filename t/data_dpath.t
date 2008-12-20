@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 46;
+use Test::More tests => 52;
 
 
 use Data::DPath 'dpath';
@@ -80,23 +80,37 @@ is_deeply(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2',
 # WATCH OUT: the order of results is not defined! tests may be false negatives ...
 @resultlist = dpath('//AAA/*/CCC')->match($data);
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "ANYWHERE + KEYs + ANYSTEP" );
+@resultlist = dpath('///AAA/*/CCC')->match($data);
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP" );
 
 
 @resultlist = Data::DPath->match($data, '//AAA/*/CCC');
-# ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
 is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP as function" );
+@resultlist = Data::DPath->match($data, '///AAA/*/CCC');
+is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP as function" );
 
 # via Perl 5.10 smart matching
 
 my $dpath = dpath('//AAA/*/CCC');
 $resultlist = $data ~~ $dpath;
 is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
+$resultlist = $data ~~ $dpath;
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
+
 $resultlist = $data ~~ dpath('//AAA/*/CCC');
 is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
+$resultlist = $data ~~ dpath('///AAA/*/CCC');
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
+
 $resultlist = $data ~~ dpath '//AAA/*/CCC';
 is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
+$resultlist = $data ~~ dpath '///AAA/*/CCC';
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
+
 $resultlist = dpath '//AAA/*/CCC' ~~ $data;
 is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
+$resultlist = dpath '///AAA/*/CCC' ~~ $data;
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC/*';
 is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3' ], "trailing .../* unpacks" );
