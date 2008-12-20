@@ -96,8 +96,8 @@ class Data::DPath::Context {
                                                         {
                                                                 push @new_points, map {
                                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                      } @{$point->ref}
-                                                                              }
+                                                                                      } @${$point->ref};
+                                                        }
                                                 }
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
