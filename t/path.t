@@ -225,7 +225,7 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
 
 # ---------------------------- filter without path part ----------------------
 
-$strange_path = q!//A1/[2]/A3/[key =~ qw(neigh.*hoods)]/A5/!;
+$strange_path = q!//A1/[2]/A3/[key =~ qw(neigh.*hoods)]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = $dpath->_steps;
@@ -242,6 +242,9 @@ is_deeply(\@kinds, [qw/ROOT
                        KEY
                        ANYWHERE
                        KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
                       /],
           "kinds3");
 
@@ -253,6 +256,9 @@ is_deeply(\@parts, [
                     'A3',
                     '',
                     'A5',
+                    '',
+                    '',
+                    'A6',
                    ],
           "parts3");
 is_deeply(\@filters, [
@@ -262,6 +268,9 @@ is_deeply(\@filters, [
                       '[2]',
                       undef,
                       '[key =~ qw(neigh.*hoods)]',
+                      undef,
+                      undef,
+                      undef,
                       undef,
                      ],
           "filters3");
