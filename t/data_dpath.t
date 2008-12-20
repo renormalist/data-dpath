@@ -160,11 +160,11 @@ TODO: {
 
         $resultlist = $data ~~ dpath '/AAA/*/CCC/*[2]';
         # ( 'ZZZ' )
-        is_deeply($resultlist, [ 'ZZZ' ] );
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ] );
 
         $resultlist = $data ~~ dpath '//AAA/*/CCC/*[2]';
-        # ( 'ZZZ' )
-        is_deeply($resultlist, [ 'ZZZ', 'RR3' ] );
+        diag Dumper($resultlist);
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "FILTER int" );
 
         # context objects for incremental searches
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
