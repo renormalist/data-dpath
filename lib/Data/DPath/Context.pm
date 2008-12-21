@@ -132,19 +132,28 @@ method search($path) {
                                 foreach my $point (@current_points) {
                                         $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                         # take point as array
-                                        $Data::DPath::DEBUG && say "    *** ", ref(${$point->ref});
-                                        given (ref ${$point->ref}) {
+                                        my $ref = ${$point->ref};
+                                        $Data::DPath::DEBUG && say "    *** ", ref($ref);
+                                        given (ref $ref) {
                                                 when ('HASH')
                                                 {
                                                         push @new_points, map {
                                                                                new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                              } values %${$point->ref};
+                                                                              } values %$ref;
                                                 }
                                                 when ('ARRAY')
                                                 {
                                                         push @new_points, map {
                                                                                new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                              } @${$point->ref};
+                                                                              } @$ref;
+                                                }
+                                                default
+                                                {
+                                                        if (ref $point->ref eq 'SCALAR') {
+                                                                push @new_points, map {
+                                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                      } $ref;
+                                                        }
                                                 }
                                         }
                                         $Data::DPath::DEBUG && say "    `-----------------------------------";
@@ -162,7 +171,7 @@ method search($path) {
                         }
                 }
                 $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
-                @new_points = $self->filter_points($step, @new_points);
+                @new_points = $self->_filter_points($step, @new_points);
                 $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
                 @current_points = @new_points;
                 $Data::DPath::DEBUG && say "    ______________________________________________________________________";
