@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 69;
+use Test::More tests => 71;
 
 use Data::DPath 'dpath';
 
@@ -140,19 +140,28 @@ TODO: {
 
         # filters
 
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[$#_ == 2]'; # array with 3 elements (last index is 2)
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[$#_ == 2]';  # array with 3 elements (last index is 2) # DEPRECATED
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[@_  == 3]'; # array with 3 elements
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[@_  == 3]';  # array with 3 elements                   # DEPRECATED
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
-        # same as
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[size == 3]'; # array with 3 elements                   # OK
+        is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
+
+        # same?
         $resultlist = $data ~~ dpath '//AAA/*/CCC/[$#_ == 2]';
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
+
         $resultlist = $data ~~ dpath '//AAA/*/CCC/[@_  == 3]';
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
 
-        $resultlist = $data ~~ dpath '//AAA/*/CCC/*';
-        is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3', 'affe'] );
+}
 
+$resultlist = $data ~~ dpath '//AAA/*/CCC/*';
+is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3', 'affe'] );
+
+TODO: {
+
+        local $TODO = 'spec only';
 
         $resultlist = $data ~~ dpath '/AAA/*/CCC/* | /some/where/else/AAA/BBB/CCC';
         # ( 'XXX', 'YYY', 'ZZZ', 'affe' )
@@ -170,6 +179,12 @@ TODO: {
 
         $resultlist = $data ~~ dpath '//AAA/*/CCC[2]';
         is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + KEY + FILTER int" );
+
+}
+
+TODO: {
+
+        local $TODO = 'rethink spec';
 
         # only allowing to access the first value makes
         # CCC[0] the same as CCC, which seems redundant and useless
@@ -192,6 +207,12 @@ TODO: {
         $resultlist = $data ~~ dpath '//AAA/*/CCC[1]';
         diag Dumper($resultlist);
         is_deeply($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEY + FILTER int 1" );
+
+}
+
+TODO: {
+
+        local $TODO = 'spec only';
 
         # --------------------
 
@@ -335,3 +356,44 @@ TODO: {
         is_deeply($resultlist, [ 'interesting value' ] );
 
 }
+
+# ----------------------------------------
+
+my $data4  = {
+              AAA  => { BBB => { CCC  => [ qw/
+                                                     XXX
+                                                     YYY
+                                                     ZZZ
+                                                     XXXX
+                                                     YYYY
+                                                     ZZZZ
+                                             / ] } },
+              some => { where => { else => {
+                                            AAA => { BBB => { CCC => 'affe' } }, # plain BBB
+                                           } } },
+              neighbourhoods => [
+                                 { 'DDD' => { EEE => { F1 => 'affe',
+                                                       F2 => 'tiger',
+                                                       F3 => 'fink',
+                                                       F4 => 'star',
+                                                     },
+                                              FFF => 'interesting value' }
+                                 },
+                                 { 'DDD' => { EEE => { F1 => 'bla',
+                                                       F2 => 'bli',
+                                                       F3 => 'blu',
+                                                       F4 => 'blo',
+                                                     },
+                                              FFF => 'boring value' }
+                                 },
+                                ],
+             };
+
+TODO: {
+        local $TODO = 'too dirty, first cleanup _filter_eval';
+
+        $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ ${$_->{ref}} =~ m(....) ]';
+        is_deeply($resultlist, [ 'XXXX', 'YYYY', 'ZZZZ', 'affe' ], "FILTER eval regex" );
+
+}
+
