@@ -23,30 +23,30 @@ method all {
                          #$_->ref
                          defined $_ ? $_->ref : ()          # ?: should not be neccessary
                          # better way, especially earlier possible?
-                         # it crrently lazily solves array access on points that are not arrays, e.g.:
+                         # it currently lazily solves array access on points that are not arrays, e.g.:
                          #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
                          # where last ->{'CCC'} is not an array but simple value
+                         # See also data_dpath.t, the AHA section.
+                         # I don't really like it yet.
                         } $self->current_points;
 }
 
-sub filter_points_index {
+# filter current results by array index
+sub _filter_points_index {
         my ($self, $index, @points) = @_;
-        #say "Context.filter_points_index: $index";
         return @points ? ($points[$index]) : ();
 }
 
-sub filter_points_eval {
+# filter current results by condition
+sub _filter_points_eval {
         my ($self, $filter, @points) = @_;
         return () unless @points;
-        say STDERR "Context.filter_points_eval: $filter";
-        #return ( $points[$filter] );
-        #say STDERR "                 BEFORE: ".Dumper(\@points);
+        # say STDERR "Context._filter_points_eval: $filter";
         my @new_points = grep { eval $filter } @points;
-        #say STDERR "                 AFTER:  ".Dumper(\@new_points);
         return @new_points;
 }
 
-sub filter_points {
+sub _filter_points {
         my ($self, $step, @points) = @_;
 
         return () unless @points;
@@ -54,14 +54,14 @@ sub filter_points {
         my $filter = $step->filter;
         return @points unless defined $filter;
 
-        $filter =~ s/^\[(.*)\]$/$1/;
+        $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
         given ($filter)
         {
                 when (/^\d+$/) {
-                        return $self->filter_points_index($filter, @points);
+                        return $self->_filter_points_index($filter, @points);  # simple array index
                 }
                 default {
-                        return $self->filter_points_eval($filter, @points);
+                        return $self->_filter_points_eval($filter, @points);   # full condition
                 }
         }
 }
@@ -183,6 +183,8 @@ __END__
 
 Data::DPath::Context - Abstraction for a current context that enables incremental searches.
 
+=head1 API METHODS
+
 =head2 all
 
 Returns all values covered by current context.
@@ -194,6 +196,15 @@ Return new context with path relative to current context.
 =head2 match( $path )
 
 Same as C<< search($path)->all() >>;
+
+=head1 API METHODS
+
+=head2 _filter_points
+
+Evaluates the filter condition in brackets. It differenciates between
+simple integers, which are taken as array index, and all other
+conditions, which are taken as evaled perl expression in a grep like
+expression.
 
 =head1 AUTHOR
 
