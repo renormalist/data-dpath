@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 56;
+use Test::More tests => 57;
 
 use Data::DPath 'dpath';
 
@@ -168,25 +168,24 @@ TODO: {
 
         # context objects for incremental searches
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
-        $context->all();
+        $resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "context for incremental searches" );
 
         # is '*/..[0]' the same as ''?
         $context = Data::DPath->get_context($data, '//AAA/*/..[0]/CCC'); # !!??
-        $context->all();
+        $resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
         is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ] );
 
         # dpath inside context, same as: Data::DPath->match($data, '//AAA/*/CCC/*[2]')
-        $context->search(dpath '/*[2]');
-        $context ~~ dpath '/*[2]';
-        # ( 'ZZZ' )
-        is_deeply($resultlist, [ 'ZZZ' ] );
-
-        # ----------------------------------------
+        $resultlist = $context->search(dpath '/*[2]');
+        is_deeply($resultlist, [ 'ZZZ' ], "incremental + FILTER int" );
 
 }
+
+# ----------------------------------------
+
 
 
 my $data2 = [
@@ -211,51 +210,49 @@ is_deeply($resultlist, [ $data2,
                          [ qw/ XXX YYY ZZZ / ]
                        ], "ANYWHERE" );
 
+$resultlist = $data2 ~~ dpath '/*[2]';
+is_deeply($resultlist, [ 'WWW' ], "ROOT + ANYSTEP + FILTER int: plain value" );
+
+$resultlist = $data2 ~~ dpath '/*[3]';
+# ( { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } )
+is_deeply($resultlist, [ { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } ], "ROOT + ANYSTEP + FILTER int: ref value" );
+
 TODO: {
 
         local $TODO = 'spec only';
 
-        $resultlist = $data2 ~~ dpath '/*[2]';
-        # ( 'WWW' )
-        is_deeply($resultlist, [ 'WWW' ] );
-
         $resultlist = $data2 ~~ dpath '//*[2]';
-        # ( 'WWW', 'ZZZ' )
-        is_deeply($resultlist, [ 'WWW', 'ZZZ' ] );
-
-        $resultlist = $data2 ~~ dpath '/*[3]';
-        # ( { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } )
-        is_deeply($resultlist, [ { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } ] );
+        is_deeply($resultlist, [ 'WWW', 'ZZZ' ], "ANYWHERE + ANYSTEP + FILTER int" );
 
 }
 
 # ----------------------------------------
 
+my $data3  = {
+              AAA  => bless( { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] } }, "Foo::Bar"), # blessed BBB
+              some => { where => { else => {
+                                            AAA => { BBB => { CCC => 'affe' } }, # plain BBB
+                                           } } },
+              neighbourhoods => [
+                                 { 'DDD' => { EEE => { F1 => 'affe',
+                                                       F2 => 'tiger',
+                                                       F3 => 'fink',
+                                                       F4 => 'star',
+                                                     },
+                                              FFF => 'interesting value' }
+                                 },
+                                 { 'DDD' => { EEE => { F1 => 'bla',
+                                                       F2 => 'bli',
+                                                       F3 => 'blu',
+                                                       F4 => 'blo',
+                                                     },
+                                              FFF => 'boring value' }
+                                 },
+                                ],
+             };
+
 TODO: {
         local $TODO = 'spec only';
-
-        my $data3  = {
-                      AAA  => bless( { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] } }, "Foo::Bar"), # blessed BBB
-                      some => { where => { else => {
-                                                    AAA => { BBB => { CCC => 'affe' } }, # plain BBB
-                                                   } } },
-                      neighbourhoods => [
-                                         { 'DDD' => { EEE => { F1 => 'affe',
-                                                               F2 => 'tiger',
-                                                               F3 => 'fink',
-                                                               F4 => 'star',
-                                                             },
-                                                      FFF => 'interesting value' }
-                                         },
-                                         { 'DDD' => { EEE => { F1 => 'bla',
-                                                               F2 => 'bli',
-                                                               F3 => 'blu',
-                                                               F4 => 'blo',
-                                                             },
-                                                      FFF => 'boring value' }
-                                         },
-                                        ],
-                     };
 
         $resultlist = $data3 ~~ dpath '//AAA/BBB[ref($_) eq "Foo::Bar"]/CCC';
         # ( ['XXX', 'YYY', 'ZZZ'] )
@@ -271,15 +268,23 @@ TODO: {
         # ( 'interesting value' )
         is_deeply($resultlist, [ 'interesting value' ] );
 
-        # same via direct access
-        $resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
-        # ( 'interesting value' )
-        is_deeply($resultlist, [ 'interesting value' ] );
+}
+
+$resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
+# ( 'interesting value' )
+is_deeply($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER int + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[0]/DDD/FFF';
+# ( 'interesting value' )
+is_deeply($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int + KEYs" );
+
+TODO: {
+        local $TODO = 'spec only';
 
         # filters on ANY
         $resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
         # ( 'interesting value' )
-        is_deeply($resultlist, [ 'interesting value' ] );
+        is_deeply($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + FILTER eval + FILTER int" );
 
         # filters on ANYWHERE (or is /[...]/ better the same as /*[...]/ ?)
         $resultlist = $data3 ~~ dpath '/[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
