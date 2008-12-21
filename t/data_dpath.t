@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 57;
+use Test::More tests => 69;
 
 use Data::DPath 'dpath';
 
@@ -159,12 +159,41 @@ TODO: {
         is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3', 'affe' ] );
 
         $resultlist = $data ~~ dpath '/AAA/*/CCC/*[2]';
-        # ( 'ZZZ' )
-        is_deeply($resultlist, [ 'ZZZ', 'RR3' ] );
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "ANYSTEP + FILTER int" );
 
         $resultlist = $data ~~ dpath '//AAA/*/CCC/*[2]';
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + ANYSTEP + FILTER int" );
+
+        # ---------- is CCC/*[2] the same as CCC[2] or is it not? DECIDE NOW! ----------
+        $resultlist = $data ~~ dpath '/AAA/*/CCC[2]';
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "KEY + FILTER int" );
+
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[2]';
+        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + KEY + FILTER int" );
+
+        # only allowing to access the first value makes
+        # CCC[0] the same as CCC, which seems redundant and useless
+
+        # AHA: current semantic is: the array index refers to all currently collected results.
+        #      Is this what we want as useful complement to *[2]?
+        #      It would also mean to only be useful at end of path, right?
+
+        $resultlist = $data ~~ dpath '/AAA/*/CCC[0]';
         diag Dumper($resultlist);
-        is_deeply($resultlist, [ 'ZZZ', 'RR3' ], "FILTER int" );
+        is_deeply($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ] ], "KEY + FILTER int 0" );
+
+        $resultlist = $data ~~ dpath '/AAA/*/CCC[1]';
+        is_deeply($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "KEY + FILTER int 1" );
+
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[0]';
+        diag Dumper($resultlist);
+        is_deeply($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ] ], "ANYWHERE + KEY + FILTER int 0" );
+
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[1]';
+        diag Dumper($resultlist);
+        is_deeply($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEY + FILTER int 1" );
+
+        # --------------------
 
         # context objects for incremental searches
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
@@ -225,6 +254,20 @@ TODO: {
         is_deeply($resultlist, [ 'WWW', 'ZZZ' ], "ANYWHERE + ANYSTEP + FILTER int" );
 
 }
+
+# basic eval filters
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC';
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "FILTER eval prepare" );
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC[17 == 17]';
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "FILTER eval simple true" );
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC[0 == 0]';
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "FILTER eval simple true with false values" );
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC["foo" eq "foo"]';
+is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "FILTER eval simple true with strings" );
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC[1 == 2]';
+is_deeply($resultlist, [ ], "FILTER eval simple false" );
+$resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC["foo" eq "bar"]';
+is_deeply($resultlist, [ ], "FILTER eval simple false with strings" );
 
 # ----------------------------------------
 

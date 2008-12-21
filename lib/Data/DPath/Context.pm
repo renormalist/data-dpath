@@ -19,19 +19,31 @@ method all {
         return
             map { $$_ }
                 uniq
-                    map { $_->ref } $self->current_points;
+                    map {
+                         #$_->ref
+                         defined $_ ? $_->ref : ()          # ?: should not be neccessary
+                         # better way, especially earlier possible?
+                         # it crrently lazily solves array access on points that are not arrays, e.g.:
+                         #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
+                         # where last ->{'CCC'} is not an array but simple value
+                        } $self->current_points;
 }
 
 sub filter_points_index {
         my ($self, $index, @points) = @_;
+        #say "Context.filter_points_index: $index";
         return @points ? ($points[$index]) : ();
 }
 
 sub filter_points_eval {
         my ($self, $filter, @points) = @_;
-        say "Context.filter_points_eval: $filter";
+        return () unless @points;
+        say STDERR "Context.filter_points_eval: $filter";
         #return ( $points[$filter] );
-        return grep { eval $filter } @points;
+        #say STDERR "                 BEFORE: ".Dumper(\@points);
+        my @new_points = grep { eval $filter } @points;
+        #say STDERR "                 AFTER:  ".Dumper(\@new_points);
+        return @new_points;
 }
 
 sub filter_points {
