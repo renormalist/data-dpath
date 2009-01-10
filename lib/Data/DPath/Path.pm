@@ -17,8 +17,7 @@ class Data::DPath::Path {
 
         use overload '~~' => \&op_match;
 
-        sub op_match {  # not a method for ~~, due to "Odd number of elements in hash assignment"
-                my ($self, $data) = @_;
+        method op_match($data, $rhs) {
                 return [ $self->match( $data ) ];
         }
 
