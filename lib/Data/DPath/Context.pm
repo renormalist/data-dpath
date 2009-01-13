@@ -76,14 +76,14 @@ class Data::DPath::Context {
                         {
                                 when ('ROOT')
                                 {
-                                # the root node
-                                # (only makes sense at first step, but currently not asserted)
+                                        # the root node
+                                        # (only makes sense at first step, but currently not asserted)
                                         push @new_points, @current_points;
                                 }
                                 when ('ANYWHERE')
                                 {
-                                # '//'
-                                # all hash/array nodes of a data structure
+                                        # '//'
+                                        # all hash/array nodes of a data structure
                                         $Data::DPath::DEBUG && print "current_points: ".Dumper(\@current_points);
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
@@ -109,7 +109,7 @@ class Data::DPath::Context {
                                 }
                                 when ('KEY')
                                 {
-                                # the value of a key
+                                        # the value of a key
                                         foreach my $point (@current_points) {
                                                 next unless ref ${$point->ref} eq 'HASH';
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
@@ -124,8 +124,8 @@ class Data::DPath::Context {
                                 }
                                 when ('ANYSTEP')
                                 {
-                                # '*'
-                                # all leaves of a data tree
+                                        # '*'
+                                        # all leaves of a data tree
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 # take point as array
@@ -158,8 +158,8 @@ class Data::DPath::Context {
                                 }
                                 when ('PARENT')
                                 {
-                                # '..'
-                                # the parent
+                                        # '..'
+                                        # the parent
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 push @new_points, $point->parent;

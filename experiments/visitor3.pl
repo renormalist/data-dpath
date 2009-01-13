@@ -17,16 +17,16 @@ my $data  = {
              foo => { 'bar' => { 'baz' => { brueller => [ qw/affe tiger fink star/] } } },
             };
 
-say "Find all the plain values ...";
-$v = Data::Visitor::Callback->new(value     => sub { say " VALUE: $_" });
-$v->visit( $data );
+# say "Find all the plain values ...";
+# $v = Data::Visitor::Callback->new(value     => sub { say " VALUE: $_" });
+# $v->visit( $data );
 
-say "Find all hash/array refs ...";
-$v = Data::Visitor::Callback->new(
-                                  ignore_return_values => 1,
-                                  ref => sub { say " REF_VALUE: ".Dumper($_) }
-                                 );
-$v->visit( $data );
+# say "Find all hash/array refs ...";
+# $v = Data::Visitor::Callback->new(
+#                                   ignore_return_values => 1,
+#                                   ref => sub { say " REF_VALUE: ".Dumper($_) }
+#                                  );
+# $v->visit( $data );
 
 my @results;
 $v = Data::Visitor::Callback->new(

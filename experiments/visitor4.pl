@@ -17,37 +17,18 @@ my $data  = {
              foo => { 'bar' => { 'baz' => { brueller => [ qw/affe tiger fink star/] } } },
             };
 
-# say "Find all the plain values ...";
-# $v = Data::Visitor::Callback->new(value     => sub { say " VALUE: $_" });
-# $v->visit( $data );
-
 say "Find all hash/array refs ...";
 
-# $v = Data::Visitor::Callback->new(
-#                                   ignore_return_values => 1,
-#                                   ref => sub { say " REF_VALUE: ".Dumper($_) }
-#                                  );
-# $v->visit( $data );
-
-# my @results1;
-# $v = Data::Visitor::Callback->new(
-#                                   #ignore_return_values => 1,
-#                                   ref => sub {
-#                                               my ( $visitor, $data ) = @_;
-#                                               push @results1, $data
-#                                              }
-#                                  );
-# $v->visit( $data2 );
-# print "results1: ".Dumper(\@results1);
-
+# only finds "inner" values; if you need the outer start value
+# then just wrap it into array brackets.
 sub any {
         my ($out, $in) = @_;
 
         $in //= [];
         return @$out unless @$in;
 
-        my @results2;
-        my @outrefs;
+        my @newin;
+        my @newout;
 
         foreach my $v (@$in) {
                 my @values;
@@ -56,35 +37,44 @@ sub any {
                         when ('ARRAY') { @values = @$v        }
                         default { next }
                 }
-                push @outrefs, grep { ref =~ /^HASH|ARRAY$/ } @values;
+                push @newout,
+                    # $v is the parent of @newout
+                    map {
+                         # new Data::DPath::Point( ref => \$_, parent => $v )
+                         $_
+                        }
+                        grep {
+                                ref =~ /^HASH|ARRAY$/
+                        } @values;
+
                 foreach (@values) {
-                        $v = Data::Visitor::Callback->new(
-                                                          ref => sub {
-                                                                      my ( $visitor, $data ) = @_;
-                                                                      push @results2, $data
-                                                                     }
-                                                         );
+                        $v = new Data::Visitor::Callback(
+                                                         ref => sub {
+                                                                     my ( $visitor, $data ) = @_;
+                                                                     push @newin, $data
+                                                                    }
+                                                        );
                         $v->visit( $_ );
                 }
         }
-        push @$out,  @outrefs;
-        return any ($out, \@results2);
+        push @$out,  @newout;
+        return any ($out, \@newin);
 }
 
 # ----------
 
 my @results2;
-@results2 = any([], [ $data ]);
+@results2 = any([], [ [ $data ] ]);
 print "results2: ".Dumper(\@results2);
 say "count: ".scalar(@results2);
 
 # ----------
 
-my $data2  = [
-              "AAA",
-              { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
-             ];
-@results2 = any([], [ $data2 ]);
-print "results2: ".Dumper(\@results2);
-say "count: ".scalar(@results2);
+# my $data2  = [
+#               "AAA",
+#               { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
+#              ];
+# @results2 = any([], [ $data2 ]);
+# print "results2: ".Dumper(\@results2);
+# say "count: ".scalar(@results2);
 
