@@ -1,187 +1,186 @@
-package Data::DPath::Context;
-
-use Moose;
-use MooseX::Method::Signatures; # no Moosex::Declare due to eval inside
+use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
-use Data::Dumper;
-use Data::DPath::Point;
-use List::MoreUtils 'uniq';
-use Data::Visitor::Callback;
+class Data::DPath::Context {
 
-# Points are the collected pointers into the datastructure
-has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
+        use Data::Dumper;
+        use Data::DPath::Point;
+        use List::MoreUtils 'uniq';
+        use Data::Visitor::Callback;
 
-method all {
-        return
-            map { $$_ }
-                uniq
-                    map {
-                         #$_->ref
-                         defined $_ ? $_->ref : ()          # ?: should not be neccessary
-                         # better way, especially earlier possible?
-                         # it currently lazily solves array access on points that are not arrays, e.g.:
-                         #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
-                         # where last ->{'CCC'} is not an array but simple value
-                         # See also data_dpath.t, the AHA section.
-                         # I don't really like it yet.
-                        } $self->current_points;
-}
+        # Points are the collected pointers into the datastructure
+        has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
 
-# filter current results by array index
-sub _filter_points_index {
-        my ($self, $index, @points) = @_;
-        return @points ? ($points[$index]) : ();
-}
+        method all {
+                return
+                    map { $$_ }
+                        uniq
+                            map {
+                                 #$_->ref
+                                 defined $_ ? $_->ref : () # ?: should not be neccessary
+                                 # better way, especially earlier possible?
+                                 # it currently lazily solves array access on points that are not arrays, e.g.:
+                                 #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
+                                 # where last ->{'CCC'} is not an array but simple value
+                                 # See also data_dpath.t, the AHA section.
+                                 # I don't really like it yet.
+                                } $self->current_points;
+        }
 
-# filter current results by condition
-sub _filter_points_eval {
-        my ($self, $filter, @points) = @_;
-        return () unless @points;
-        # say STDERR "Context._filter_points_eval: $filter";
-        my @new_points = grep { eval $filter } @points;
-        return @new_points;
-}
+        # filter current results by array index
+        sub _filter_points_index {
+                my ($self, $index, @points) = @_;
+                return @points ? ($points[$index]) : ();
+        }
 
-sub _filter_points {
-        my ($self, $step, @points) = @_;
+        # filter current results by condition
+        sub _filter_points_eval {
+                my ($self, $filter, @points) = @_;
+                return () unless @points;
+                # say STDERR "Context._filter_points_eval: $filter";
+                my @new_points = grep { eval $filter } @points;
+                return @new_points;
+        }
 
-        return () unless @points;
+        sub _filter_points {
+                my ($self, $step, @points) = @_;
 
-        my $filter = $step->filter;
-        return @points unless defined $filter;
+                return () unless @points;
 
-        $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
-        given ($filter)
-        {
-                when (/^\d+$/) {
-                        return $self->_filter_points_index($filter, @points);  # simple array index
-                }
-                default {
-                        return $self->_filter_points_eval($filter, @points);   # full condition
+                my $filter = $step->filter;
+                return @points unless defined $filter;
+
+                $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
+                given ($filter)
+                {
+                        when (/^\d+$/) {
+                                return $self->_filter_points_index($filter, @points); # simple array index
+                        }
+                        default {
+                                return $self->_filter_points_eval($filter, @points); # full condition
+                        }
                 }
         }
-}
 
-method search($path) {
-        $Data::DPath::DEBUG && say "Context.search:";
-        $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
-        $Data::DPath::DEBUG && say "    \$path.path == ", Dumper($path->path);
-        my @current_points = $self->current_points;
-        foreach my $step ($path->_steps) {
-                $Data::DPath::DEBUG && say "    ", $step->kind, " ==> ", $step->part;
-                $Data::DPath::DEBUG && say "    current_points: ", Dumper(\@current_points);
-                my @new_points = ();
-                given ($step->kind)
-                {
-                        when ('ROOT')
+        method search($path) {
+                $Data::DPath::DEBUG && say "Context.search:";
+                $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
+                $Data::DPath::DEBUG && say "    \$path.path == ", Dumper($path->path);
+                my @current_points = $self->current_points;
+                foreach my $step ($path->_steps) {
+                        $Data::DPath::DEBUG && say "    ", $step->kind, " ==> ", $step->part;
+                        $Data::DPath::DEBUG && say "    current_points: ", Dumper(\@current_points);
+                        my @new_points = ();
+                        given ($step->kind)
                         {
+                                when ('ROOT')
+                                {
                                 # the root node
                                 # (only makes sense at first step, but currently not asserted)
-                                push @new_points, @current_points;
-                        }
-                        when ('ANYWHERE')
-                        {
+                                        push @new_points, @current_points;
+                                }
+                                when ('ANYWHERE')
+                                {
                                 # '//'
                                 # all hash/array nodes of a data structure
-                                $Data::DPath::DEBUG && print "current_points: ".Dumper(\@current_points);
-                                foreach my $point (@current_points) {
-                                        $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                        $Data::DPath::DEBUG && print "    point: ", Dumper($point);
-                                        $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                        # take point as hash, skip undefs
-                                        my @all_refs = ();
-                                        my $v = Data::Visitor::Callback->new(
-                                                                             ignore_return_values => 1,
-                                                                             ref => sub {
-                                                                                         my ( $visitor, $data ) = @_;
-                                                                                         push @all_refs, $data
-                                                                                        }
-                                                                            );
-                                        $Data::DPath::DEBUG && print "point-ref: ".Dumper( ${$point->ref} ); # " ;
-                                        $v->visit( ${$point->ref} ); # }$
-                                        push @new_points, map {
-                                                               $Data::DPath::DEBUG && print "all-new-ref: ".Dumper( $_ ); # " ;
-                                                               new Data::DPath::Point( ref => \$_, parent => $point )
-                                                              } @all_refs;
-                                        $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        $Data::DPath::DEBUG && print "current_points: ".Dumper(\@current_points);
+                                        foreach my $point (@current_points) {
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                $Data::DPath::DEBUG && print "    point: ", Dumper($point);
+                                                $Data::DPath::DEBUG && print "    step: ", Dumper($step);
+                                                # take point as hash, skip undefs
+                                                my @all_refs = ();
+                                                my $v = Data::Visitor::Callback->new(
+                                                                                     ignore_return_values => 1,
+                                                                                     ref => sub {
+                                                                                                 my ( $visitor, $data ) = @_;
+                                                                                                 push @all_refs, $data
+                                                                                                }
+                                                                                    );
+                                                $Data::DPath::DEBUG && print "point-ref: ".Dumper( ${$point->ref} ); # " ;
+                                                $v->visit( ${$point->ref} ); # }$
+                                                push @new_points, map {
+                                                                       $Data::DPath::DEBUG && print "all-new-ref: ".Dumper( $_ ); # " ;
+                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                      } @all_refs;
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        }
                                 }
-                        }
-                        when ('KEY')
-                        {
+                                when ('KEY')
+                                {
                                 # the value of a key
-                                foreach my $point (@current_points) {
-                                        next unless ref ${$point->ref} eq 'HASH';
-                                        $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                        $Data::DPath::DEBUG && print "    point: ", Dumper($point);
-                                        $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                        # take point as hash, skip undefs
-                                        push @new_points, map {
-                                                               new Data::DPath::Point( ref => \$_, parent => $point )
-                                                              } ( ${$point->ref}->{$step->part} || () );
-                                        $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        foreach my $point (@current_points) {
+                                                next unless ref ${$point->ref} eq 'HASH';
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                $Data::DPath::DEBUG && print "    point: ", Dumper($point);
+                                                $Data::DPath::DEBUG && print "    step: ", Dumper($step);
+                                                # take point as hash, skip undefs
+                                                push @new_points, map {
+                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                      } ( ${$point->ref}->{$step->part} || () );
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        }
                                 }
-                        }
-                        when ('ANYSTEP')
-                        {
+                                when ('ANYSTEP')
+                                {
                                 # '*'
                                 # all leaves of a data tree
-                                foreach my $point (@current_points) {
-                                        $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                        # take point as array
-                                        my $ref = ${$point->ref};
-                                        $Data::DPath::DEBUG && say "    *** ", ref($ref);
-                                        given (ref $ref) {
-                                                when ('HASH')
-                                                {
-                                                        push @new_points, map {
-                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                              } values %$ref;
-                                                }
-                                                when ('ARRAY')
-                                                {
-                                                        push @new_points, map {
-                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                              } @$ref;
-                                                }
-                                                default
-                                                {
-                                                        if (ref $point->ref eq 'SCALAR') {
+                                        foreach my $point (@current_points) {
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                # take point as array
+                                                my $ref = ${$point->ref};
+                                                $Data::DPath::DEBUG && say "    *** ", ref($ref);
+                                                given (ref $ref) {
+                                                        when ('HASH')
+                                                        {
                                                                 push @new_points, map {
                                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                      } $ref;
+                                                                                      } values %$ref;
+                                                        }
+                                                        when ('ARRAY')
+                                                        {
+                                                                push @new_points, map {
+                                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                      } @$ref;
+                                                        }
+                                                        default
+                                                        {
+                                                                if (ref $point->ref eq 'SCALAR') {
+                                                                        push @new_points, map {
+                                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                              } $ref;
+                                                                }
                                                         }
                                                 }
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
-                                        $Data::DPath::DEBUG && say "    `-----------------------------------";
                                 }
-                        }
-                        when ('PARENT')
-                        {
+                                when ('PARENT')
+                                {
                                 # '..'
                                 # the parent
-                                foreach my $point (@current_points) {
-                                        $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                        push @new_points, $point->parent;
-                                        $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        foreach my $point (@current_points) {
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                push @new_points, $point->parent;
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        }
                                 }
                         }
+                        $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
+                        @new_points = $self->_filter_points($step, @new_points);
+                        $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
+                        @current_points = @new_points;
+                        $Data::DPath::DEBUG && say "    ______________________________________________________________________";
                 }
-                $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
-                @new_points = $self->_filter_points($step, @new_points);
-                $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
-                @current_points = @new_points;
-                $Data::DPath::DEBUG && say "    ______________________________________________________________________";
+                $self->current_points( \@current_points );
+                return $self;
         }
-        $self->current_points( \@current_points );
-        return $self;
-}
 
-method match($path) {
-        $self->search($path)->all;
+        method match($path) {
+                $self->search($path)->all;
+        }
+
 }
 
 1;

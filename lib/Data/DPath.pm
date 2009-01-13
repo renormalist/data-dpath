@@ -1,35 +1,34 @@
-package Data::DPath;
-
-use Moose;
-use MooseX::Method::Signatures; # no Moosex::Declare due to eval inside
+use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
-our $DEBUG = 0;
-our $VERSION = '0.02';
+class Data::DPath {
 
-use Data::DPath::Path;
-use Data::DPath::Context;
-use Sub::Exporter -setup => { exports =>           [ 'dpath' ],
-                              groups  => { all  => [ 'dpath' ] },
-                            };
+        our $DEBUG = 0;
+        our $VERSION = '0.02';
 
-sub dpath($) {
-        my ($path) = @_;
-        new Data::DPath::Path(path => $path);
+        use Data::DPath::Path;
+        use Data::DPath::Context;
+        use Sub::Exporter -setup => { exports =>           [ 'dpath' ],
+                                      groups  => { all  => [ 'dpath' ] },
+                                    };
+
+        sub dpath($) {
+                my ($path) = @_;
+                new Data::DPath::Path(path => $path);
+        }
+
+        method get_context (Any $data, Str $path) {
+                new Data::DPath::Context(path => $path);
+        }
+
+        method match (Any $data, Str $path) {
+                Data::DPath::Path->new(path => $path)->match($data);
+        }
+
+        # ------------------------------------------------------------
+
 }
-
-method get_context (Any $data, Str $path) {
-        new Data::DPath::Context(path => $path);
-}
-
-method match (Any $data, Str $path) {
-        Data::DPath::Path->new(path => $path)->match($data);
-}
-
-# ------------------------------------------------------------
 
 1;
 
