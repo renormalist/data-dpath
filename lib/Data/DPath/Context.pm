@@ -63,6 +63,47 @@ class Data::DPath::Context {
                 }
         }
 
+        # only finds "inner" values; if you need the outer start value
+        # then just wrap it into array brackets.
+        sub _any {
+                my ($out, $in) = @_;
+
+                #print "    in: ", Dumper($in);
+                #sleep 3;
+
+                $in //= [];
+                return @$out unless @$in;
+
+                my @newin;
+                my @newout;
+
+                foreach my $point (@$in) {
+                        my @values;
+                        my $ref = $point->ref;
+                        given (ref $$ref) {
+                                when ('HASH')  { @values = values %{$$ref} }
+                                when ('ARRAY') { @values = @{$$ref}        }
+                                default { next }
+                        }
+
+                        push @newout,
+                            map { new Data::DPath::Point( ref => \$_, parent => $point ) }
+                                grep { ref =~ /^HASH|ARRAY$/ }
+                                    @values;
+
+                        foreach (@values) {
+                                my $v = new Data::Visitor::Callback( ref => sub {
+                                                                                 my ( $visitor, $data ) = @_;
+                                                                                 # TODO: just encapsulate for recursive call, parent not needed
+                                                                                 push @newin, new Data::DPath::Point( ref => \$data, parent => $point );
+                                                                                } );
+                                $v->visit( $_ );
+                        }
+                }
+                push @$out,  @newout;
+                return _any ($out, \@newin);
+        }
+
         method search($path) {
                 $Data::DPath::DEBUG && say "Context.search:";
                 $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
@@ -89,21 +130,9 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                                # take point as hash, skip undefs
-                                                my @all_refs = ();
-                                                my $v = Data::Visitor::Callback->new(
-                                                                                     ignore_return_values => 1,
-                                                                                     ref => sub {
-                                                                                                 my ( $visitor, $data ) = @_;
-                                                                                                 push @all_refs, $data
-                                                                                                }
-                                                                                    );
-                                                $Data::DPath::DEBUG && print "point-ref: ".Dumper( ${$point->ref} ); # " ;
-                                                $v->visit( ${$point->ref} ); # }$
-                                                push @new_points, map {
-                                                                       $Data::DPath::DEBUG && print "all-new-ref: ".Dumper( $_ ); # " ;
-                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                      } @all_refs;
+                                                @new_points = _any([], [ $point ]);
+                                                push @new_points, $point;
+                                                $Data::DPath::DEBUG && print "    new_points: ", Dumper(\@new_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
