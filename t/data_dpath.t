@@ -6,8 +6,9 @@ use warnings;
 use Test::More tests => 71;
 
 use Data::DPath 'dpath';
+use Data::Dumper;
 
-#local $Data::DPath::DEBUG = 1;
+# local $Data::DPath::DEBUG = 1;
 
 BEGIN {
 	use_ok( 'Data::DPath' );
@@ -52,7 +53,6 @@ is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + K
 is_deeply(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
 
 @resultlist = dpath('/')->match($data);
-use Data::Dumper;
 is_deeply(\@resultlist, [ $data ], "ROOT" );
 
 @resultlist = dpath('/AAA/*/CCC')->match($data);
@@ -78,15 +78,15 @@ is_deeply(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2',
 
 # WATCH OUT: the order of results is not defined! tests may be false negatives ...
 @resultlist = dpath('//AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "ANYWHERE + KEYs + ANYSTEP" );
+is_deeply(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'] ], "ANYWHERE + KEYs + ANYSTEP" );
 @resultlist = dpath('///AAA/*/CCC')->match($data);
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP" );
+is_deeply(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'] ], "2xANYWHERE + KEYs + ANYSTEP" );
 
 
 @resultlist = Data::DPath->match($data, '//AAA/*/CCC');
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP as function" );
+is_deeply(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP as function" );
 @resultlist = Data::DPath->match($data, '///AAA/*/CCC');
-is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP as function" );
+is_deeply(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP as function" );
 
 # from now on more via Perl 5.10 smart matching
 
@@ -108,24 +108,24 @@ is_deeply($resultlist, [ 'affe' ], "ANYWHERE + KEYs + ANYWHEREs" );
 
 my $dpath = dpath('//AAA/*/CCC');
 $resultlist = $data ~~ $dpath;
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
 $resultlist = $data ~~ $dpath;
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
 
 $resultlist = $data ~~ dpath('//AAA/*/CCC');
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
 $resultlist = $data ~~ dpath('///AAA/*/CCC');
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC';
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
 $resultlist = $data ~~ dpath '///AAA/*/CCC';
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
 
 $resultlist = dpath '//AAA/*/CCC' ~~ $data;
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
 $resultlist = dpath '///AAA/*/CCC' ~~ $data;
-is_deeply($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
+is_deeply($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC/*';
 is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3' ], "trailing .../* unpacks" );
@@ -157,7 +157,7 @@ TODO: {
 }
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/*';
-is_deeply($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3', 'affe'] );
+is_deeply($resultlist, [ 'affe', 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3' ] );
 
 TODO: {
 
@@ -253,11 +253,13 @@ $resultlist = $data2 ~~ dpath '/';
 is_deeply($resultlist, [ $data2 ], "ROOT" );
 
 $resultlist = $data2 ~~ dpath '//';
-is_deeply($resultlist, [ $data2,
-                         { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } },
-                         { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
-                         { CCC  => [ qw/ XXX YYY ZZZ / ] },
-                         [ qw/ XXX YYY ZZZ / ]
+print Dumper($resultlist);
+is_deeply($resultlist, [
+                        { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } },
+                        { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
+                        { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                        [ qw/ XXX YYY ZZZ / ],
+                        $data2,
                        ], "ANYWHERE" );
 
 $resultlist = $data2 ~~ dpath '/*[2]';
