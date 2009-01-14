@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 71;
+use Test::More tests => 72;
 
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -36,6 +36,14 @@ is_deeply(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
 
 @resultlist = dpath('/AAA/BBB/CCC/..')->match($data);
 is_deeply(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
+
+@resultlist = dpath('//../CCC')->match($data);
+print Dumper(\@resultlist);
+is_deeply(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
+                          [ qw/ RR1 RR2 RR3 / ],
+                          'affe',                      # missing due to reduction to HASH|ARRAY in _any?
+                          'zomtec',
+                        ], "KEYs + PARENT + ANYWHERE" );
 
 @resultlist = dpath('/AAA/BBB/CCC/../..')->match($data);
 is_deeply(\@resultlist, [
@@ -253,7 +261,6 @@ $resultlist = $data2 ~~ dpath '/';
 is_deeply($resultlist, [ $data2 ], "ROOT" );
 
 $resultlist = $data2 ~~ dpath '//';
-print Dumper($resultlist);
 is_deeply($resultlist, [
                         { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } },
                         { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
