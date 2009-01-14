@@ -132,6 +132,7 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
                                                 @new_points = _any([], [ $point ]);
                                                 push @new_points, $point;
+                                                #print "    new_points: ", Dumper(\@new_points);
                                                 $Data::DPath::DEBUG && print "    new_points: ", Dumper(\@new_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
@@ -139,6 +140,7 @@ class Data::DPath::Context {
                                 when ('KEY')
                                 {
                                         # the value of a key
+                                        #print "    current_points: ", Dumper(\@current_points);
                                         foreach my $point (@current_points) {
                                                 next unless defined $point;
                                                 next unless ref ${$point->ref} eq 'HASH';
