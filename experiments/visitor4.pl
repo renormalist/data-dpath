@@ -48,13 +48,13 @@ sub any {
                         } @values;
 
                 foreach (@values) {
-                        $v = new Data::Visitor::Callback(
-                                                         ref => sub {
-                                                                     my ( $visitor, $data ) = @_;
-                                                                     push @newin, $data
-                                                                    }
-                                                        );
-                        $v->visit( $_ );
+                        my $vis = new Data::Visitor::Callback(
+                                                              ref => sub {
+                                                                          my ( $visitor, $data ) = @_;
+                                                                          push @newin, $data
+                                                                         }
+                                                             );
+                        $vis->visit( $_ );
                 }
         }
         push @$out,  @newout;
