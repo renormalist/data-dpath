@@ -9,14 +9,20 @@ class Data::DPath {
 
         use Data::DPath::Path;
         use Data::DPath::Context;
-        use Sub::Exporter -setup => { exports =>           [ 'dpath' ],
-                                      groups  => { all  => [ 'dpath' ] },
-                                    };
 
-        sub dpath($) {
-                my ($path) = @_;
-                new Data::DPath::Path(path => $path);
+        sub build_dpath {
+                return sub ($) {
+                        my ($path) = @_;
+                        new Data::DPath::Path(path => $path);
+                };
         }
+
+        use namespace::clean -except => 'meta';
+
+        use Sub::Exporter -setup => {
+                exports => [ dpath => \&build_dpath ],
+                groups  => { all  => [ 'dpath' ] },
+        };
 
         method get_context (Any $data, Str $path) {
                 new Data::DPath::Context(path => $path);
