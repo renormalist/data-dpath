@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 72;
+use Test::More tests => 73;
 
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -102,6 +102,9 @@ is_deeply(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ]
 
 $resultlist = $data ~~ dpath '/some//CCC';
 is_deeply($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHERE + KEY" );
+
+$resultlist = dpath '/some//CCC' ~~ $data;
+is_deeply($resultlist, [ 'affe' ], "left side without parens due to prototype" );
 
 $resultlist = $data ~~ dpath '//some//CCC';
 is_deeply($resultlist, [ 'affe' ], "ANYWHERE + KEY + ANYWHERE + KEY" );
