@@ -18,6 +18,7 @@ class Data::DPath::Context {
                         uniq
                             map {
                                  #$_->ref
+                                 #print STDERR Dumper($_);
                                  defined $_ ? $_->ref : () # ?: should not be neccessary
                                  # better way, especially earlier possible?
                                  # it currently lazily solves array access on points that are not arrays, e.g.:
@@ -38,8 +39,27 @@ class Data::DPath::Context {
         sub _filter_points_eval {
                 my ($self, $filter, @points) = @_;
                 return () unless @points;
-                # say STDERR "Context._filter_points_eval: $filter";
-                my @new_points = grep { eval $filter } @points;
+                return @points unless defined $filter;
+
+                my @new_points;
+                {
+                        package Data::DPath::Filters;
+                        local our $index = 0;
+                        @new_points =
+                            grep {
+                                    my $res;
+                                    my $p = $_;
+                                    local $_;
+                                    if ( defined $p->ref ) {
+                                            $_ = ${ $p->ref };
+                                            $res = eval $filter;
+                                    } else {
+                                            $res = 0;
+                                    }
+                                    $index++;
+                                    $res;
+                            } @points;
+                }
                 return @new_points;
         }
 
@@ -57,8 +77,11 @@ class Data::DPath::Context {
                         when (/^\d+$/) {
                                 return $self->_filter_points_index($filter, @points); # simple array index
                         }
-                        default {
+                        when (/\S/) {
                                 return $self->_filter_points_eval($filter, @points); # full condition
+                        }
+                        default {
+                                return @points;
                         }
                 }
         }
@@ -258,3 +281,42 @@ This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+__END__
+
+/foo[ isa("Foo")  ]/
+
+    @filtered = grep { eval $condition } @points;
+
+/foo[ reallyhotstuff("Foo")  ]/
+
+/foo[ index == 7  ]/
+
+package Data::DPath::Filters;
+        our $index;
+
+        sub reallyhotstuff {
+                (@args) = @_;
+                # $_->ref sowieso da
+                return 1 or 0;
+        }
+
+        sub index { $index };
+}
+
+package Data::DPath::Context;
+sub _filter {
+        
+        @points = map { new Point( ref => $_ } @refs;
+                        
+                        @filtered = grep { eval 'reallyhotstuff("Foo")' } @points;
+                        grep { $_ = ${ $_->ref }; foo() } @list;
+                        {
+                                package Data::DPath::Filters;
+                                local $index = -1;
+                                grep { $index++; $_ = ${ $_->ref }; eval $condition; } @points;
+                        }
+}
+# moose type constraints, haben check methode
+# haben Syntax, diese stehlen
+# subtypes definieren
+
