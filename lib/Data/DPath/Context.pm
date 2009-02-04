@@ -105,7 +105,7 @@ class Data::DPath::Context {
                         given (ref $$ref) {
                                 when ('HASH')  { @values = values %{$$ref} }
                                 when ('ARRAY') { @values = @{$$ref}        }
-                                default { next }
+                                default        { next }
                         }
                         foreach (@values) {
                                 push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
