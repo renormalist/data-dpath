@@ -9,7 +9,7 @@ sub affe {
         return $_ eq 'affe' ? 1 : 0;
 }
 
-sub index { $index }
+sub index { say "index: $index"; $index }
 
 1;
 

@@ -71,17 +71,20 @@ class Data::DPath::Context {
                 return @points unless defined $filter;
 
                 $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
-                given ($filter)
+
+                if ($filter =~ /^\d+$/)
                 {
-                        when (/^\d+$/) {
-                                return $self->_filter_points_index($filter, @points); # simple array index
-                        }
-                        when (/\S/) {
-                                return $self->_filter_points_eval($filter, @points); # full condition
-                        }
-                        default {
-                                return @points;
-                        }
+                        #say "INT Filter: $filter";
+                        return $self->_filter_points_index($filter, @points); # simple array index
+                }
+                elsif ($filter =~ /\S/)
+                {
+                        say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
+                        return $self->_filter_points_eval($filter, @points); # full condition
+                }
+                else
+                {
+                        return @points;
                 }
         }
 
@@ -294,9 +297,9 @@ package Data::DPath::Filters;
 
 package Data::DPath::Context;
 sub _filter {
-        
+
         @points = map { new Point( ref => $_ } @refs;
-                        
+
                         @filtered = grep { eval 'reallyhotstuff("Foo")' } @points;
                         grep { $_ = ${ $_->ref }; foo() } @list;
                         {
