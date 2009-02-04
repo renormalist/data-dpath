@@ -266,13 +266,13 @@ cmp_bag($resultlist, [ $data2 ], "ROOT" );
 
 $resultlist = $data2 ~~ dpath '//';
 cmp_bag($resultlist, [
-                        qw( UUU VVV WWW XXX YYY ZZZ ),
-                        { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } },
-                        { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
-                        { CCC  => [ qw/ XXX YYY ZZZ / ] },
-                        [ qw/ XXX YYY ZZZ / ],
-                        $data2,
-                       ], "ANYWHERE" );
+                      qw( UUU VVV WWW XXX YYY ZZZ ),
+                      { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } },
+                      { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } },
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      [ qw/ XXX YYY ZZZ / ],
+                      $data2,
+                     ], "ANYWHERE" );
 
 $resultlist = $data2 ~~ dpath '/*[2]';
 cmp_bag($resultlist, [ 'WWW' ], "ROOT + ANYSTEP + FILTER int: plain value" );
