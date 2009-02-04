@@ -403,16 +403,16 @@ my $data4  = {
                                 ],
              };
 
-# TODO: {
-#         local $TODO = 'too dirty, first cleanup _filter_eval';
+TODO: {
+        local $TODO = 'too dirty, first cleanup _filter_eval';
 
         $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ ${$_->{ref}} =~ m(....) ]';
         cmp_bag($resultlist, [ 'XXXX', 'YYYY', 'ZZZZ', 'affe' ], "FILTER eval regex" );
 
-# }
+}
 
-# TODO: {
-#         local $TODO = 'should work now';
+TODO: {
+        local $TODO = 'should work now';
 
         $resultlist = $data4 ~~ dpath '/AAA/BBB/CCC/*[ index == 1 ]';
         cmp_bag($resultlist, [ 'YYYY' ], "FILTER: index" );
@@ -420,5 +420,5 @@ my $data4  = {
         $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ affe ]';
         cmp_bag($resultlist, [ 'affe' ], "FILTER: affe" );
 
-# }
+}
 
