@@ -7,7 +7,6 @@ class Data::DPath::Context {
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
-        use Data::Visitor::Callback;
 
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
@@ -87,7 +86,7 @@ class Data::DPath::Context {
         }
 
         # only finds "inner" values; if you need the outer start value
-        # then just wrap it into array brackets.
+        # then just wrap it into one more level of array brackets.
         sub _any {
                 my ($out, $in) = @_;
 
@@ -108,19 +107,9 @@ class Data::DPath::Context {
                                 when ('ARRAY') { @values = @{$$ref}        }
                                 default { next }
                         }
-
-                        push @newout,
-                            map { new Data::DPath::Point( ref => \$_, parent => $point ) }
-                                grep { ref =~ /^HASH|ARRAY$/ }
-                                    @values;
-
                         foreach (@values) {
-                                my $v = new Data::Visitor::Callback( ref => sub {
-                                                                                 my ( $visitor, $data ) = @_;
-                                                                                 # TODO: just encapsulate for recursive call, parent not needed
-                                                                                 push @newin, new Data::DPath::Point( ref => \$data, parent => $point );
-                                                                                } );
-                                $v->visit( $_ );
+                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
+                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
                         }
                 }
                 push @$out,  @newout;
