@@ -72,19 +72,18 @@ class Data::DPath::Context {
 
                 $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
 
-                if ($filter =~ /^\d+$/)
-                {
-                        #say "INT Filter: $filter";
-                        return $self->_filter_points_index($filter, @points); # simple array index
-                }
-                elsif ($filter =~ /\S/)
-                {
-                        say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
-                        return $self->_filter_points_eval($filter, @points); # full condition
-                }
-                else
-                {
-                        return @points;
+                given ($filter) {
+                        when (/^\d+$/) {
+                                #say "INT Filter: $filter";
+                                return $self->_filter_points_index($filter, @points); # simple array index
+                        }
+                        when (/\S/) {
+                                say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
+                                return $self->_filter_points_eval($filter, @points); # full condition
+                        }
+                        default {
+                                return @points;
+                        }
                 }
         }
 
