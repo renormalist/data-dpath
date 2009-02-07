@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 77;
+use Test::More tests => 84;
 use Test::Deep;
 
 use Data::DPath 'dpath';
@@ -326,6 +326,20 @@ my $data3  = {
                                                      },
                                               FFF => 'boring value' }
                                  },
+                                 { 'DDD' => { EEE => { F1 => 'xbla',
+                                                       F2 => 'xbli',
+                                                       F3 => 'xblu',
+                                                       F4 => 'xblo',
+                                                     },
+                                              FFF => 'third value' }
+                                 },
+                                 { 'DDD' => { EEE => { F1 => 'ybla',
+                                                       F2 => 'ybli',
+                                                       F3 => 'yblu',
+                                                       F4 => 'yblo',
+                                                     },
+                                              FFF => 'fourth value' }
+                                 },
                                 ],
              };
 
@@ -363,6 +377,34 @@ cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int 0 + 
 $resultlist = $data3 ~~ dpath '//neighbourhoods/*[1]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'boring value' ], "ANYWHERE + KEYs + FILTER int 1 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[2]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'third value' ], "ANYWHERE + KEYs + FILTER int 2 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[3]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'fourth value' ], "ANYWHERE + KEYs + FILTER int 3 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[-1]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'fourth value' ], "ANYWHERE + KEYs + FILTER int -1 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[-2]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'third value' ], "ANYWHERE + KEYs + FILTER int -2 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[-3]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'boring value' ], "ANYWHERE + KEYs + FILTER int -3 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[-4]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int -4 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[-5]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER int -5 + KEYs" );
 
 TODO: {
         local $TODO = 'spec only';
