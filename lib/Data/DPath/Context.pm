@@ -258,7 +258,7 @@ Same as C<< search($path)->all() >>;
 Evaluates the filter condition in brackets. It differenciates between
 simple integers, which are taken as array index, and all other
 conditions, which are taken as evaled perl expression in a grep like
-expression.
+expression onto the set of points found by current step.
 
 =head1 AUTHOR
 

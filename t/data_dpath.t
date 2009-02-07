@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 75;
+use Test::More tests => 77;
 use Test::Deep;
 
 use Data::DPath 'dpath';
@@ -350,11 +350,19 @@ TODO: {
 
 $resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
 # ( 'interesting value' )
-cmp_bag($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER int + KEYs" );
+cmp_bag($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER int 0 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '/neighbourhoods/*[1]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'boring value' ], "ROOT + KEYs + FILTER int 1 + KEYs" );
 
 $resultlist = $data3 ~~ dpath '//neighbourhoods/*[0]/DDD/FFF';
 # ( 'interesting value' )
-cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int + KEYs" );
+cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int 0 + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[1]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'boring value' ], "ANYWHERE + KEYs + FILTER int 1 + KEYs" );
 
 TODO: {
         local $TODO = 'spec only';
