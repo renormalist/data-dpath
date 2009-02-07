@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 84;
+use Test::More tests => 85;
 use Test::Deep;
 
 use Data::DPath 'dpath';
@@ -404,7 +404,11 @@ cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER int -4 +
 
 $resultlist = $data3 ~~ dpath '//neighbourhoods/*[-5]/DDD/FFF';
 # ( 'interesting value' )
-cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER int -5 + KEYs" );
+cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER too negative int + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//neighbourhoods/*[20]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER too high int + KEYs" );
 
 TODO: {
         local $TODO = 'spec only';
