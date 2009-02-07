@@ -73,7 +73,7 @@ class Data::DPath::Context {
                 $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
 
                 given ($filter) {
-                        when (/^\d+$/) {
+                        when (/^-?\d+$/) {
                                 #say "INT Filter: $filter";
                                 return $self->_filter_points_index($filter, @points); # simple array index
                         }
