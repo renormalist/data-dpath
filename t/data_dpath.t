@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 84;
+use Test::More tests => 86;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -433,22 +433,18 @@ my $data4  = {
                                 ],
              };
 
-TODO: {
-        local $TODO = 'too dirty, first cleanup _filter_eval';
+$resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ affe ]';
+cmp_bag($resultlist, [ 'affe' ], "FILTER: affe" );
 
-        $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ ${$_->{ref}} =~ m(....) ]';
-        cmp_bag($resultlist, [ 'XXXX', 'YYYY', 'ZZZZ', 'affe' ], "FILTER eval regex" );
+$resultlist = $data4 ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]';
+cmp_bag($resultlist, [ 'YYY' ], "FILTER: index" );
 
-}
+$resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ m(....) ]';
+cmp_bag($resultlist, [ 'XXXX', 'YYYY', 'ZZZZ', 'affe' ], "FILTER eval regex five chars" );
 
-TODO: {
-        local $TODO = 'should work now';
+$resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ m([A-Z]+) ]';
+cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex just capitalizes" );
 
-        $resultlist = $data4 ~~ dpath '/AAA/BBB/CCC/*[ index == 1 ]';
-        cmp_bag($resultlist, [ 'YYYY' ], "FILTER: index" );
-
-        $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ affe ]';
-        cmp_bag($resultlist, [ 'affe' ], "FILTER: affe" );
-
-}
+$resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/"*"[ m/[A-Z]+/ ]';
+cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with slashes needs quotes" );
 
