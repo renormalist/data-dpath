@@ -280,14 +280,8 @@ $resultlist = $data2 ~~ dpath '/*[3]';
 # ( { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } )
 cmp_bag($resultlist, [ { AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] } } } ], "ROOT + ANYSTEP + FILTER int: ref value" );
 
-TODO: {
-
-        local $TODO = 'spec only';
-
-        $resultlist = $data2 ~~ dpath '//*[2]';
-        cmp_bag($resultlist, [ 'WWW', 'ZZZ' ], "ANYWHERE + ANYSTEP + FILTER int" );
-
-}
+$resultlist = $data2 ~~ dpath '//*[2]';
+cmp_bag($resultlist, [ 'WWW', 'ZZZ' ], "ANYWHERE + ANYSTEP + FILTER int" );
 
 # basic eval filters
 $resultlist = $data2 ~~ dpath '/*/AAA/BBB/CCC';
