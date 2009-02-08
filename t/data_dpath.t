@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 86;
+use Test::More tests => 91;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -172,15 +172,23 @@ TODO: {
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC/*[0]';
 cmp_bag($resultlist, [ 'XXX', 'RR1' ], "ANYSTEP + FILTER int 0" );
+$resultlist = $data ~~ dpath '/AAA/*/CCC/*[ 0 ]';
+cmp_bag($resultlist, [ 'XXX', 'RR1' ], "ANYSTEP + FILTER int 0 whitespace" );
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC/*[2]';
 cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYSTEP + FILTER int 2" );
+$resultlist = $data ~~ dpath '/AAA/*/CCC/*[ 2 ]';
+cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYSTEP + FILTER int 2 whitespace" );
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/*[0]';
 cmp_bag($resultlist, [ 'XXX', 'RR1', 'affe' ], "ANYWHERE + ANYSTEP + FILTER int 0" );
+$resultlist = $data ~~ dpath '//AAA/*/CCC/*[ 0 ]';
+cmp_bag($resultlist, [ 'XXX', 'RR1', 'affe' ], "ANYWHERE + ANYSTEP + FILTER int 0 whitespace" );
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/*[2]';
 cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + ANYSTEP + FILTER int 2" );
+$resultlist = $data ~~ dpath '//AAA/*/CCC/*[ 2 ]';
+cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + ANYSTEP + FILTER int 2 whitespace" );
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC[2]';
 cmp_bag($resultlist, [ ], "KEY + FILTER int" );
@@ -437,6 +445,9 @@ $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ affe ]';
 cmp_bag($resultlist, [ 'affe' ], "FILTER: affe" );
 
 $resultlist = $data4 ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]';
+cmp_bag($resultlist, [ 'YYY' ], "FILTER: index" );
+
+$resultlist = $data4 ~~ dpath '/AAA/BBB/CCC/*[ 1 ]';
 cmp_bag($resultlist, [ 'YYY' ], "FILTER: index" );
 
 $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ m(....) ]';

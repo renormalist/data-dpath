@@ -75,7 +75,7 @@ class Data::DPath::Context {
                 my $filter = $step->filter;
                 return @points unless defined $filter;
 
-                $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
+                $filter =~ s/^\[\s*(.*?)\s*\]$/$1/; # strip brackets and whitespace
 
                 given ($filter) {
                         when (/^-?\d+$/) {
