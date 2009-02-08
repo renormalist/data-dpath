@@ -133,7 +133,9 @@ class Data::DPath::Context {
                                 {
                                         # the root node
                                         # (only makes sense at first step, but currently not asserted)
-                                        push @new_points, @current_points;
+                                        my @step_points = @current_points;
+                                        @step_points = $self->_filter_points($step, @step_points);
+                                        push @new_points, @step_points;
                                 }
                                 when ('ANYWHERE')
                                 {
@@ -144,9 +146,9 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                                @new_points = _any([], [ $point ]);
-                                                push @new_points, $point;
-                                                #print "    new_points: ", Dumper(\@new_points);
+                                                my @step_points = (_any([], [ $point ]), $point);
+                                                @step_points = $self->_filter_points($step, @step_points);
+                                                push @new_points, @step_points;
                                                 $Data::DPath::DEBUG && print "    new_points: ", Dumper(\@new_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
@@ -162,9 +164,11 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
                                                 # take point as hash, skip undefs
-                                                push @new_points, map {
+                                                my @step_points = map {
                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                       } ( ${$point->ref}->{$step->part} || () );
+                                                @step_points = $self->_filter_points($step, @step_points);
+                                                push @new_points, @step_points;
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
@@ -180,22 +184,28 @@ class Data::DPath::Context {
                                                 given (ref $ref) {
                                                         when ('HASH')
                                                         {
-                                                                push @new_points, map {
+                                                                my @step_points = map {
                                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                                       } values %$ref;
+                                                                @step_points = $self->_filter_points($step, @step_points);
+                                                                push @new_points, @step_points;
                                                         }
                                                         when ('ARRAY')
                                                         {
-                                                                push @new_points, map {
+                                                                my @step_points = map {
                                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                                       } @$ref;
+                                                                @step_points = $self->_filter_points($step, @step_points);
+                                                                push @new_points, @step_points;
                                                         }
                                                         default
                                                         {
                                                                 if (ref $point->ref eq 'SCALAR') {
-                                                                        push @new_points, map {
+                                                                        my @step_points = map {
                                                                                                new Data::DPath::Point( ref => \$_, parent => $point )
                                                                                               } $ref;
+                                                                        @step_points = $self->_filter_points($step, @step_points);
+                                                                        push @new_points, @step_points;
                                                                 }
                                                         }
                                                 }
@@ -208,14 +218,13 @@ class Data::DPath::Context {
                                         # the parent
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                                push @new_points, $point->parent;
+                                                my @step_points = $point->parent;
+                                                @step_points = $self->_filter_points($step, @step_points);
+                                                push @new_points, @step_points;
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                         }
-                        $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
-                        @new_points = $self->_filter_points($step, @new_points);
-                        $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
                         @current_points = @new_points;
                         $Data::DPath::DEBUG && say "    ______________________________________________________________________";
                 }
