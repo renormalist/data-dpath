@@ -4,13 +4,13 @@ use 5.010;
 use strict;
 use warnings;
 
-our $index;
+our $idx;
 
 sub affe {
         return $_ eq 'affe' ? 1 : 0;
 }
 
-sub index { say "index: $index"; $index }
+sub idx { $idx }
 
 1;
 

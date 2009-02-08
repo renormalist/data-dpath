@@ -46,7 +46,7 @@ class Data::DPath::Context {
                 {
                         require Data::DPath::Filters;
                         package Data::DPath::Filters;
-                        local our $index = 0;
+                        local our $idx = 0;
                         @new_points =
                             grep {
                                     my $res;
@@ -54,12 +54,13 @@ class Data::DPath::Context {
                                     local $_;
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
+                                            # say STDERR "* $_";
                                             $res = eval $filter;
                                             say STDERR $@ if $@;
                                     } else {
                                             $res = 0;
                                     }
-                                    $index++;
+                                    $idx++;
                                     $res;
                             } @points;
                 }
