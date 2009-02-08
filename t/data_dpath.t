@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 91;
+use Test::More tests => 96;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -144,18 +144,41 @@ $resultlist = $data ~~ dpath '/strange_keys/DD DD/"EE/E"/CCC';
 $resultlist = $data ~~ dpath '/strange_keys/"DD DD"/"EE/E"/CCC';
 cmp_bag($resultlist, [ 'zomtec' ], "quoted KEY containg slash" );
 
-TODO: {
+$resultlist = $data ~~ dpath '//AAA/*/CCC[size == 3]'; # array with 3 elements
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], 'filter size == 3' );
 
-        local $TODO = 'spec only';
+$resultlist = $data ~~ dpath '//AAA/*/CCC[size == 1]'; # array with 1 elements
+cmp_bag($resultlist, [ 'affe' ], 'filter size == 1' );
 
-        # filters
+$resultlist = $data ~~ dpath '//AAA/*/CCC[size >= 1]'; # array with >= elements
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], 'filter size >= 1' );
 
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[size == 3]'; # array with 3 elements                   # OK
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], 'filter size == 3' );
+$resultlist = $data ~~ dpath '/AAA[size == 3]'; # hash with >= elements
+cmp_bag($resultlist, [
+                      {
+                       BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                       DDD => { EEE  => [ qw/ uuu vvv www / ] },
+                      }
+                     ], 'filter hash size == 3' );
 
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[size == 1]'; # array with 3 elements                   # OK
-        cmp_bag($resultlist, [ 'affe' ], 'filter size == 1' );
-}
+$resultlist = $data ~~ dpath '/AAA[size != 3]'; # hash with keys
+cmp_bag($resultlist, [ ], 'filter hash size != 3' );
+
+$resultlist = $data ~~ dpath '//AAA[size >= 1]'; # hash with >= elements
+cmp_bag($resultlist, [
+                      {
+                       BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                       DDD => { EEE  => [ qw/ uuu vvv www / ] },
+                      },
+                      { BBB => { CCC => 'affe' } },
+                     ], 'filter hash size >= 1' );
+
+$resultlist = $data ~~ dpath '//AAA[size == 1]'; # hash with >= elements
+cmp_bag($resultlist, [
+                      { BBB => { CCC => 'affe' } },
+                     ], 'ANYWHERE filter hash size == 1' );
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/*';
 cmp_bag($resultlist, [ 'affe', 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3' ] );
