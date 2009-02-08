@@ -17,7 +17,8 @@ class Data::DPath::Context {
                         uniq
                             map {
                                  #$_->ref
-                                 #print STDERR Dumper($_);
+                                 #say STDERR "UNDEF" unless defined $_;
+                                 #print STDERR $_ ? Dumper($_->ref) : "UNDEF";
                                  defined $_ ? $_->ref : () # ?: should not be neccessary
                                  # better way, especially earlier possible?
                                  # it currently lazily solves array access on points that are not arrays, e.g.:
@@ -40,6 +41,7 @@ class Data::DPath::Context {
                 return () unless @points;
                 return @points unless defined $filter;
 
+                #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @points ]);
                 my @new_points;
                 {
                         package Data::DPath::Filters;

@@ -387,7 +387,7 @@ $resultlist = $data3 ~~ dpath '//neighbourhoods/*[20]/DDD/FFF';
 cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER too high int + KEYs" );
 
 TODO: {
-        local $TODO = 'spec only';
+        local $TODO = 'spec only: matches';
 
         # filters on ANY
         $resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
