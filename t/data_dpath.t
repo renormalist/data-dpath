@@ -3,9 +3,8 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 85;
+use Test::More tests => 84;
 use Test::Deep;
-
 use Data::DPath 'dpath';
 use Data::Dumper;
 
@@ -151,20 +150,11 @@ TODO: {
 
         # filters
 
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[$#_ == 2]';  # array with 3 elements (last index is 2) # DEPRECATED
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[@_  == 3]';  # array with 3 elements                   # DEPRECATED
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
         $resultlist = $data ~~ dpath '//AAA/*/CCC[size == 3]'; # array with 3 elements                   # OK
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
+        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], 'filter size == 3' );
 
-        # same?
-        $resultlist = $data ~~ dpath '//AAA/*/CCC/[$#_ == 2]';
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
-
-        $resultlist = $data ~~ dpath '//AAA/*/CCC/[@_  == 3]';
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
-
+        $resultlist = $data ~~ dpath '//AAA/*/CCC[size == 1]'; # array with 3 elements                   # OK
+        cmp_bag($resultlist, [ 'affe' ], 'filter size == 1' );
 }
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/*';
@@ -172,76 +162,69 @@ cmp_bag($resultlist, [ 'affe', 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3' ] );
 
 TODO: {
 
-        local $TODO = 'spec only';
+        local $TODO = 'far away future spec';
 
         $resultlist = $data ~~ dpath '/AAA/*/CCC/* | /some/where/else/AAA/BBB/CCC';
         # ( 'XXX', 'YYY', 'ZZZ', 'affe' )
         cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'RR1', 'RR2', 'RR3', 'affe' ] );
 
-        $resultlist = $data ~~ dpath '/AAA/*/CCC/*[2]';
-        cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYSTEP + FILTER int" );
-
-        $resultlist = $data ~~ dpath '//AAA/*/CCC/*[2]';
-        cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + ANYSTEP + FILTER int" );
-
-        # ---------- is CCC/*[2] the same as CCC[2] or is it not? DECIDE NOW! ----------
-        $resultlist = $data ~~ dpath '/AAA/*/CCC[2]';
-        cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "KEY + FILTER int" );
-
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[2]';
-        cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + KEY + FILTER int" );
-
 }
+
+$resultlist = $data ~~ dpath '/AAA/*/CCC/*[0]';
+cmp_bag($resultlist, [ 'XXX', 'RR1' ], "ANYSTEP + FILTER int 0" );
+
+$resultlist = $data ~~ dpath '/AAA/*/CCC/*[2]';
+cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYSTEP + FILTER int 2" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC/*[0]';
+cmp_bag($resultlist, [ 'XXX', 'RR1', 'affe' ], "ANYWHERE + ANYSTEP + FILTER int 0" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC/*[2]';
+cmp_bag($resultlist, [ 'ZZZ', 'RR3' ], "ANYWHERE + ANYSTEP + FILTER int 2" );
+
+$resultlist = $data ~~ dpath '/AAA/*/CCC[2]';
+cmp_bag($resultlist, [ ], "KEY + FILTER int" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC[2]';
+cmp_bag($resultlist, [ ], "ANYWHERE + KEY + FILTER int" );
+
+
+$resultlist = $data ~~ dpath '/AAA/*/CCC[0]';
+#diag Dumper($resultlist);
+cmp_bag($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ], [ 'RR1', 'RR2', 'RR3' ] ], "KEY + FILTER int 0" );
+
+$resultlist = $data ~~ dpath '/AAA/*/CCC[1]';
+cmp_bag($resultlist, [ ], "KEY + FILTER int 1" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC[0]';
+#diag Dumper($resultlist);
+cmp_bag($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ], [ 'RR1', 'RR2', 'RR3' ], 'affe' ], "ANYWHERE + KEY + FILTER int 0" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC[1]';
+#diag Dumper($resultlist);
+cmp_bag($resultlist, [ ], "ANYWHERE + KEY + FILTER int 1" );
 
 TODO: {
 
-        local $TODO = 'rethink spec';
-
-        # only allowing to access the first value makes
-        # CCC[0] the same as CCC, which seems redundant and useless
-
-        # AHA: current semantic is: the array index refers to all currently collected results.
-        #      Is this what we want as useful complement to *[2]?
-        #      It would also mean to only be useful at end of path, right?
-
-        $resultlist = $data ~~ dpath '/AAA/*/CCC[0]';
-        diag Dumper($resultlist);
-        cmp_bag($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ] ], "KEY + FILTER int 0" );
-
-        $resultlist = $data ~~ dpath '/AAA/*/CCC[1]';
-        cmp_bag($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "KEY + FILTER int 1" );
-
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[0]';
-        diag Dumper($resultlist);
-        cmp_bag($resultlist, [ [ 'XXX', 'YYY', 'ZZZ' ] ], "ANYWHERE + KEY + FILTER int 0" );
-
-        $resultlist = $data ~~ dpath '//AAA/*/CCC[1]';
-        diag Dumper($resultlist);
-        cmp_bag($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEY + FILTER int 1" );
-
-}
-
-TODO: {
-
-        local $TODO = 'spec only';
+        local $TODO = 'spec only: context';
 
         # --------------------
 
         # context objects for incremental searches
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
-        $resultlist = $context->all();
+        @resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "context for incremental searches" );
+        cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "context for incremental searches" );
 
         # is '*/..[0]' the same as ''?
         $context = Data::DPath->get_context($data, '//AAA/*/..[0]/CCC'); # !!??
-        $resultlist = $context->all();
+        @resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ] );
+        cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ] );
 
         # dpath inside context, same as: Data::DPath->match($data, '//AAA/*/CCC/*[2]')
-        $resultlist = $context->search(dpath '/*[2]');
-        cmp_bag($resultlist, [ 'ZZZ' ], "incremental + FILTER int" );
+        @resultlist = $context->search(dpath '/*[2]')->all;
+        cmp_bag(\@resultlist, [ 'ZZZ' ], "incremental + FILTER int" );
 
 }
 
