@@ -15,16 +15,16 @@ BEGIN {
 	use_ok( 'Data::DPath' );
 }
 
-my $data  = {
-             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
-                       RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
-                       DDD   => { EEE  => [ qw/ uuu vvv www / ] },
-                     },
-             some => { where => { else => {
-                                           AAA => { BBB => { CCC => 'affe' } },
-                                          } } },
-             strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
-            };
+my $data = {
+            AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                    },
+            some => { where => { else => {
+                                          AAA => { BBB => { CCC => 'affe' } },
+                                         } } },
+            strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
+           };
 
 my @resultlist;
 my $resultlist;
@@ -39,7 +39,7 @@ cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
 cmp_bag(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
 
 @resultlist = dpath('//../CCC')->match($data);
-print Dumper(\@resultlist);
+#print Dumper(\@resultlist);
 cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
                           [ qw/ RR1 RR2 RR3 / ],
                           'affe',                      # missing due to reduction to HASH|ARRAY in _any?
@@ -85,7 +85,6 @@ cmp_bag(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', '
 
 # --- ---
 
-# WATCH OUT: the order of results is not defined! tests may be false negatives ...
 @resultlist = dpath('//AAA/*/CCC')->match($data);
 cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'] ], "ANYWHERE + KEYs + ANYSTEP" );
 @resultlist = dpath('///AAA/*/CCC')->match($data);

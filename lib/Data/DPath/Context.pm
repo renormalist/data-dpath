@@ -74,11 +74,11 @@ class Data::DPath::Context {
 
                 given ($filter) {
                         when (/^-?\d+$/) {
-                                #say "INT Filter: $filter";
+                                # say "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @points));
                                 return $self->_filter_points_index($filter, @points); # simple array index
                         }
                         when (/\S/) {
-                                say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
+                                #say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
                                 return $self->_filter_points_eval($filter, @points); # full condition
                         }
                         default {
