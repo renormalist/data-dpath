@@ -44,6 +44,7 @@ class Data::DPath::Context {
                 #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @points ]);
                 my @new_points;
                 {
+                        require Data::DPath::Filters;
                         package Data::DPath::Filters;
                         local our $index = 0;
                         @new_points =
@@ -54,6 +55,7 @@ class Data::DPath::Context {
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
                                             $res = eval $filter;
+                                            say STDERR $@ if $@;
                                     } else {
                                             $res = 0;
                                     }
