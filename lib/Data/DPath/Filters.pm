@@ -37,9 +37,15 @@ Data::DPath::Filters - Magic DWIM functions available inside filter conditions
 
 Mysterious test function. Will vanish. Soon.
 
-=head2 index
+=head2 idx
 
 Returns the current index inside array elements.
+
+=head2 size
+
+Returns the size of the current element. If it's a hash ref it returns
+number of elements, if hashref it rturns number of keys, if scalar it
+returns 1, everything else returns -1.
 
 =head1 AUTHOR
 
