@@ -16,16 +16,7 @@ class Data::DPath::Context {
                     map { $$_ }
                         uniq
                             map {
-                                 #$_->ref
-                                 #say STDERR "UNDEF" unless defined $_;
-                                 #print STDERR $_ ? Dumper($_->ref) : "UNDEF";
-                                 defined $_ ? $_->ref : () # ?: should not be neccessary
-                                 # better way, especially earlier possible?
-                                 # it currently lazily solves array access on points that are not arrays, e.g.:
-                                 #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
-                                 # where last ->{'CCC'} is not an array but simple value
-                                 # See also data_dpath.t, the AHA section.
-                                 # I don't really like it yet.
+                                 defined $_ ? $_->ref : ()
                                 } $self->current_points;
         }
 
