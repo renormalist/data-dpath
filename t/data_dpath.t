@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 108;
+use Test::More tests => 110;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -559,6 +559,15 @@ cmp_bag($resultlist, [
                      ], "ROOT + ANYSTEP + FILTER eval with key matches m(CC)" );
 
 
+$resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]');
+#print STDERR "resultlist = ", Dumper($resultlist);
+cmp_bag($resultlist, [ 'RR2' ], "ANYWHERE + ANYSTEP + FILTER eval value" );
+
+$resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]/..');
+#print STDERR "resultlist = ", Dumper($resultlist);
+cmp_bag($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + ANYSTEP + FILTER eval value + PARENT" );
+
 $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]/../..');
 #print STDERR "resultlist = ", Dumper($resultlist);
-cmp_bag($resultlist, [ { CCC  => [ qw/ RR1 RR2 RR3 / ] } ], "KEYs" );
+cmp_bag($resultlist, [ { CCC  => [ 'RR1', 'RR2', 'RR3' ] } ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT" );
+
