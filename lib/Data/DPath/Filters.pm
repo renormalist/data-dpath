@@ -24,7 +24,7 @@ sub size
 
 sub key
 {
-        # print STDERR "*** key ", Dumper($_ ? $_ : "UNDEF");
+        #print STDERR "*** key ", Dumper($_ ? $_ : "UNDEF");
         return (keys %$_)[0] if ref $_  eq 'HASH';
         return undef;
 }
@@ -63,14 +63,19 @@ Returns the current index inside array elements.
 
 =head2 size
 
-Returns the size of the current element. If it is a hash ref it returns
-number of elements, if hashref it rturns number of keys, if scalar it
-returns 1, everything else returns -1.
+Returns the size of the current element. If it is a hash ref it
+returns number of elements, if hashref it returns number of keys, if
+scalar it returns 1, everything else returns -1.
 
 =head2 key
 
 Returns the key of the current element if it is a hashref. Else it
 returns undef.
+
+=head2 value
+
+Returns the value of the current element. If it is a hashref return
+the value. If a scalar return the scalar. Else return undef.
 
 =head1 AUTHOR
 

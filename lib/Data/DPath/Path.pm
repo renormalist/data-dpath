@@ -45,11 +45,7 @@ class Data::DPath::Path {
                 my @steps;
 
                 push @steps, new Data::DPath::Step( part => '', kind => 'ROOT' );
-#                 my ($start) = $remaining_path =~ m,^(//?),;
-#                 given ($start) {
-#                         when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
-#                         when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
-#                 }
+
                 while ($remaining_path) {
                         my $plain_part;
                         my $filter;

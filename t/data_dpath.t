@@ -446,8 +446,16 @@ $resultlist = $data3 ~~ dpath '//neighbourhoods/*[20]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER too high int + KEYs" );
 
+
 TODO: {
         local $TODO = 'spec only: matches';
+
+#         #$resultlist = $data3 ~~ dpath '/*';#[ key =~ qw(neigh.*hoods) ]';#/*[0]/DDD/FFF';
+#         $resultlist = $data3 ~~ dpath '//[ key =~ qw(neigh.*hoods) ]';#/*[0]/DDD/FFF';
+#         #print STDERR "data3      = ", Dumper($data3);
+# print STDERR "\n\n--------------------------------------------------\n\n";
+#         print STDERR "resultlist = ", Dumper($resultlist);
+# print STDERR "\n\n**************************************************\n\n";
 
         # filters on ANY
         $resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
@@ -557,7 +565,6 @@ cmp_bag($resultlist, [
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
                       { CCC  => 'affe' },
                      ], "ROOT + ANYSTEP + FILTER eval with key matches m(CC)" );
-
 
 $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]');
 #print STDERR "resultlist = ", Dumper($resultlist);
