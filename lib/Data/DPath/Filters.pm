@@ -29,6 +29,14 @@ sub key
         return undef;
 }
 
+sub value
+{
+        #print STDERR "*** value ", (keys %$_)[0], " ", Dumper($_ ? $_ : "UNDEF");
+        return (values %$_)[0] if ref  $_  eq 'HASH';
+        return $_              if ref \$_  eq 'SCALAR';
+        return undef;
+}
+
 # IDEA: functions that return always true, but track stack of values, eg. last taken index
 #
 #    //AAA/*[ _push_idx ]/CCC[ condition ]/../../*[ idx == pop_idx + 1]/
