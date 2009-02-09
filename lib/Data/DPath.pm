@@ -5,7 +5,7 @@ use 5.010;
 class Data::DPath {
 
         our $DEBUG = 0;
-        our $VERSION = '0.02';
+        our $VERSION = '0.03';
 
         use Data::DPath::Path;
         use Data::DPath::Context;
