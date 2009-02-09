@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More tests => 23;
 
 use 5.010;
 
@@ -227,7 +227,6 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
 
 $strange_path = q!//A1/[2]/A3/[key =~ qw(neigh.*hoods)]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-$dpath = new Data::DPath::Path( path => $strange_path );
 @steps = $dpath->_steps;
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
@@ -278,3 +277,32 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs3");
 is((scalar @isas), (scalar @steps), "isas3");
 
 # --------------------------------------------------
+
+$strange_path = q!/[2]!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                      /],
+          "kinds4");
+
+is_deeply(\@parts, [
+                    '',
+                   ],
+          "parts4");
+TODO: {
+        local $TODO = 'filters on ROOT/ANYWHERE not yet working';
+
+        is_deeply(\@filters, [
+                              '[2]',
+                             ],
+                  "filters4");
+}
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs4");
+is((scalar @isas), (scalar @steps), "isas4");
+
