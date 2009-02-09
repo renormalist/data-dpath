@@ -1,3 +1,39 @@
+2009-02-09  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.03
+
+	* The first useful release, see test suite for many examples!
+
+	* much improved path tokenizer
+
+	* new path steps: parent "..", anywhere "//", anystep "*"
+
+	* implemented filter conditions (in brackets after path step)
+
+	* filter condition type "just index": *[1]
+
+	* filter condition type "eval": *[idx =3]
+
+	* clean filter semantics for STEP[filter] vs. STEP/*[filter]
+
+	* clean semantics for anywhere+parent "//.."
+
+	* provide filter functions: size, idx
+
+	* more concise semantics combinations of "..", "*", and filters
+
+	* many more tests
+
+	* more clean export behaviour [rafl++]
+
+	* uniq results if found via multiple ways
+
+	* overloaded '~~' smartmatch
+
+	* switch to Module::Install
+
+	* tests do not depend on result order
+
 2008-11-26  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.01
