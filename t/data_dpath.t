@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 100;
+use Test::More tests => 107;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -138,7 +138,6 @@ cmp_bag($resultlist, [
                      ], "ANYWHERE + KEY" );
 
 $resultlist = $data ~~ dpath('//AAA/*');
-#print STDERR Dumper([ $data ~~ dpath('//AAA/*') ]);
 cmp_bag($resultlist, [
                       { CCC  => [ qw/ XXX YYY ZZZ / ] },
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -147,11 +146,9 @@ cmp_bag($resultlist, [
                      ], "ANYWHERE + KEY + ANYSTEP" );
 
 $resultlist = $data ~~ dpath('//AAA/*[size == 3]');
-print STDERR Dumper($resultlist);
 cmp_bag($resultlist, [ ], "ANYWHERE + KEY + ANYSTEP + FILTER size" );
 
 $resultlist = $data ~~ dpath('//AAA/*[size == 1]');
-print STDERR Dumper($resultlist);
 cmp_bag($resultlist, [
                       { CCC  => [ qw/ XXX YYY ZZZ / ] },
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -513,4 +510,51 @@ cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER e
 
 $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/"*"[ m/[A-Z]+/ ]';
 cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with slashes needs quotes" );
+
+$resultlist = $data ~~ dpath '//AAA/BBB[key eq "CCC"]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + STEP + FILTER eval key eq string" );
+
+$resultlist = $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]';
+cmp_bag($resultlist, [ ], "ROOT + STEP + ANYSTEP + FILTER eval key eq string, just to show difference" );
+
+$resultlist = $data ~~ dpath '//AAA/*[ key eq "CCC" ]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + ANYSTEP + FILTER eval key eq string" );
+
+$resultlist = $data ~~ dpath '//AAA/*[ key =~ m(...) ]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      { EEE  => [ qw/ uuu vvv www / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + ANYSTEP + FILTER eval key matches m()" );
+
+$resultlist = $data ~~ dpath '//AAA/*[ key =~ qr(...) ]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      { EEE  => [ qw/ uuu vvv www / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + ANYSTEP + FILTER eval key matches qr()" );
+
+$resultlist = $data ~~ dpath '//AAA/*[ key =~ m(...) ]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      { EEE  => [ qw/ uuu vvv www / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + ANYSTEP + FILTER eval with key matches m(...)" );
+
+$resultlist = $data ~~ dpath '//AAA/*[ key =~ m(CC) ]';
+cmp_bag($resultlist, [
+                      { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                      { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                      { CCC  => 'affe' },
+                     ], "ROOT + ANYSTEP + FILTER eval with key matches m(CC)" );
 
