@@ -16,10 +16,9 @@ sub idx { $idx }
 
 sub size
 {
-        #say "size: ".Dumper($_);
-        return scalar @$_      if ref $_ eq 'ARRAY';
-        return scalar keys %$_ if ref $_ eq 'HASH';
-        return  1         if ref \$_ eq 'SCALAR';
+        return scalar @$_      if ref $_  eq 'ARRAY';
+        return scalar keys %$_ if ref $_  eq 'HASH';
+        return  1              if ref \$_ eq 'SCALAR';
         return -1;
 }
 
