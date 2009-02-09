@@ -23,6 +23,19 @@ sub size
         return -1;
 }
 
+sub key
+{
+        # print STDERR "*** key ", Dumper($_ ? $_ : "UNDEF");
+        return (keys %$_)[0] if ref $_  eq 'HASH';
+        return undef;
+}
+
+# IDEA: functions that return always true, but track stack of values, eg. last taken index
+#
+#    //AAA/*[ _push_idx ]/CCC[ condition ]/../../*[ idx == pop_idx + 1]/
+#
+# This would take a way down to a filtered CCC, then back again and take the next neighbor.
+
 1;
 
 __END__
@@ -43,9 +56,14 @@ Returns the current index inside array elements.
 
 =head2 size
 
-Returns the size of the current element. If it's a hash ref it returns
+Returns the size of the current element. If it is a hash ref it returns
 number of elements, if hashref it rturns number of keys, if scalar it
 returns 1, everything else returns -1.
+
+=head2 key
+
+Returns the key of the current element if it is a hashref. Else it
+returns undef.
 
 =head1 AUTHOR
 

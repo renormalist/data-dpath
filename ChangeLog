@@ -18,7 +18,7 @@
 
 	* clean semantics for anywhere+parent "//.."
 
-	* provide filter functions: size, idx
+	* provide filter functions: size, idx, key
 
 	* more concise semantics combinations of "..", "*", and filters
 
