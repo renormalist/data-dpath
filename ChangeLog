@@ -12,15 +12,13 @@
 
 	* filter condition type "just index": *[1]
 
-	* filter condition type "eval": *[idx =3]
+	* filter condition type "eval": *[idx == 3], *[ key =~ m(foo) ]
 
-	* clean filter semantics for STEP[filter] vs. STEP/*[filter]
+	* cleaner semantics for STEP[filter] vs. STEP/*[filter]
 
-	* clean semantics for anywhere+parent "//.."
+	* cleaner semantics for combinations of "//", "..", "*", and filters
 
-	* provide filter functions: size, idx, key
-
-	* more concise semantics combinations of "..", "*", and filters
+	* provide filter functions: size, idx, key, value
 
 	* many more tests
 

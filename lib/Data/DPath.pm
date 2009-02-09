@@ -83,8 +83,24 @@ Data::DPath - DPath is not XPath!
     @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
     $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
+Various other example paths from C<t/data_dpath.t> (not neccessarily
+fitting to above data structure):
 
-See currently working paths in C<t/data_dpath.t>.
+    $data ~~ dpath '/AAA/*/CCC'
+    $data ~~ dpath '/AAA/BBB/CCC/../..'    # parents  (..)
+    $data ~~ dpath '//AAA'                 # anywhere (//)
+    $data ~~ dpath '//AAA/*'               # anywhere + anystep
+    $data ~~ dpath '//AAA/*[size == 3]'    # filter by arrays/hash size
+    $data ~~ dpath '//AAA/*[size != 3]'    # filter by arrays/hash size
+    $data ~~ dpath '/"EE/E"/CCC'           # quote strange keys
+    $data ~~ dpath '/AAA/BBB/CCC/*[1]'     # filter by array index
+    $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
+    $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
+    $data ~~ dpath '//AAA/*[ key =~ m(CC) ]'    # filter by regex matching keys
+    $data ~~ dpath '//AAA/"*"[ key =~ /CC/ ]'   # when path is quoted, filter can contain slashes
+    $data ~~ dpath '//CCC/*[value eq "RR2"]'    # filter by values of hashes
+
+See full details C<t/data_dpath.t>.
 
 =head1 INSTALLATION
 
