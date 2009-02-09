@@ -46,6 +46,7 @@ class Data::DPath::Context {
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
                                             # say STDERR "* $_";
+                                            no warnings 'uninitialized'; # having non-fitting values is the norm
                                             $res = eval $filter;
                                             say STDERR $@ if $@;
                                     } else {
