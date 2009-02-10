@@ -104,12 +104,16 @@ fitting to above data structure):
 
 See full details C<t/data_dpath.t>.
 
-=head1 INSTALLATION
+=head1 ALPHA WARNING
 
- perl Makefile.PL
- make
- make test
- make install
+I still experiment in details of semantics, especially final names of
+the available filter functions and some edge cases like path steps
+with just filter, or similar.
+
+I will name this module v1.00 when I consider it stable.
+
+In the mean time the worst thing that might happen would be slightly
+changes to your dpaths. No current features will get lost.
 
 =head1 FUNCTIONS
 
@@ -155,8 +159,6 @@ dpath> is the same as C<dpath ~~ data>).
 
 =item * C<//>
 
-(not yet implemented)
-
 Anchors to any hash or array inside the data structure below the
 current step (or the root).
 
@@ -173,8 +175,6 @@ This allows any way between C<BBB> and C<FARAWAY>.
 
 =item * C<*>
 
-(only partially implemented)
-
 Matches one step of any value relative to the current step (or the
 root). This step might be any hash key or all values of an array in
 the step before.
@@ -187,8 +187,6 @@ vs. C</part/*[filter]>
 ... TODO ...
 
 =head2 Filters
-
-(not yet implemented)
 
 Filters are conditions in brackets. They apply to all elements that
 are directly found by the path part to which the filter is appended.
