@@ -6,3 +6,4 @@ blib\b
 ^Makefile.old$
 ^Debian
 ^Data-DPath-
+experiments
