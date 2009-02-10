@@ -47,6 +47,8 @@ sub value
 
 __END__
 
+=pod
+
 =head1 NAME
 
 Data::DPath::Filters - Magic DWIM functions available inside filter conditions

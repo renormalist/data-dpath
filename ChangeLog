@@ -1,4 +1,12 @@
-2009-02-10  Steffen Schwigon  <steffen.schwigon@amd.com>
+2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.05
+
+	* more docs
+
+	* tests for negative array indexes
+
+2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.04
 

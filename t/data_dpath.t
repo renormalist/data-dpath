@@ -580,9 +580,12 @@ $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]');
 #print STDERR "resultlist = ", Dumper($resultlist);
 cmp_bag($resultlist, [ 'RR2' ], "ANYWHERE + ANYSTEP + FILTER eval value" );
 
+# print STDERR "**************************************************\n";
+# print STDERR "resultlist = ", Dumper($data ~~ dpath('//CCC/*[value eq "RR2"]')); # /..
 $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]/..');
 #print STDERR "resultlist = ", Dumper($resultlist);
 cmp_bag($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + ANYSTEP + FILTER eval value + PARENT" );
+# print STDERR "**************************************************\n";
 
 $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]/../..');
 #print STDERR "resultlist = ", Dumper($resultlist);
