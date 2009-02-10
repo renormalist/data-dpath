@@ -1,3 +1,10 @@
+2009-02-10  Steffen Schwigon  <steffen.schwigon@amd.com>
+
+	* v0.04
+
+	* Fix $VERSION inside MoosX::Declare'd class not recognized by
+	CPAN indexer
+
 2009-02-09  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.03
