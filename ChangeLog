@@ -1,3 +1,52 @@
+2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.05
+
+	* more docs
+
+	* tests for negative array indexes
+
+2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.04
+
+	* Fix $VERSION inside MoosX::Declare'd class not recognized by
+	CPAN indexer
+
+2009-02-09  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.03
+
+	* The first useful release, see test suite for many examples!
+
+	* much improved path tokenizer
+
+	* new path steps: parent "..", anywhere "//", anystep "*"
+
+	* implemented filter conditions (in brackets after path step)
+
+	* filter condition type "just index": *[1]
+
+	* filter condition type "eval": *[idx == 3], *[ key =~ m(foo) ]
+
+	* cleaner semantics for STEP[filter] vs. STEP/*[filter]
+
+	* cleaner semantics for combinations of "//", "..", "*", and filters
+
+	* provide filter functions: size, idx, key, value
+
+	* many more tests
+
+	* more clean export behaviour [rafl++]
+
+	* uniq results if found via multiple ways
+
+	* overloaded '~~' smartmatch
+
+	* switch to Module::Install
+
+	* tests do not depend on result order
+
 2008-11-26  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.01

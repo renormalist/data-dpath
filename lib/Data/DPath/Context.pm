@@ -7,7 +7,6 @@ class Data::DPath::Context {
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
-        use Data::Visitor::Callback;
 
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
@@ -17,15 +16,7 @@ class Data::DPath::Context {
                     map { $$_ }
                         uniq
                             map {
-                                 #$_->ref
-                                 #print STDERR Dumper($_);
-                                 defined $_ ? $_->ref : () # ?: should not be neccessary
-                                 # better way, especially earlier possible?
-                                 # it currently lazily solves array access on points that are not arrays, e.g.:
-                                 #   'ref' => \${$VAR1->{'parent'}{'parent'}{'parent'}{'parent'}{'parent'}{'ref'}}->{'AAA'}->{'BBB'}->{'CCC'}->[2]
-                                 # where last ->{'CCC'} is not an array but simple value
-                                 # See also data_dpath.t, the AHA section.
-                                 # I don't really like it yet.
+                                 defined $_ ? $_->ref : ()
                                 } $self->current_points;
         }
 
@@ -41,10 +32,12 @@ class Data::DPath::Context {
                 return () unless @points;
                 return @points unless defined $filter;
 
+                #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @points ]);
                 my @new_points;
                 {
+                        require Data::DPath::Filters;
                         package Data::DPath::Filters;
-                        local our $index = 0;
+                        local our $idx = 0;
                         @new_points =
                             grep {
                                     my $res;
@@ -52,11 +45,14 @@ class Data::DPath::Context {
                                     local $_;
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
+                                            # say STDERR "* $_";
+                                            no warnings 'uninitialized'; # having non-fitting values is the norm
                                             $res = eval $filter;
+                                            say STDERR $@ if $@;
                                     } else {
                                             $res = 0;
                                     }
-                                    $index++;
+                                    $idx++;
                                     $res;
                             } @points;
                 }
@@ -71,13 +67,15 @@ class Data::DPath::Context {
                 my $filter = $step->filter;
                 return @points unless defined $filter;
 
-                $filter =~ s/^\[(.*)\]$/$1/; # strip brackets
-                given ($filter)
-                {
-                        when (/^\d+$/) {
+                $filter =~ s/^\[\s*(.*?)\s*\]$/$1/; # strip brackets and whitespace
+
+                given ($filter) {
+                        when (/^-?\d+$/) {
+                                # say "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @points));
                                 return $self->_filter_points_index($filter, @points); # simple array index
                         }
                         when (/\S/) {
+                                #say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @points));
                                 return $self->_filter_points_eval($filter, @points); # full condition
                         }
                         default {
@@ -87,7 +85,7 @@ class Data::DPath::Context {
         }
 
         # only finds "inner" values; if you need the outer start value
-        # then just wrap it into array brackets.
+        # then just wrap it into one more level of array brackets.
         sub _any {
                 my ($out, $in) = @_;
 
@@ -106,21 +104,11 @@ class Data::DPath::Context {
                         given (ref $$ref) {
                                 when ('HASH')  { @values = values %{$$ref} }
                                 when ('ARRAY') { @values = @{$$ref}        }
-                                default { next }
+                                default        { next }
                         }
-
-                        push @newout,
-                            map { new Data::DPath::Point( ref => \$_, parent => $point ) }
-                                grep { ref =~ /^HASH|ARRAY$/ }
-                                    @values;
-
                         foreach (@values) {
-                                my $v = new Data::Visitor::Callback( ref => sub {
-                                                                                 my ( $visitor, $data ) = @_;
-                                                                                 # TODO: just encapsulate for recursive call, parent not needed
-                                                                                 push @newin, new Data::DPath::Point( ref => \$data, parent => $point );
-                                                                                } );
-                                $v->visit( $_ );
+                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
+                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
                         }
                 }
                 push @$out,  @newout;
@@ -142,7 +130,8 @@ class Data::DPath::Context {
                                 {
                                         # the root node
                                         # (only makes sense at first step, but currently not asserted)
-                                        push @new_points, @current_points;
+                                        my @step_points = $self->_filter_points($step, @current_points);
+                                        push @new_points, @step_points;
                                 }
                                 when ('ANYWHERE')
                                 {
@@ -153,9 +142,8 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
-                                                @new_points = _any([], [ $point ]);
-                                                push @new_points, $point;
-                                                #print "    new_points: ", Dumper(\@new_points);
+                                                my @step_points = (_any([], [ $point ]), $point);
+                                                push @new_points, $self->_filter_points($step, @step_points);
                                                 $Data::DPath::DEBUG && print "    new_points: ", Dumper(\@new_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
@@ -171,9 +159,10 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
                                                 # take point as hash, skip undefs
-                                                push @new_points, map {
+                                                my @step_points = map {
                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                       } ( ${$point->ref}->{$step->part} || () );
+                                                push @new_points, $self->_filter_points($step, @step_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
@@ -186,28 +175,30 @@ class Data::DPath::Context {
                                                 # take point as array
                                                 my $ref = ${$point->ref};
                                                 $Data::DPath::DEBUG && say "    *** ", ref($ref);
+                                                my @step_points = ();
                                                 given (ref $ref) {
                                                         when ('HASH')
                                                         {
-                                                                push @new_points, map {
-                                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                      } values %$ref;
+                                                                @step_points = map {
+                                                                                    new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                   } values %$ref;
                                                         }
                                                         when ('ARRAY')
                                                         {
-                                                                push @new_points, map {
-                                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                      } @$ref;
+                                                                @step_points = map {
+                                                                                    new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                   } @$ref;
                                                         }
                                                         default
                                                         {
                                                                 if (ref $point->ref eq 'SCALAR') {
-                                                                        push @new_points, map {
-                                                                                               new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                              } $ref;
+                                                                        @step_points = map {
+                                                                                            new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                           } $ref;
                                                                 }
                                                         }
                                                 }
+                                                push @new_points, $self->_filter_points($step, @step_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
@@ -217,14 +208,12 @@ class Data::DPath::Context {
                                         # the parent
                                         foreach my $point (@current_points) {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                                push @new_points, $point->parent;
+                                                my @step_points = ($point->parent);
+                                                push @new_points, $self->_filter_points($step, @step_points);
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                         }
-                        $Data::DPath::DEBUG && print "    newpoints unfiltered: ", Dumper(\@new_points);
-                        @new_points = $self->_filter_points($step, @new_points);
-                        $Data::DPath::DEBUG && print "    newpoints filtered:   ", Dumper(\@new_points);
                         @current_points = @new_points;
                         $Data::DPath::DEBUG && say "    ______________________________________________________________________";
                 }
@@ -260,14 +249,14 @@ Return new context with path relative to current context.
 
 Same as C<< search($path)->all() >>;
 
-=head1 API METHODS
+=head1 UTILITY SUBS/METHODS
 
 =head2 _filter_points
 
 Evaluates the filter condition in brackets. It differenciates between
 simple integers, which are taken as array index, and all other
 conditions, which are taken as evaled perl expression in a grep like
-expression.
+expression onto the set of points found by current step.
 
 =head1 AUTHOR
 
@@ -275,7 +264,7 @@ Steffen Schwigon, C<< <schwigon at cpan.org> >>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 Steffen Schwigon.
+Copyright 2008,2009 Steffen Schwigon.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -305,9 +294,9 @@ package Data::DPath::Filters;
 
 package Data::DPath::Context;
 sub _filter {
-        
+
         @points = map { new Point( ref => $_ } @refs;
-                        
+
                         @filtered = grep { eval 'reallyhotstuff("Foo")' } @points;
                         grep { $_ = ${ $_->ref }; foo() } @list;
                         {

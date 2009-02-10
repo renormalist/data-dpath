@@ -5,7 +5,6 @@ use 5.010;
 class Data::DPath {
 
         our $DEBUG = 0;
-        our $VERSION = '0.02';
 
         use Data::DPath::Path;
         use Data::DPath::Context;
@@ -35,6 +34,10 @@ class Data::DPath {
         # ------------------------------------------------------------
 
 }
+
+# classical package/VERSION way for the CPAN indexer
+package Data::DPath;
+our $VERSION = '0.05';
 
 1;
 
@@ -83,15 +86,37 @@ Data::DPath - DPath is not XPath!
     @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
     $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
+Various other example paths from C<t/data_dpath.t> (not neccessarily
+fitting to above data structure):
 
-See currently working paths in C<t/data_dpath.t>.
+    $data ~~ dpath '/AAA/*/CCC'
+    $data ~~ dpath '/AAA/BBB/CCC/../..'    # parents  (..)
+    $data ~~ dpath '//AAA'                 # anywhere (//)
+    $data ~~ dpath '//AAA/*'               # anywhere + anystep
+    $data ~~ dpath '//AAA/*[size == 3]'    # filter by arrays/hash size
+    $data ~~ dpath '//AAA/*[size != 3]'    # filter by arrays/hash size
+    $data ~~ dpath '/"EE/E"/CCC'           # quote strange keys
+    $data ~~ dpath '/AAA/BBB/CCC/*[1]'     # filter by array index
+    $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
+    $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
+    $data ~~ dpath '//AAA/*[ key =~ m(CC) ]'    # filter by regex matching keys
+    $data ~~ dpath '//AAA/"*"[ key =~ /CC/ ]'   # when path is quoted, filter can contain slashes
+    $data ~~ dpath '//CCC/*[value eq "RR2"]'    # filter by values of hashes
 
-=head1 INSTALLATION
+See full details C<t/data_dpath.t>.
 
- perl Makefile.PL
- make
- make test
- make install
+=head1 ALPHA WARNING
+
+I still experiment in details of semantics, especially final names of
+the available filter functions and some edge cases, in particular, I
+expect slightly changes in filters without keys, like
+C<//[filter]>.
+
+But no current features should get lost. The worst thing that might
+happen would be slightly changes to your dpaths.
+
+I will name this module v1.00 when I consider it stable. Ask me if you
+are not sure.
 
 =head1 FUNCTIONS
 
@@ -129,15 +154,44 @@ dpath> is the same as C<dpath ~~ data>).
 
 =head2 Synopsis
 
-... TODO ...
+ /AAA/BBB/CCC
+ /AAA/*/CCC
+ //CCC/*
+ //CCC/*[2]
+ //CCC/*[size == 3]
+ //CCC/*[size != 3]
+ /"EE/E"/CCC
+ /AAA/BBB/CCC/*[1]
+ /AAA/BBB/CCC/*[ idx == 1 ]
+ //AAA/BBB/*[key eq "CCC"]
+ //AAA/*[ key =~ m(CC) ]
+ //AAA/"*"[ key =~ /CC/ ]
+ //CCC/*[value eq "RR2"]
+
+=head2 Modeled on XPath
+
+The basic idea is that of XPath: define a way through a datastructure
+and allow some funky ways to describe fuzzy ways. The syntax is
+roughly looking like XPath but in fact have not much more in common.
+
+=head3 Some wording
+
+I call the whole path a, well, B<path>.
+
+It consists of single (B<path>) B<steps> that are divided by the path
+separator C</>.
+
+Each step can have a B<filter> appended in brackets C<[]> that narrows
+down the matching set of results.
+
+Additional functions provided inside the filters are called, well,
+B<filter functions>.
 
 =head2 Special elements
 
 =over 4
 
 =item * C<//>
-
-(not yet implemented)
 
 Anchors to any hash or array inside the data structure below the
 current step (or the root).
@@ -155,8 +209,6 @@ This allows any way between C<BBB> and C<FARAWAY>.
 
 =item * C<*>
 
-(only partially implemented)
-
 Matches one step of any value relative to the current step (or the
 root). This step might be any hash key or all values of an array in
 the step before.
@@ -170,8 +222,6 @@ vs. C</part/*[filter]>
 
 =head2 Filters
 
-(not yet implemented)
-
 Filters are conditions in brackets. They apply to all elements that
 are directly found by the path part to which the filter is appended.
 
@@ -182,16 +232,43 @@ Examples:
 
 =over 4
 
-=item C</*[2]/>
+=item C</FOO/*[2]/>
 
 A single integer as filter means choose an element from an array. So
-the C<*> finds all subelements on current step and the C<[2]> reduces
-them to only the third element (index starts at 0).
+the C<*> finds all subelements that follow current step C<FOO> and the
+C<[2]> reduces them to only the third element (index starts at 0).
 
-=item C</FOO[ref eq 'ARRAY']/>
+=item C</FOO/*[ idx == 2 ]/>
 
-The C<FOO> is a step that matches a hash key C<FOO> and the filter
-only takes the element if it is an 'ARRAY'.
+The C<*> is a step that matches all elements after C<FOO>, but with
+the filter only those elements are chosen that are of index 2. This is
+actually the same as just C</FOO/*[2]>.
+
+=item C</FOO[key eq "CCC"]>
+
+On step C<FOO> it matches only those elements whose key is "CCC".
+
+=item C</FOO[key =~ m(CCC) ]>
+
+On step C<FOO> it matches only those elements whose key matches the
+regex C</CCC/>. It's actually just Perl code inside the filter but the
+C</> was avoided because it is the path separator, therefore the round
+parens around the regex.
+
+=item C<//FOO/*[value eq "RR2"]>
+
+Find elements below C<FOO> that have the value C<RR2>.
+
+Combine this with the parent step C<..>:
+
+=item C<//FOO/*[value eq "RR2"]/..>
+
+Find such an element below C<FOO> where an element with value C<RR2>
+is contained.
+
+=item C<//FOO[size >= 3]>
+
+Find C<FOO> elements that are arrays or hashes of size 3 or bigger.
 
 =back
 
@@ -200,32 +277,37 @@ C<isa> and C<ref>.
 
 =head2 Filter functions
 
-(not yet implemented)
-
 The filter condition is internally part of a C<grep> over the current
-subset of values. So you can also use the variable C<$_> in it:
+subset of values. So you can write any condition like in a grep and
+also use the variable C<$_>.
 
-  /*[$_->isa eq 'Some::Class']/
+Additional filter functions are available that are usually written to
+use $_ by default. See L<Data::DPath::Filters|Data::DPath::Filters>
+for complete list of available filter functions.
 
-Additional filter functions are available that are usually prototyped
-to take $_ by default:
+Here are some of them:
 
 =over 4
 
-=item C<index>
+=item idx
 
-The index of an element. So these two filters are equivalent:
+Returns the current index inside array elements.
 
- /*[2]/
- /*[index == 2]/
+=item size
 
-=item C<ref>
+Returns the size of the current element. If it is a hash ref it
+returns number of elements, if hashref it returns number of keys, if
+scalar it returns 1, everything else returns -1.
 
-Perl's C<ref>.
+=item key
 
-=item C<isa>
+Returns the key of the current element if it is a hashref. Else it
+returns undef.
 
-Perl's C<isa>.
+=item value
+
+Returns the value of the current element. If it is a hashref return
+the value. If a scalar return the scalar. Else return undef.
 
 =back
 
@@ -314,6 +396,10 @@ something you know (Perl, Shell, etc.).
 =head1 AUTHOR
 
 Steffen Schwigon, C<< <schwigon at cpan.org> >>
+
+=head1 CONTRIBUTIONS
+
+Florian Ragwitz (cleaner exports, $_ scoping, general perl consultant)
 
 =head1 BUGS
 

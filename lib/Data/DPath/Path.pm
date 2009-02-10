@@ -45,11 +45,7 @@ class Data::DPath::Path {
                 my @steps;
 
                 push @steps, new Data::DPath::Step( part => '', kind => 'ROOT' );
-#                 my ($start) = $remaining_path =~ m,^(//?),;
-#                 given ($start) {
-#                         when ('//') { push @steps, new Data::DPath::Step( part => $start, kind => 'ANYWHERE'  ) }
-#                         when ('/')  { push @steps, new Data::DPath::Step( part => $start, kind => 'ROOT'      ) }
-#                 }
+
                 while ($remaining_path) {
                         my $plain_part;
                         my $filter;
@@ -146,7 +142,7 @@ Steffen Schwigon, C<< <schwigon at cpan.org> >>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 Steffen Schwigon.
+Copyright 2008,2009 Steffen Schwigon.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

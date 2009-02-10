@@ -7,3 +7,4 @@ blib\b
 ^Debian
 ^Data-DPath-
 experiments
+t/00-suite-meta.t
