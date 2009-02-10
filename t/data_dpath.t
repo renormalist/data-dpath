@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 114;
+use Test::More tests => 115;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -203,6 +203,15 @@ cmp_bag($resultlist, [
                       },
                       { BBB => { CCC => 'affe' } },
                      ], 'FILTER hash size >= 1' );
+
+$resultlist = $data ~~ dpath '//AAA[ size >= 3 ]'; # hash with >= 3 elements
+cmp_bag($resultlist, [
+                      {
+                       BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                       DDD => { EEE  => [ qw/ uuu vvv www / ] },
+                      },
+                     ], 'FILTER hash size >= 3' );
 
 $resultlist = $data ~~ dpath '//AAA[size == 1]'; # hash with >= elements
 cmp_bag($resultlist, [

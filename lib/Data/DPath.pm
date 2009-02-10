@@ -35,8 +35,9 @@ class Data::DPath {
 
 }
 
+# classical package/VERSION way for the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 1;
 
