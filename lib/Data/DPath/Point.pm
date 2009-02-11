@@ -7,6 +7,9 @@ class Data::DPath::Point {
         has ref    => ( is  => "rw", default => sub { undef } );
 }
 
+# help the CPAN indexer
+package Data::DPath::Point;
+
 1;
 
 __END__

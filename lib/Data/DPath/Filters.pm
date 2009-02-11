@@ -43,6 +43,9 @@ sub value
 #
 # This would take a way down to a filtered CCC, then back again and take the next neighbor.
 
+# help the CPAN indexer
+package Data::DPath::Filters;
+
 1;
 
 __END__

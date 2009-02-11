@@ -227,6 +227,9 @@ class Data::DPath::Context {
 
 }
 
+# help the CPAN indexer
+package Data::DPath::Context;
+
 1;
 
 __END__
