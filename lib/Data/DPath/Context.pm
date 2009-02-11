@@ -7,6 +7,7 @@ class Data::DPath::Context {
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
+        use Scalar::Util 'reftype';
 
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
@@ -101,7 +102,7 @@ class Data::DPath::Context {
                 foreach my $point (@$in) {
                         my @values;
                         my $ref = $point->ref;
-                        given (ref $$ref) {
+                        given (reftype $$ref) {
                                 when ('HASH')  { @values = values %{$$ref} }
                                 when ('ARRAY') { @values = @{$$ref}        }
                                 default        { next }
@@ -153,8 +154,9 @@ class Data::DPath::Context {
                                         # the value of a key
                                         #print "    current_points: ", Dumper(\@current_points);
                                         foreach my $point (@current_points) {
+                                                no warnings 'uninitialized';
                                                 next unless defined $point;
-                                                next unless ref ${$point->ref} eq 'HASH';
+                                                next unless reftype ${$point->ref} eq 'HASH';
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
@@ -174,9 +176,9 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 # take point as array
                                                 my $ref = ${$point->ref};
-                                                $Data::DPath::DEBUG && say "    *** ", ref($ref);
+                                                $Data::DPath::DEBUG && say "    *** ", reftype ($ref);
                                                 my @step_points = ();
-                                                given (ref $ref) {
+                                                given (reftype $ref) {
                                                         when ('HASH')
                                                         {
                                                                 @step_points = map {
@@ -191,7 +193,7 @@ class Data::DPath::Context {
                                                         }
                                                         default
                                                         {
-                                                                if (ref $point->ref eq 'SCALAR') {
+                                                                if (reftype $point->ref eq 'SCALAR') {
                                                                         @step_points = map {
                                                                                             new Data::DPath::Point( ref => \$_, parent => $point )
                                                                                            } $ref;
