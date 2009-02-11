@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use Scalar::Util;
 
 our $idx;
 
@@ -16,25 +17,44 @@ sub idx { $idx }
 
 sub size
 {
-        return scalar @$_      if ref $_  eq 'ARRAY';
-        return scalar keys %$_ if ref $_  eq 'HASH';
-        return  1              if ref \$_ eq 'SCALAR';
+        no warnings 'uninitialized';
+        return scalar @$_      if Scalar::Util::reftype $_  eq 'ARRAY';
+        return scalar keys %$_ if Scalar::Util::reftype $_  eq 'HASH';
+        return  1              if Scalar::Util::reftype \$_ eq 'SCALAR';
         return -1;
 }
 
 sub key
 {
         #print STDERR "*** key ", Dumper($_ ? $_ : "UNDEF");
-        return (keys %$_)[0] if ref $_  eq 'HASH';
+        no warnings 'uninitialized';
+        return (keys %$_)[0] if Scalar::Util::reftype $_  eq 'HASH';
         return undef;
 }
 
 sub value
 {
         #print STDERR "*** value ", (keys %$_)[0], " ", Dumper($_ ? $_ : "UNDEF");
-        return (values %$_)[0] if ref  $_  eq 'HASH';
-        return $_              if ref \$_  eq 'SCALAR';
+        no warnings 'uninitialized';
+        return (values %$_)[0] if (defined $_ and Scalar::Util::reftype  $_  eq 'HASH');
+        return $_              if (defined $_ and Scalar::Util::reftype \$_  eq 'SCALAR');
         return undef;
+}
+
+sub isa {
+        my ($classname) = @_;
+
+        #print STDERR "*** value ", Dumper($_ ? $_ : "UNDEF");
+        return $_->isa($classname) if (defined $_ and Scalar::Util::blessed $_);
+        return undef;
+}
+
+sub reftype {
+        my ($refname) = @_;
+
+        #print STDERR "*** value ", Dumper($_ ? $_ : "UNDEF");
+        return Scalar::Util::reftype($_) if not $refname;
+        return (Scalar::Util::reftype($_) eq $refname);
 }
 
 # IDEA: functions that return always true, but track stack of values, eg. last taken index
@@ -81,6 +101,21 @@ returns undef.
 
 Returns the value of the current element. If it is a hashref return
 the value. If a scalar return the scalar. Else return undef.
+
+=head2 isa
+
+Frontend to UNIVERSAL::isa. True if the current elemt is_a given
+class.
+
+=head2 reftype
+
+Frontend to Scalar::Util::reftype.
+
+If argument given it checks whether reftype($_) equals this argument
+and returns true/false.
+
+If no argument is given it returns reftype of current element $_ (and
+you can do comparison by yourself).
 
 =head1 AUTHOR
 

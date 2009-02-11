@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 115;
+use Test::More tests => 118;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -398,24 +398,27 @@ my $data3  = {
                                 ],
              };
 
-TODO: {
-        local $TODO = 'spec only';
+# ------------------------------
 
-        $resultlist = $data3 ~~ dpath '//AAA/BBB[ref($_) eq "Foo::Bar"]/CCC';
-        # ( ['XXX', 'YYY', 'ZZZ'] )
-        cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ] );
+$resultlist = $data3 ~~ dpath '//AAA/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs in blessed structs" );
 
-        # parent step
-        $resultlist = $data3 ~~ dpath '//DDD/EEE/F1[$_ eq "affe"]/../FFF'; # the DDD/FFF where the neighbor DDD/EEE/F1 == "affe"
-        # ( 'interesting value' )
-        cmp_bag($resultlist, [ 'interesting value' ] );
+$resultlist = $data3 ~~ dpath '//AAA[ reftype("HASH") ]/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
 
-        # filter expressions can directly or indirectly follow a step (without or with slash), so this is the same
-        $resultlist = $data3 ~~ dpath '//DDD/EEE/F1/[$_ eq "affe"]/../FFF';
-        # ( 'interesting value' )
-        cmp_bag($resultlist, [ 'interesting value' ] );
+$resultlist = $data3 ~~ dpath '//AAA[ reftype eq "HASH" ]/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
 
-}
+$resultlist = $data3 ~~ dpath '//AAA[ reftype =~ m(ASH) ]/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//AAA[ isa("Foo::Bar") ]/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "ANYWHERE + FILTER isa + KEYs" );
+
+$resultlist = $data3 ~~ dpath '//DDD/EEE/F1[ value eq "affe" ]/../../FFF'; # the DDD/FFF where the neighbor DDD/EEE/F1 == "affe"
+cmp_bag($resultlist, [ 'interesting value' ], "ANYWHERE + KEYs + FILTER in blessed structs" );
+
+# ------------------------------
 
 $resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
 # ( 'interesting value' )

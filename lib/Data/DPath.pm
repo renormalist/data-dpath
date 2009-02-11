@@ -272,9 +272,6 @@ Find C<FOO> elements that are arrays or hashes of size 3 or bigger.
 
 =back
 
-See L<Filter functions|Filter functions> for more functions like
-C<isa> and C<ref>.
-
 =head2 Filter functions
 
 The filter condition is internally part of a C<grep> over the current
