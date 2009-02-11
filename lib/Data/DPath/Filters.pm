@@ -80,7 +80,10 @@ Data::DPath::Filters - Magic DWIM functions available inside filter conditions
 
 =head2 affe
 
-Mysterious test function. Will vanish. Soon.
+Mysterious test function. Will vanish. Soon. Or will it really? No,
+probably not. I like it. :-)
+
+Returns true if the value eq "affe".
 
 =head2 idx
 
