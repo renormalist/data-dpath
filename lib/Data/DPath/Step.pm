@@ -8,6 +8,9 @@ class Data::DPath::Step {
         has filter => ( isa => "Any", is  => "rw", default => sub { undef } );
 }
 
+# help the CPAN indexer
+package Data::DPath::Step;
+
 1;
 
 __END__

@@ -35,9 +35,9 @@ class Data::DPath {
 
 }
 
-# classical package/VERSION way for the CPAN indexer
+# help the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.05';
+our $VERSION = '0.08';
 
 1;
 
@@ -271,9 +271,6 @@ is contained.
 Find C<FOO> elements that are arrays or hashes of size 3 or bigger.
 
 =back
-
-See L<Filter functions|Filter functions> for more functions like
-C<isa> and C<ref>.
 
 =head2 Filter functions
 

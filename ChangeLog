@@ -1,3 +1,20 @@
+2009-02-11  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.08
+
+	* Fix missing dependency to Test::Deep. Thanks, CPAN testers.
+
+	* v0.07
+
+	* use Scalar::Util::reftype instead of ref. This enables blessed
+	data structures to work.
+
+	* Provide "reftype" and "isa" as filter functions.
+
+	* v0.06
+
+	* "package" statements to help the CPAN indexer.
+
 2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.05

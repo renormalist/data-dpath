@@ -7,6 +7,7 @@ class Data::DPath::Context {
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
+        use Scalar::Util 'reftype';
 
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
@@ -101,7 +102,7 @@ class Data::DPath::Context {
                 foreach my $point (@$in) {
                         my @values;
                         my $ref = $point->ref;
-                        given (ref $$ref) {
+                        given (reftype $$ref) {
                                 when ('HASH')  { @values = values %{$$ref} }
                                 when ('ARRAY') { @values = @{$$ref}        }
                                 default        { next }
@@ -153,8 +154,9 @@ class Data::DPath::Context {
                                         # the value of a key
                                         #print "    current_points: ", Dumper(\@current_points);
                                         foreach my $point (@current_points) {
+                                                no warnings 'uninitialized';
                                                 next unless defined $point;
-                                                next unless ref ${$point->ref} eq 'HASH';
+                                                next unless reftype ${$point->ref} eq 'HASH';
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 $Data::DPath::DEBUG && print "    point: ", Dumper($point);
                                                 $Data::DPath::DEBUG && print "    step: ", Dumper($step);
@@ -174,9 +176,9 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 # take point as array
                                                 my $ref = ${$point->ref};
-                                                $Data::DPath::DEBUG && say "    *** ", ref($ref);
+                                                $Data::DPath::DEBUG && say "    *** ", reftype ($ref);
                                                 my @step_points = ();
-                                                given (ref $ref) {
+                                                given (reftype $ref) {
                                                         when ('HASH')
                                                         {
                                                                 @step_points = map {
@@ -191,7 +193,7 @@ class Data::DPath::Context {
                                                         }
                                                         default
                                                         {
-                                                                if (ref $point->ref eq 'SCALAR') {
+                                                                if (reftype $point->ref eq 'SCALAR') {
                                                                         @step_points = map {
                                                                                             new Data::DPath::Point( ref => \$_, parent => $point )
                                                                                            } $ref;
@@ -226,6 +228,9 @@ class Data::DPath::Context {
         }
 
 }
+
+# help the CPAN indexer
+package Data::DPath::Context;
 
 1;
 
@@ -270,42 +275,3 @@ This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-__END__
-
-/foo[ isa("Foo")  ]/
-
-    @filtered = grep { eval $condition } @points;
-
-/foo[ reallyhotstuff("Foo")  ]/
-
-/foo[ index == 7  ]/
-
-package Data::DPath::Filters;
-        our $index;
-
-        sub reallyhotstuff {
-                (@args) = @_;
-                # $_->ref sowieso da
-                return 1 or 0;
-        }
-
-        sub index { $index };
-}
-
-package Data::DPath::Context;
-sub _filter {
-
-        @points = map { new Point( ref => $_ } @refs;
-
-                        @filtered = grep { eval 'reallyhotstuff("Foo")' } @points;
-                        grep { $_ = ${ $_->ref }; foo() } @list;
-                        {
-                                package Data::DPath::Filters;
-                                local $index = -1;
-                                grep { $index++; $_ = ${ $_->ref }; eval $condition; } @points;
-                        }
-}
-# moose type constraints, haben check methode
-# haben Syntax, diese stehlen
-# subtypes definieren
-

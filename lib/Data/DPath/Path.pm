@@ -94,6 +94,9 @@ class Data::DPath::Path {
         }
 }
 
+# help the CPAN indexer
+package Data::DPath::Path;
+
 1;
 
 __END__
