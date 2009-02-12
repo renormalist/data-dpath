@@ -56,6 +56,7 @@ class Data::DPath::Path {
                                         ($plain_part, $remaining_path) = extract_delimited($remaining_path, q/'"/, "/"); # '
                                         ($filter,     $remaining_path) = extract_bracketed($remaining_path);
                                         $plain_part                    = unescape unquote $plain_part;
+                                        $kind                          = 'KEY'; # quoted is always a key
                                 }
                                 default {
                                         ($extracted, $remaining_path) = extract_delimited($remaining_path,'/');
@@ -75,10 +76,10 @@ class Data::DPath::Path {
                         }
 
                         given ($plain_part) {
-                                when ('*')  { $kind = 'ANYSTEP'  }
-                                when ('..') { $kind = 'PARENT'   }
-                                when ('')   { $kind = 'ANYWHERE' }
-                                default     { $kind = 'KEY'      }
+                                when ('*')  { $kind ||= 'ANYSTEP'  }
+                                when ('..') { $kind ||= 'PARENT'   }
+                                when ('')   { $kind ||= 'ANYWHERE' }
+                                default     { $kind ||= 'KEY'      }
                         }
                         push @steps, new Data::DPath::Step( part   => $plain_part,
                                                             kind   => $kind,

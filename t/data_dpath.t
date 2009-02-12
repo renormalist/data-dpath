@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 118;
+use Test::More tests => 122;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -538,8 +538,12 @@ cmp_bag($resultlist, [ 'XXXX', 'YYYY', 'ZZZZ', 'affe' ], "FILTER eval regex five
 $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/*[ m([A-Z]+) ]';
 cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex just capitalizes" );
 
-$resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/"*"[ m/[A-Z]+/ ]';
-cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with slashes needs quotes" );
+SKIP:
+{
+        skip "quote semantics changed", 1;
+        $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/"*"[ m/[A-Z]+/ ]';
+        cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with slashes needs quotes" );
+}
 
 $resultlist = $data ~~ dpath '//AAA/BBB[key eq "CCC"]';
 cmp_bag($resultlist, [
@@ -602,4 +606,34 @@ cmp_bag($resultlist, [ [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + ANYSTEP + FILTER e
 $resultlist = $data ~~ dpath('//CCC/*[value eq "RR2"]/../..');
 #print STDERR "resultlist = ", Dumper($resultlist);
 cmp_bag($resultlist, [ { CCC  => [ 'RR1', 'RR2', 'RR3' ] } ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT" );
+
+# ----------------------------------------
+
+
+my $data5 = {
+             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                       DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                       "*"   => { CCC  => [ qw/ ASTAR BSTAR CSTAR / ] },
+                       "//"  => { CCC  => [ qw/ ASLASH BSLASH CSLASH / ] },
+                       ".."  => { CCC  => [ qw/ ADOT BDOT CDOT / ] },
+                     },
+            };
+
+$resultlist = $data5 ~~ dpath('/AAA/*/CCC');
+cmp_bag($resultlist, [ [ qw/ XXX YYY ZZZ / ],
+                       [ qw/ RR1 RR2 RR3 / ],
+                       [ qw/ ASTAR BSTAR CSTAR / ],
+                       [ qw/ ASLASH BSLASH CSLASH / ],
+                       [ qw/ ADOT BDOT CDOT / ],
+                     ], "KEYs + ANYSTEP again" );
+
+$resultlist = $data5 ~~ dpath('/AAA/"*"/CCC');
+cmp_bag($resultlist, [ [ qw/ ASTAR BSTAR CSTAR / ] ], "KEYs + (*)" );
+
+$resultlist = $data5 ~~ dpath('/AAA/"//"/CCC');
+cmp_bag($resultlist, [ [ qw/ ASLASH BSLASH CSLASH / ] ], "KEYs + (//)" );
+
+$resultlist = $data5 ~~ dpath('/AAA/".."/CCC');
+cmp_bag($resultlist, [ [ qw/ ADOT BDOT CDOT / ] ], "KEYs + (..)" );
 
