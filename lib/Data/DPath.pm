@@ -290,11 +290,14 @@ Here are some of them:
 
 Returns the current index inside array elements.
 
+Please note that the current matching elements might not be in a
+defined order if resulting from anything else than arrays.
+
 =item size
 
-Returns the size of the current element. If it is a hash ref it
-returns number of elements, if hashref it returns number of keys, if
-scalar it returns 1, everything else returns -1.
+Returns the size of the current element. If it is a arrayref it
+returns number of elements, if it's a hashref it returns number of
+keys, if it's a scalar it returns 1, everything else returns -1.
 
 =item key
 

@@ -74,7 +74,7 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Filters - Magic DWIM functions available inside filter conditions
+Data::DPath::Filters - Magic functions available inside filter conditions
 
 =head1 API METHODS
 
@@ -88,6 +88,9 @@ Returns true if the value eq "affe".
 =head2 idx
 
 Returns the current index inside array elements.
+
+Please note that the current matching elements might not be in a
+defined order if resulting from anything else than arrays.
 
 =head2 size
 
@@ -114,11 +117,12 @@ class.
 
 Frontend to Scalar::Util::reftype.
 
-If argument given it checks whether reftype($_) equals this argument
+If argument given it checks whether reftype($_) equals the argument
 and returns true/false.
 
-If no argument is given it returns reftype of current element $_ (and
-you can do comparison by yourself).
+If no argument is given it returns reftype of current element $_ and
+you can do comparison by yourself with C<eq>, C<=~>, C<~~> or
+whatever.
 
 =head1 AUTHOR
 
