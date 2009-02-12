@@ -1,3 +1,7 @@
+2009-02-12  Steffen Schwigon  <ss5@renormalist.net>
+
+	* Quoted special chars ("*", "//", "..") now work as keys
+
 2009-02-11  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.08
