@@ -251,9 +251,9 @@ On step C<FOO> it matches only those elements whose key is "CCC".
 =item C</FOO[key =~ m(CCC) ]>
 
 On step C<FOO> it matches only those elements whose key matches the
-regex C</CCC/>. It's actually just Perl code inside the filter but the
-C</> was avoided because it is the path separator, therefore the round
-parens around the regex.
+regex C</CCC/>. It is actually just Perl code inside the filter but
+the C</> was avoided because it is the path separator, therefore the
+round parens around the regex.
 
 =item C<//FOO/*[value eq "RR2"]>
 
@@ -266,7 +266,7 @@ Combine this with the parent step C<..>:
 Find such an element below C<FOO> where an element with value C<RR2>
 is contained.
 
-=item C<//FOO[size >= 3]>
+=item C<//FOO[size E<gt>= 3]>
 
 Find C<FOO> elements that are arrays or hashes of size 3 or bigger.
 
