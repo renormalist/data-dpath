@@ -23,11 +23,11 @@ class Data::DPath {
                 groups  => { all  => [ 'dpath' ] },
         };
 
-        method get_context (Any $data, Str $path) {
+        method get_context ($class: Any $data, Str $path) {
                 new Data::DPath::Context(path => $path);
         }
 
-        method match (Any $data, Str $path) {
+        method match ($class: Any $data, Str $path) {
                 Data::DPath::Path->new(path => $path)->match($data);
         }
 
