@@ -1,6 +1,11 @@
-2009-02-12  Steffen Schwigon  <ss5@renormalist.net>
+2009-03-01  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.09
 
 	* Quoted special chars ("*", "//", "..") now work as keys
+
+	* compatibility with newest MooseX::Method::Signatures on class
+	methods [Florian Ragwitz]
 
 2009-02-11  Steffen Schwigon  <ss5@renormalist.net>
 
