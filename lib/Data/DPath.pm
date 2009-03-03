@@ -23,11 +23,11 @@ class Data::DPath {
                 groups  => { all  => [ 'dpath' ] },
         };
 
-        method get_context (Any $data, Str $path) {
+        method get_context ($class: Any $data, Str $path) {
                 new Data::DPath::Context(path => $path);
         }
 
-        method match (Any $data, Str $path) {
+        method match ($class: Any $data, Str $path) {
                 Data::DPath::Path->new(path => $path)->match($data);
         }
 
@@ -37,7 +37,7 @@ class Data::DPath {
 
 # help the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 1;
 
