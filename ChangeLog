@@ -1,5 +1,7 @@
 2009-03-01  Steffen Schwigon  <ss5@renormalist.net>
 
+	* v0.10
+
 	* fix forgotten "use" for standalone using of ::Path
 
 2009-02-12  Steffen Schwigon  <ss5@renormalist.net>
