@@ -351,12 +351,15 @@ cmp_bag($resultlist, [ $data2 ], "ROOT" );
 $resultlist = $data2 ~~ dpath '//';
 cmp_bag($resultlist, [
                       qw( UUU VVV WWW XXX YYY ZZZ ),
-                      { AAA => { BBB => { CCC => [ qw/ XXX YYY ZZZ / ] } } },
-                      { BBB => { CCC => [ qw/ XXX YYY ZZZ / ] } },
-                      { CCC => [ qw/ XXX YYY ZZZ / ] },
                       [ qw/ XXX YYY ZZZ / ],
+                      { CCC => [ qw/ XXX YYY ZZZ / ] },
+                      { BBB => { CCC => [ qw/ XXX YYY ZZZ / ] } },
+                      { AAA => { BBB => { CCC => [ qw/ XXX YYY ZZZ / ] } } },
                       $data2,
                      ], "ANYWHERE" );
+
+$resultlist = $data2 ~~ dpath '//*[ size == 3 ]';
+cmp_bag($resultlist, [ [ qw/ XXX YYY ZZZ / ] ], "ANYWHERE + ANYSTEP + FILTER int" );
 
 $resultlist = $data2 ~~ dpath '/*[2]';
 cmp_bag($resultlist, [ 'WWW' ], "ROOT + ANYSTEP + FILTER int: plain value" );
@@ -495,12 +498,19 @@ cmp_bag($resultlist, [ ], "ANYWHERE + KEYs + FILTER too high int + KEYs" );
 TODO: {
         local $TODO = 'spec only: matches';
 
-#         #$resultlist = $data3 ~~ dpath '/*';#[ key =~ qw(neigh.*hoods) ]';#/*[0]/DDD/FFF';
-#         $resultlist = $data3 ~~ dpath '//[ key =~ qw(neigh.*hoods) ]';#/*[0]/DDD/FFF';
-#         #print STDERR "data3      = ", Dumper($data3);
-# print STDERR "\n\n--------------------------------------------------\n\n";
-#         print STDERR "resultlist = ", Dumper($resultlist);
-# print STDERR "\n\n**************************************************\n\n";
+        #print "\n\n--------------------------------------------------\n\n";
+        #$resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';#/*[0]/DDD/FFF';
+        #$resultlist = $data3 ~~ dpath '//*[ key eq "neighbourhoods" ]/*[0]/DDD/FFF';#/*[0]/DDD/FFF';
+        #$resultlist = $data3 ~~ dpath '//.[ 0 ]';#/*[0]/DDD/FFF';
+        #print "data3      = ", Dumper($data3);
+        #print "\n\n--------------------------------------------------\n\n";
+        #print "resultlist = ", Dumper($resultlist);
+        #print "\n\n**************************************************\n\n";
+
+        # #$resultlist = $data3 ~~ dpath '/*';#[ key =~ qr(neigh.*hoods) ]';#/*[0]/DDD/FFF';
+        # print STDERR "\n\n--------------------------------------------------\n\n";
+        # print STDERR "resultlist = ", Dumper($resultlist);
+        # print STDERR "\n\n**************************************************\n\n";
 
         # filters on ANY
         $resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
