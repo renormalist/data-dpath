@@ -66,6 +66,11 @@ sub reftype {
         return (Scalar::Util::reftype($_) eq $refname);
 }
 
+# sub parent, Eltern-Knoten liefern
+# nextchild, von parent und mir selbst
+# previous child
+# "." als aktueller Knoten, kind of "no-op", daran aber Filter verknüpfbar, löst //.[filter] und /.[filter]
+
 # IDEA: functions that return always true, but track stack of values, eg. last taken index
 #
 #    //AAA/*[ _push_idx ]/CCC[ condition ]/../../*[ idx == pop_idx + 1]/

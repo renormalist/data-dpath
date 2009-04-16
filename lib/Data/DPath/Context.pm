@@ -117,13 +117,8 @@ class Data::DPath::Context {
         }
 
         method search($path) {
-                $Data::DPath::DEBUG && say "Context.search:";
-                $Data::DPath::DEBUG && say "    \$path == ",      Dumper($path);
-                $Data::DPath::DEBUG && say "    \$path.path == ", Dumper($path->path);
                 my @current_points = $self->current_points;
                 foreach my $step ($path->_steps) {
-                        $Data::DPath::DEBUG && say "    ", $step->kind, " ==> ", $step->part;
-                        $Data::DPath::DEBUG && say "    current_points: ", Dumper(\@current_points);
                         my @new_points = ();
                         given ($step->kind)
                         {
@@ -138,15 +133,9 @@ class Data::DPath::Context {
                                 {
                                         # '//'
                                         # all hash/array nodes of a data structure
-                                        $Data::DPath::DEBUG && print "current_points: ".Dumper(\@current_points);
                                         foreach my $point (@current_points) {
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                                $Data::DPath::DEBUG && print "    point: ", Dumper($point);
-                                                $Data::DPath::DEBUG && print "    step: ", Dumper($step);
                                                 my @step_points = (_any([], [ $point ]), $point);
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && print "    new_points: ", Dumper(\@new_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                                 when ('KEY')
@@ -157,15 +146,11 @@ class Data::DPath::Context {
                                                 no warnings 'uninitialized';
                                                 next unless defined $point;
                                                 next unless reftype ${$point->ref} eq 'HASH';
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
-                                                $Data::DPath::DEBUG && print "    point: ", Dumper($point);
-                                                $Data::DPath::DEBUG && print "    step: ", Dumper($step);
                                                 # take point as hash, skip undefs
                                                 my @step_points = map {
                                                                        new Data::DPath::Point( ref => \$_, parent => $point )
                                                                       } ( ${$point->ref}->{$step->part} || () );
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                                 when ('ANYSTEP')
@@ -173,10 +158,8 @@ class Data::DPath::Context {
                                         # '*'
                                         # all leaves of a data tree
                                         foreach my $point (@current_points) {
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 # take point as array
                                                 my $ref = ${$point->ref};
-                                                $Data::DPath::DEBUG && say "    *** ", reftype ($ref);
                                                 my @step_points = ();
                                                 given (reftype $ref) {
                                                         when ('HASH')
@@ -201,7 +184,6 @@ class Data::DPath::Context {
                                                         }
                                                 }
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                                 when ('NOSTEP')
@@ -220,15 +202,12 @@ class Data::DPath::Context {
                                         # '..'
                                         # the parent
                                         foreach my $point (@current_points) {
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 my @step_points = ($point->parent);
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                         }
                         @current_points = @new_points;
-                        $Data::DPath::DEBUG && say "    ______________________________________________________________________";
                 }
                 $self->current_points( \@current_points );
                 return $self;
