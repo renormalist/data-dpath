@@ -702,7 +702,6 @@ $resultlist = $data6 ~~ dpath '/.[ isa("Some::Funky::Stuff") ]/.[ size == 5 ]/.[
 cmp_bag($resultlist, [ $data6 ], "ROOT + NOSTEP + FILTER isa + FILTER size + FILTER reftype" );
 
 $resultlist = $data6 ~~ dpath '//.[ size == 4 ]';
-say STDERR Dumper($resultlist);
 cmp_bag($resultlist, [
                       [ 1, 2, 3, 4 ],
                       [ qw( AAA BBB CCC DDD ) ],

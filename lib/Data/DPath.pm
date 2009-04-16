@@ -105,18 +105,38 @@ fitting to above data structure):
 
 See full details C<t/data_dpath.t>.
 
-=head1 ALPHA WARNING
+=head1 ABOUT
 
-I still experiment in details of semantics, especially final names of
-the available filter functions and some edge cases, in particular, I
-expect slightly changes in filters without keys, like
-C<//[filter]>.
+With this module you can address points in a datastructure by
+describing a "path" to it using hash keys, array indexes or some
+wildcard-like steps. It is inspired by XPath but differs from it.
 
-But no current features should get lost. The worst thing that might
-happen would be slightly changes to your dpaths.
+=head2 Why not XPath?
 
-I will name this module v1.00 when I consider it stable. Ask me if you
-are not sure.
+XPath is for XML. DPath is for data structures, with a stronger Perl
+focus.
+
+Although XML documents are data structures, they are special.
+
+Elements in XML always have an order which is in contrast to hash keys
+in Perl.
+
+XML elements names on same level can be repeated, not so in hashes.
+
+XML element names are more limited than arbitrary strange hash keys.
+
+XML elements can have attributes and those can be addressed by XPath;
+Perl data structures do not need this. On the other side, data
+structures in Perl can contain blessed elements, DPath can address
+this.
+
+XML has namespaces, data structures have not.
+
+Arrays starting with index 1 as in XPath would be confusing to read
+for data structures.
+
+DPath allows filter expressions that are in fact just Perl expressions
+not an own sub language as in XPath.
 
 =head1 FUNCTIONS
 
@@ -125,7 +145,12 @@ are not sure.
 Meant as the front end function for everyday use of Data::DPath. It
 takes a path string and returns a C<Data::DPath::Path> object on which
 the match method can be called with data structures and the operator
-C<~~> is overloaded. See SYNOPSIS.
+C<~~> is overloaded.
+
+The function is prototyped to take exactly one argument so that you
+can omit the parens in many cases.
+
+See SYNOPSIS.
 
 =head1 METHODS
 
@@ -167,6 +192,8 @@ dpath> is the same as C<dpath ~~ data>).
  //AAA/*[ key =~ m(CC) ]
  //AAA/"*"[ key =~ /CC/ ]
  //CCC/*[value eq "RR2"]
+ //.[ size == 4 ]
+ /.[ isa("Funky::Stuff") ]/.[ size == 5 ]/.[ reftype eq "ARRAY" ]
 
 =head2 Modeled on XPath
 
@@ -187,6 +214,9 @@ down the matching set of results.
 Additional functions provided inside the filters are called, well,
 B<filter functions>.
 
+Each step has a set of C<point>s relative to the set of points before
+this step, all starting at the root of the data structure.
+
 =head2 Special elements
 
 =over 4
@@ -194,7 +224,7 @@ B<filter functions>.
 =item * C<//>
 
 Anchors to any hash or array inside the data structure below the
-current step (or the root).
+currently found points (or the root).
 
 Typically used at the start of a path to anchor the path anywhere
 instead of only the root node:
@@ -209,23 +239,24 @@ This allows any way between C<BBB> and C<FARAWAY>.
 
 =item * C<*>
 
-Matches one step of any value relative to the current step (or the
+Matches one step of any value relative to the current points (or the
 root). This step might be any hash key or all values of an array in
 the step before.
 
 =item * C<..>
 
-Matches the parent element relative to the current step.
+Matches the parent element relative to the current points.
 
 =item * C<.>
 
-A "no step". This keeps passively at the current step, but allows
-incrementally attaching filters to steps or to otherwise hard to reach
-steps, like the top root element C</>. So you can do:
+A "no step". This keeps passively at the current points, but allows
+incrementally attaching filters to points or to otherwise hard to
+reach steps, like the top root element C</>. So you can do:
 
  /.[ FILTER ]
 
 or chain filters:
+
  /AAA/BBB/.[ filter1 ]/.[ filter2 ]/.[ filter3 ]
 
 This way you do not need to stuff many filters together into one huge
@@ -234,7 +265,7 @@ killer expression and can more easily maintain them.
 See L<Filters|Filters> for more details on filters.
 
 =item * If you need those special elements to be not special but as
-key names, then just quote them:
+key names, just quote them:
 
  /"*"/
  /"*"[ filter ]/
