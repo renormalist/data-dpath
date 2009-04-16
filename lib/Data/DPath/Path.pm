@@ -77,9 +77,10 @@ class Data::DPath::Path {
                         }
 
                         given ($plain_part) {
-                                when ('*')  { $kind ||= 'ANYSTEP'  }
-                                when ('..') { $kind ||= 'PARENT'   }
                                 when ('')   { $kind ||= 'ANYWHERE' }
+                                when ('*')  { $kind ||= 'ANYSTEP'  }
+                                when ('.')  { $kind ||= 'NOSTEP'   }
+                                when ('..') { $kind ||= 'PARENT'   }
                                 default     { $kind ||= 'KEY'      }
                         }
                         push @steps, new Data::DPath::Step( part   => $plain_part,

@@ -204,6 +204,17 @@ class Data::DPath::Context {
                                                 $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
+                                when ('NOSTEP')
+                                {
+                                        # '.'
+                                        # no step (neither up nor down), just allow filtering
+                                        foreach my $point (@current_points) {
+                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                my @step_points = ($point);
+                                                push @new_points, $self->_filter_points($step, @step_points);
+                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                        }
+                                }
                                 when ('PARENT')
                                 {
                                         # '..'
