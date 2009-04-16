@@ -213,9 +213,41 @@ Matches one step of any value relative to the current step (or the
 root). This step might be any hash key or all values of an array in
 the step before.
 
+=item * C<..>
+
+Matches the parent element relative to the current step.
+
+=item * C<.>
+
+A "no step". This keeps passively at the current step, but allows
+incrementally attaching filters to steps or to otherwise hard to reach
+steps, like the top root element C</>. So you can do:
+
+ /.[ FILTER ]
+
+or chain filters:
+ /AAA/BBB/.[ filter1 ]/.[ filter2 ]/.[ filter3 ]
+
+This way you do not need to stuff many filters together into one huge
+killer expression and can more easily maintain them.
+
+See L<Filters|Filters> for more details on filters.
+
+=item * If you need those special elements to be not special but as
+key names, then just quote them:
+
+ /"*"/
+ /"*"[ filter ]/
+ /".."/
+ /".."[ filter ]/
+ /"."/
+ /"."[ filter ]/
+ /"//"/
+ /"//"[ filter ]/
+
 =back
 
-=head2 Difference between C</part[filter]> vs. C</part/[filter]>
+=head2 Difference between C</part[filter]> vs. C</part/.[filter]>
 vs. C</part/*[filter]>
 
 ... TODO ...
