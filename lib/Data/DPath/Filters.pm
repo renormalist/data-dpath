@@ -26,8 +26,17 @@ sub size
 
 sub key
 {
-        #print STDERR "*** key ", Dumper($_ ? $_ : "UNDEF");
         no warnings 'uninitialized';
+        return (keys %$_)[0] if Scalar::Util::reftype $_  eq 'HASH';
+        return undef;
+}
+
+# same as key() + debug info
+sub _key
+{
+        no warnings 'uninitialized';
+        say "*** key ", Scalar::Util::reftype($_), " -- ", Dumper($_ ? $_ : "UNDEF");
+        say "        ", join (", ", keys %$_) if Scalar::Util::reftype $_  eq 'HASH';
         return (keys %$_)[0] if Scalar::Util::reftype $_  eq 'HASH';
         return undef;
 }
