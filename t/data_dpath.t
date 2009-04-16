@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 122;
+use Test::More tests => 130;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -34,8 +34,14 @@ my $context;
 @resultlist = dpath('/AAA/BBB/CCC')->match($data);
 cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
 
+@resultlist = dpath('/AAA/./BBB/./CCC')->match($data);
+cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs + NOSTEPs" );
+
 @resultlist = dpath('/AAA/BBB/CCC/..')->match($data);
 cmp_bag(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
+
+@resultlist = dpath('/AAA/BBB/CCC/../.')->match($data);
+cmp_bag(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT + NOSTEP" );
 
 @resultlist = dpath('//../CCC')->match($data);
 #print Dumper(\@resultlist);
@@ -45,6 +51,14 @@ cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
                           'zomtec',
                         ], "KEYs + PARENT + ANYWHERE" );
 
+@resultlist = dpath('//./.././CCC/.')->match($data);
+#print Dumper(\@resultlist);
+cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
+                          [ qw/ RR1 RR2 RR3 / ],
+                          'affe',                      # missing due to reduction to HASH|ARRAY in _any?
+                          'zomtec',
+                        ], "KEYs + PARENT + ANYWHERE + NOSTEP" );
+
 @resultlist = dpath('/AAA/BBB/CCC/../..')->match($data);
 cmp_bag(\@resultlist, [
                          {
@@ -53,6 +67,15 @@ cmp_bag(\@resultlist, [
                           DDD => { EEE => [ qw/ uuu vvv www / ] },
                          }
                         ], "KEYs + PARENT + PARENT" );
+
+@resultlist = dpath('/AAA/././././BBB/./CCC/../././../././.')->match($data);
+cmp_bag(\@resultlist, [
+                         {
+                          BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
+                          RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                          DDD => { EEE => [ qw/ uuu vvv www / ] },
+                         }
+                        ], "KEYs + PARENT + PARENT + NOSTEPs" );
 
 @resultlist = dpath('/AAA/BBB/CCC/../../DDD')->match($data);
 cmp_bag(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
@@ -616,7 +639,8 @@ my $data5 = {
                        DDD   => { EEE  => [ qw/ uuu vvv www / ] },
                        "*"   => { CCC  => [ qw/ ASTAR BSTAR CSTAR / ] },
                        "//"  => { CCC  => [ qw/ ASLASH BSLASH CSLASH / ] },
-                       ".."  => { CCC  => [ qw/ ADOT BDOT CDOT / ] },
+                       ".."  => { CCC  => [ qw/ ADOTDOT BDOTDOT CDOTDOT / ] },
+                       "."   => { CCC  => [ qw/ ADOT BDOT CDOT / ] },
                      },
             };
 
@@ -625,6 +649,7 @@ cmp_bag($resultlist, [ [ qw/ XXX YYY ZZZ / ],
                        [ qw/ RR1 RR2 RR3 / ],
                        [ qw/ ASTAR BSTAR CSTAR / ],
                        [ qw/ ASLASH BSLASH CSLASH / ],
+                       [ qw/ ADOTDOT BDOTDOT CDOTDOT / ],
                        [ qw/ ADOT BDOT CDOT / ],
                      ], "KEYs + ANYSTEP again" );
 
@@ -635,5 +660,27 @@ $resultlist = $data5 ~~ dpath('/AAA/"//"/CCC');
 cmp_bag($resultlist, [ [ qw/ ASLASH BSLASH CSLASH / ] ], "KEYs + (//)" );
 
 $resultlist = $data5 ~~ dpath('/AAA/".."/CCC');
-cmp_bag($resultlist, [ [ qw/ ADOT BDOT CDOT / ] ], "KEYs + (..)" );
+cmp_bag($resultlist, [ [ qw/ ADOTDOT BDOTDOT CDOTDOT / ] ], "KEYs + (..)" );
+
+$resultlist = $data5 ~~ dpath('/AAA/"."/CCC');
+cmp_bag($resultlist, [ [ qw/ ADOT BDOT CDOT / ] ], "KEYs + (.)" );
+
+# ----------------------------------------
+
+
+my $data6 = bless [
+                   [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
+                   [ 1, 2, 3, 4 ],
+                   [ qw( AAA BBB CCC DDD ) ],
+                   [ 11, 22, 33 ],
+                   {
+                    hot => { stuff => { ahead => [ qw(affe tiger fink star) ] } } },
+                  ], "Some::Funky::Stuff";
+
+$resultlist = $data6 ~~ dpath '/.[ isa("Some::Funky::Stuff") ]';
+cmp_bag($resultlist, [ $data6 ], "ROOT + NOSTEP + FILTER isa: matches" );
+
+$resultlist = $data6 ~~ dpath '/.[ isa("Foo::Bar") ]';
+print STDERR "resultlist = ", Dumper($resultlist);
+cmp_bag($resultlist, [ ], "ROOT + NOSTEP + FILTER isa: not matches" );
 
