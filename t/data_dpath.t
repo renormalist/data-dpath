@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 132;
+use Test::More tests => 133;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -684,11 +684,10 @@ my $data6 = bless [
                    [ qw( AAA BBB CCC DDD ) ],
                    [ 11, 22, 33 ],
                    {
-                    hot => { stuff => { ahead => [ qw(affe tiger fink star) ] } } },
+                    hot => { stuff => { ahead => [ qw( affe tiger fink star ) ] } } },
                   ], "Some::Funky::Stuff";
 
 $resultlist = $data6 ~~ dpath '/.[ isa("Foo::Bar") ]';
-print STDERR "resultlist = ", Dumper($resultlist);
 cmp_bag($resultlist, [ ], "ROOT + NOSTEP + FILTER isa (with no match)" );
 
 $resultlist = $data6 ~~ dpath '/.[ isa("Some::Funky::Stuff") ]';
@@ -701,4 +700,12 @@ cmp_bag($resultlist, [ $data6 ], "ROOT + NOSTEP + FILTER isa + FILTER size" );
 
 $resultlist = $data6 ~~ dpath '/.[ isa("Some::Funky::Stuff") ]/.[ size == 5 ]/.[ reftype eq "ARRAY" ]';
 cmp_bag($resultlist, [ $data6 ], "ROOT + NOSTEP + FILTER isa + FILTER size + FILTER reftype" );
+
+$resultlist = $data6 ~~ dpath '//.[ size == 4 ]';
+say STDERR Dumper($resultlist);
+cmp_bag($resultlist, [
+                      [ 1, 2, 3, 4 ],
+                      [ qw( AAA BBB CCC DDD ) ],
+                      [ qw( affe tiger fink star ) ],
+                     ], "ANYWHERE + NOSTEP + FILTER int" );
 
