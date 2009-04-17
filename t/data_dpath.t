@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 133;
+use Test::More tests => 134;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
@@ -684,7 +684,13 @@ my $data6 = bless [
                    [ qw( AAA BBB CCC DDD ) ],
                    [ 11, 22, 33 ],
                    {
-                    hot => { stuff => { ahead => [ qw( affe tiger fink star ) ] } } },
+                    hot => {
+                            stuff => {
+                                      ahead => [ qw( affe tiger fink star ) ],
+                                      ""    => "some value on empty key",
+                                     }
+                           }
+                   },
                   ], "Some::Funky::Stuff";
 
 $resultlist = $data6 ~~ dpath '/.[ isa("Foo::Bar") ]';
@@ -708,3 +714,5 @@ cmp_bag($resultlist, [
                       [ qw( affe tiger fink star ) ],
                      ], "ANYWHERE + NOSTEP + FILTER int" );
 
+$resultlist = $data6 ~~ dpath '//""/';
+cmp_bag($resultlist, [ "some value on empty key" ], "empty key");
