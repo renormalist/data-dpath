@@ -13,15 +13,6 @@ class Data::DPath::Path {
                                       extract_bracketed
                              );
 
-        has path   => ( isa => "Str",      is  => "rw" );
-        has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
-
-        use overload '~~' => \&op_match;
-
-        method op_match($data, $rhs) {
-                return [ $self->match( $data ) ];
-        }
-
         sub unescape {
                 my ($str) = @_;
 
@@ -38,6 +29,17 @@ class Data::DPath::Path {
         }
 
         sub quoted { shift =~ m,^/["'],; }                                             # "
+
+        clean;
+
+        has path   => ( isa => "Str",      is  => "rw" );
+        has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+
+        use overload '~~' => \&op_match;
+
+        method op_match($data, $rhs) {
+                return [ $self->match( $data ) ];
+        }
 
         # essentially the Path parser
         method _build__steps {
