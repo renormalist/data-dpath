@@ -16,7 +16,7 @@ class Data::DPath {
                 };
         }
 
-        use namespace::clean -except => 'meta';
+        clean;
 
         use Sub::Exporter -setup => {
                 exports => [ dpath => \&build_dpath ],
