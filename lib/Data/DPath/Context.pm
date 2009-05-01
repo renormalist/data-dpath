@@ -22,14 +22,12 @@ class Data::DPath::Context {
         }
 
         # filter current results by array index
-        sub _filter_points_index {
-                my ($self, $index, @points) = @_;
+        method _filter_points_index ($index, @points) {
                 return @points ? ($points[$index]) : ();
         }
 
         # filter current results by condition
-        sub _filter_points_eval {
-                my ($self, $filter, @points) = @_;
+        method _filter_points_eval ($filter, @points) {
                 return () unless @points;
                 return @points unless defined $filter;
 
@@ -60,9 +58,7 @@ class Data::DPath::Context {
                 return @new_points;
         }
 
-        sub _filter_points {
-                my ($self, $step, @points) = @_;
-
+        method _filter_points ($step, Item @points) {
                 return () unless @points;
 
                 my $filter = $step->filter;
