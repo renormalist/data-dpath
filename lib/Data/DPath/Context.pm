@@ -9,6 +9,39 @@ class Data::DPath::Context {
         use List::MoreUtils 'uniq';
         use Scalar::Util 'reftype';
 
+        # only finds "inner" values; if you need the outer start value
+        # then just wrap it into one more level of array brackets.
+        sub _any {
+                my ($out, $in) = @_;
+
+                #print "    in: ", Dumper($in);
+                #sleep 3;
+
+                $in //= [];
+                return @$out unless @$in;
+
+                my @newin;
+                my @newout;
+
+                foreach my $point (@$in) {
+                        my @values;
+                        my $ref = $point->ref;
+                        given (reftype $$ref) {
+                                when ('HASH')  { @values = values %{$$ref} }
+                                when ('ARRAY') { @values = @{$$ref}        }
+                                default        { next }
+                        }
+                        foreach (@values) {
+                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
+                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
+                        }
+                }
+                push @$out,  @newout;
+                return _any ($out, \@newin);
+        }
+
+        clean;
+
         # Points are the collected pointers into the datastructure
         has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
 
@@ -22,14 +55,12 @@ class Data::DPath::Context {
         }
 
         # filter current results by array index
-        sub _filter_points_index {
-                my ($self, $index, @points) = @_;
+        method _filter_points_index ($index, @points) {
                 return @points ? ($points[$index]) : ();
         }
 
         # filter current results by condition
-        sub _filter_points_eval {
-                my ($self, $filter, @points) = @_;
+        method _filter_points_eval ($filter, @points) {
                 return () unless @points;
                 return @points unless defined $filter;
 
@@ -60,9 +91,7 @@ class Data::DPath::Context {
                 return @new_points;
         }
 
-        sub _filter_points {
-                my ($self, $step, @points) = @_;
-
+        method _filter_points ($step, Item @points) {
                 return () unless @points;
 
                 my $filter = $step->filter;
@@ -83,37 +112,6 @@ class Data::DPath::Context {
                                 return @points;
                         }
                 }
-        }
-
-        # only finds "inner" values; if you need the outer start value
-        # then just wrap it into one more level of array brackets.
-        sub _any {
-                my ($out, $in) = @_;
-
-                #print "    in: ", Dumper($in);
-                #sleep 3;
-
-                $in //= [];
-                return @$out unless @$in;
-
-                my @newin;
-                my @newout;
-
-                foreach my $point (@$in) {
-                        my @values;
-                        my $ref = $point->ref;
-                        given (reftype $$ref) {
-                                when ('HASH')  { @values = values %{$$ref} }
-                                when ('ARRAY') { @values = @{$$ref}        }
-                                default        { next }
-                        }
-                        foreach (@values) {
-                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
-                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
-                        }
-                }
-                push @$out,  @newout;
-                return _any ($out, \@newin);
         }
 
         method search($path) {
