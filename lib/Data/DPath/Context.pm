@@ -2,7 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath::Context {
+class Data::DPath::Context is dirty {
 
         use Data::Dumper;
         use Data::DPath::Point;

@@ -2,7 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath {
+class Data::DPath is dirty {
 
         our $DEBUG = 0;
 
