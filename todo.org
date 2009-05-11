@@ -1,0 +1,12 @@
+Idea collection
+
+* XPath localization paths
+  - [ ] ancestor
+  - [ ] preceding-sibling
+  - [ ] preceding
+* Functions for node collections
+  - [ ] position()
+  - [ ] last()
+  - [ ] count()
+  - [ ] id()
+  - [ ] 
