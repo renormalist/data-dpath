@@ -2,7 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath::Path {
+class Data::DPath::Path is dirty {
 
         use Data::Dumper;
         use Data::DPath::Step;
