@@ -37,7 +37,7 @@ class Data::DPath is dirty {
 
 # help the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 1;
 
