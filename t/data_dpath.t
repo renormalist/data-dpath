@@ -3,9 +3,9 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 134;
+use Test::More tests => 137;
 use Test::Deep;
-use Data::DPath 'dpath';
+use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
 
 # local $Data::DPath::DEBUG = 1;
@@ -34,11 +34,20 @@ my $context;
 @resultlist = dpath('/AAA/BBB/CCC')->match($data);
 cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
 
+@resultlist = dpathr('/AAA/BBB/CCC')->match($data);
+cmp_bag(\@resultlist, [ \($data->{AAA}{BBB}{CCC}) ], "KEYs (REFERENCES)" );
+
 @resultlist = dpath('/AAA/./BBB/./CCC')->match($data);
 cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs + NOSTEPs" );
 
+@resultlist = dpathr('/AAA/./BBB/./CCC')->match($data);
+cmp_bag(\@resultlist, [ \($data->{AAA}{BBB}{CCC}) ], "KEYs + NOSTEPs (REFERENCES)" );
+
 @resultlist = dpath('/AAA/BBB/CCC/..')->match($data);
 cmp_bag(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
+
+@resultlist = dpathr('/AAA/BBB/CCC/..')->match($data);
+cmp_bag(\@resultlist, [ \($data->{AAA}{BBB}) ], "KEYs + PARENT (REFERENCES)" );
 
 @resultlist = dpath('/AAA/BBB/CCC/../.')->match($data);
 cmp_bag(\@resultlist, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT + NOSTEP" );
