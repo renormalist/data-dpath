@@ -8,3 +8,5 @@ blib\b
 ^Data-DPath-
 experiments
 t/00-suite-meta.t
+nytprof.out
+nytprof
