@@ -32,8 +32,9 @@ class Data::DPath::Path is dirty {
 
         clean;
 
-        has path   => ( isa => "Str",      is  => "rw" );
-        has _steps => ( isa => "ArrayRef", is  => "rw", auto_deref => 1, lazy_build => 1 );
+        has path            => ( isa => "Str",      is => "rw" );
+        has _steps          => ( isa => "ArrayRef", is => "rw", auto_deref => 1, lazy_build => 1 );
+        has give_references => ( isa => "Int",      is => "rw", default => 0 );
 
         use overload '~~' => \&op_match;
 
@@ -94,7 +95,9 @@ class Data::DPath::Path is dirty {
         }
 
         method match($data) {
-                my $context = new Data::DPath::Context ( current_points => [ new Data::DPath::Point ( ref => \$data )] );
+                my $context = new Data::DPath::Context ( current_points  => [ new Data::DPath::Point ( ref => \$data )],
+                                                         give_references => $self->give_references,
+                                                       );
                 return $context->match($self);
         }
 }

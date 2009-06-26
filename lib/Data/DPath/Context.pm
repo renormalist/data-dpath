@@ -43,11 +43,12 @@ class Data::DPath::Context is dirty {
         clean;
 
         # Points are the collected pointers into the datastructure
-        has current_points => ( is  => "rw", isa => "ArrayRef", auto_deref => 1 );
+        has current_points  => ( isa => "ArrayRef", is => "rw", auto_deref => 1 );
+        has give_references => ( isa => "Int",      is => "rw", default => 0 );
 
         method all {
                 return
-                    map { $$_ }
+                    map { $self->give_references ? $_ : $$_ }
                         uniq
                             map {
                                  defined $_ ? $_->ref : ()

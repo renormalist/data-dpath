@@ -16,11 +16,18 @@ class Data::DPath is dirty {
                 };
         }
 
+        sub build_dpathr {
+                return sub ($) {
+                        my ($path) = @_;
+                        new Data::DPath::Path(path => $path, give_references => 1);
+                };
+        }
+
         clean;
 
         use Sub::Exporter -setup => {
-                exports => [ dpath => \&build_dpath ],
-                groups  => { all  => [ 'dpath' ] },
+                exports => [ dpath => \&build_dpath, dpathr => \&build_dpathr ],
+                groups  => { all   => [ 'dpath', 'dpathr' ] },
         };
 
         method get_context ($class: Any $data, Str $path) {
