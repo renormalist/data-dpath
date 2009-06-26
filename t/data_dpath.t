@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 137;
+use Test::More tests => 140;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -77,6 +77,9 @@ cmp_bag(\@resultlist, [
                          }
                         ], "KEYs + PARENT + PARENT" );
 
+@resultlist = dpathr('/AAA/BBB/CCC/../..')->match($data);
+cmp_bag(\@resultlist, [ \($data->{AAA}) ], "KEYs + PARENT + PARENT (REFERENCES)" );
+
 @resultlist = dpath('/AAA/././././BBB/./CCC/../././../././.')->match($data);
 cmp_bag(\@resultlist, [
                          {
@@ -146,11 +149,15 @@ cmp_bag($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHEREs + KEY" );
 $resultlist = $data ~~ dpath '//some//else//CCC';
 cmp_bag($resultlist, [ 'affe' ], "ANYWHERE + KEYs + ANYWHEREs" );
 
+$resultlist = $data ~~ dpathr '//some//else//CCC';
+cmp_bag($resultlist, [ \($data->{some}{where}{else}{AAA}{BBB}{CCC}) ], "ANYWHERE + KEYs + ANYWHEREs (REFERENCES)" );
+
 # --------------------
 
 my $dpath = dpath('//AAA/*/CCC');
 $resultlist = $data ~~ $dpath;
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
+$dpath = dpath('///AAA/*/CCC');
 $resultlist = $data ~~ $dpath;
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and variable" );
 
@@ -158,6 +165,12 @@ $resultlist = $data ~~ dpath('//AAA/*/CCC');
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
 $resultlist = $data ~~ dpath('///AAA/*/CCC');
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath()" );
+
+$resultlist = $data ~~ dpathr('///AAA/*/CCC');
+cmp_bag($resultlist, [ \($data->{some}{where}{else}{AAA}{BBB}{CCC}),
+                       \($data->{AAA}{BBB}{CCC}),
+                       \($data->{AAA}{RRR}{CCC}),
+                     ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath() (REFERENCES)" );
 
 $resultlist = $data ~~ dpath('//AAA');
 cmp_bag($resultlist, [
