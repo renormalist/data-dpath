@@ -110,6 +110,13 @@ fitting to above data structure):
     $data ~~ dpath '//AAA/"*"[ key =~ /CC/ ]'   # when path is quoted, filter can contain slashes
     $data ~~ dpath '//CCC/*[value eq "RR2"]'    # filter by values of hashes
 
+You can get references into the C<$data> data structure by using C<dpathr>:
+
+    $data ~~ dpathr '/AAA/*/CCC'
+    $data ~~ dpathr '/AAA/BBB/CCC/../..'
+    $data ~~ dpathr '//AAA'
+    # etc.
+
 See full details C<t/data_dpath.t>.
 
 =head1 ABOUT
@@ -158,6 +165,11 @@ The function is prototyped to take exactly one argument so that you
 can omit the parens in many cases.
 
 See SYNOPSIS.
+
+=head2 dpathr( $dpath )
+
+Same as C<dpath> but toggles that results are references to the
+matched points in the data structure.
 
 =head1 METHODS
 

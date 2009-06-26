@@ -117,6 +117,21 @@ Take a string description, parse it, provide frontend methods.
 
 =head1 PUBLIC METHODS
 
+=head2 new ( %args )
+
+Constructor; creates instance.
+
+Args:
+
+=over 4
+
+=item give_references
+
+Default 0. If set to true value then results are references to the
+matched points in the data structure.
+
+=back
+
 =head2 match( $data )
 
 Returns an array of all values in C<$data> that match the Path object.

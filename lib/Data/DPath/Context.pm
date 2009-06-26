@@ -231,9 +231,27 @@ Data::DPath::Context - Abstraction for a current context that enables incrementa
 
 =head1 API METHODS
 
+=head2 new ( %args )
+
+Constructor; creates instance.
+
+Args:
+
+=over 4
+
+=item give_references
+
+Default 0. If set to true value then results are references to the
+matched points in the data structure.
+
+=back
+
 =head2 all
 
 Returns all values covered by current context.
+
+If C<give_references> is set to true value then results are references
+to the matched points in the data structure.
 
 =head2 search( $path )
 
