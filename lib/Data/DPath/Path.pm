@@ -140,9 +140,7 @@ Returns an array of all values in C<$data> that match the Path object.
 
 =head2 op_match( $self, $data )
 
-This sub/method is bound as the overloading function for C<~~>. It's
-not implemented as method due to a strange "Odd number of elements in
-hash assignment" warning.
+This sub/method is bound as the overloading function for C<~~>.
 
 =head2 quoted
 
