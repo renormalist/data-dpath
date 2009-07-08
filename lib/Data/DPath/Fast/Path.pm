@@ -2,12 +2,12 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath::Path is dirty {
+class Data::DPath::Fast::Path is dirty {
 
         use Data::Dumper;
-        use Data::DPath::Step;
-        use Data::DPath::Point;
-        use Data::DPath::Context;
+        use Data::DPath::Fast::Step;
+        use Data::DPath::Fast::Point;
+        use Data::DPath::Fast::Context;
         use Text::Balanced qw (
                                       extract_delimited
                                       extract_bracketed
@@ -48,7 +48,7 @@ class Data::DPath::Path is dirty {
                 my $extracted;
                 my @steps;
 
-                push @steps, new Data::DPath::Step( part => '', kind => 'ROOT' );
+                push @steps, new Data::DPath::Fast::Step( part => '', kind => 'ROOT' );
 
                 while ($remaining_path) {
                         my $plain_part;
@@ -86,7 +86,7 @@ class Data::DPath::Path is dirty {
                                 when ('..') { $kind ||= 'PARENT'   }
                                 default     { $kind ||= 'KEY'      }
                         }
-                        push @steps, new Data::DPath::Step( part   => $plain_part,
+                        push @steps, new Data::DPath::Fast::Step( part   => $plain_part,
                                                             kind   => $kind,
                                                             filter => $filter );
                 }
@@ -95,7 +95,7 @@ class Data::DPath::Path is dirty {
         }
 
         method match($data) {
-                my $context = new Data::DPath::Context ( current_points  => [ new Data::DPath::Point ( ref => \$data )],
+                my $context = new Data::DPath::Fast::Context ( current_points  => [ new Data::DPath::Fast::Point ( ref => \$data )],
                                                          give_references => $self->give_references,
                                                        );
                 return $context->match($self);
@@ -103,7 +103,7 @@ class Data::DPath::Path is dirty {
 }
 
 # help the CPAN indexer
-package Data::DPath::Path;
+package Data::DPath::Fast::Path;
 
 1;
 
@@ -111,7 +111,7 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Path - Abstraction for a DPath.
+Data::DPath::Fast::Path - Abstraction for a DPath.
 
 Take a string description, parse it, provide frontend methods.
 

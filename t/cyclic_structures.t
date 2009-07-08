@@ -5,13 +5,13 @@ use strict;
 use warnings;
 use Test::More tests => 3;
 use Test::Deep;
-use Data::DPath 'dpath';
+use Data::DPath::Fast 'dpath';
 use Data::Dumper;
 
-# local $Data::DPath::DEBUG = 1;
+# local $Data::DPath::Fast::DEBUG = 1;
 
 BEGIN {
-	use_ok( 'Data::DPath' );
+	use_ok( 'Data::DPath::Fast' );
 }
 
 my $data = {};

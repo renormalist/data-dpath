@@ -4,11 +4,11 @@ use 5.010;
 use strict;
 use warnings;
 use Data::Dumper;
-use Data::DPath 'dpath';
+use Data::DPath::Fast 'dpath';
 
 use Test::More tests => 2;
 
-#local $Data::DPath::DEBUG = 1;
+#local $Data::DPath::Fast::DEBUG = 1;
 
 my $data  = {
              AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },

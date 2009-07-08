@@ -1,4 +1,4 @@
-package Data::DPath::Filters;
+package Data::DPath::Fast::Filters;
 
 use 5.010;
 use strict;
@@ -78,7 +78,7 @@ sub reftype {
 # This would take a way down to a filtered CCC, then back again and take the next neighbor.
 
 # help the CPAN indexer
-package Data::DPath::Filters;
+package Data::DPath::Fast::Filters;
 
 1;
 
@@ -88,7 +88,7 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Filters - Magic functions available inside filter conditions
+Data::DPath::Fast::Filters - Magic functions available inside filter conditions
 
 =head1 API METHODS
 

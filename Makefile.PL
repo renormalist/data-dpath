@@ -2,8 +2,8 @@ use strict;
 use warnings;
 use inc::Module::Install;
 
-name 'Data-DPath';
-all_from 'lib/Data/DPath.pm';
+name 'Data-DPath-Fast';
+all_from 'lib/Data/DPath/Fast.pm';
 
 requires 'perl'                       => 5.010;
 requires 'parent'                     => 0;
@@ -23,6 +23,6 @@ test_requires 'Test::More';
 test_requires 'Test::Deep';
 tests_recursive;
 
-#makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath.pm > README' } ;
+#makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath/Fast.pm > README' } ;
 
 WriteAll;

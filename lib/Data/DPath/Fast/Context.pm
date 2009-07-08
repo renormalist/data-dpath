@@ -2,10 +2,10 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath::Context is dirty {
+class Data::DPath::Fast::Context is dirty {
 
         use Data::Dumper;
-        use Data::DPath::Point;
+        use Data::DPath::Fast::Point;
         use List::MoreUtils 'uniq';
         use Scalar::Util 'reftype';
 
@@ -32,8 +32,8 @@ class Data::DPath::Context is dirty {
                                 default        { next }
                         }
                         foreach (@values) {
-                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
-                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
+                                push @newout, new Data::DPath::Fast::Point( ref => \$_, parent => $point );
+                                push @newin,  new Data::DPath::Fast::Point( ref => \$_, parent => $point );
                         }
                 }
                 push @$out,  @newout;
@@ -68,8 +68,8 @@ class Data::DPath::Context is dirty {
                 #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @points ]);
                 my @new_points;
                 {
-                        require Data::DPath::Filters;
-                        package Data::DPath::Filters;
+                        require Data::DPath::Fast::Filters;
+                        package Data::DPath::Fast::Filters;
                         local our $idx = 0;
                         @new_points =
                             grep {
@@ -147,7 +147,7 @@ class Data::DPath::Context is dirty {
                                                 next unless reftype ${$point->ref} eq 'HASH';
                                                 # take point as hash, skip undefs
                                                 my @step_points = map {
-                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                       new Data::DPath::Fast::Point( ref => \$_, parent => $point )
                                                                       } ( ${$point->ref}->{$step->part} || () );
                                                 push @new_points, $self->_filter_points($step, @step_points);
                                         }
@@ -164,20 +164,20 @@ class Data::DPath::Context is dirty {
                                                         when ('HASH')
                                                         {
                                                                 @step_points = map {
-                                                                                    new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                    new Data::DPath::Fast::Point( ref => \$_, parent => $point )
                                                                                    } values %$ref;
                                                         }
                                                         when ('ARRAY')
                                                         {
                                                                 @step_points = map {
-                                                                                    new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                    new Data::DPath::Fast::Point( ref => \$_, parent => $point )
                                                                                    } @$ref;
                                                         }
                                                         default
                                                         {
                                                                 if (reftype $point->ref eq 'SCALAR') {
                                                                         @step_points = map {
-                                                                                            new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                            new Data::DPath::Fast::Point( ref => \$_, parent => $point )
                                                                                            } $ref;
                                                                 }
                                                         }
@@ -190,10 +190,10 @@ class Data::DPath::Context is dirty {
                                         # '.'
                                         # no step (neither up nor down), just allow filtering
                                         foreach my $point (@current_points) {
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
+                                                $Data::DPath::Fast::DEBUG && say "    ,-----------------------------------";
                                                 my @step_points = ($point);
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
+                                                $Data::DPath::Fast::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                                 when ('PARENT')
@@ -219,7 +219,7 @@ class Data::DPath::Context is dirty {
 }
 
 # help the CPAN indexer
-package Data::DPath::Context;
+package Data::DPath::Fast::Context;
 
 1;
 
@@ -227,7 +227,7 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Context - Abstraction for a current context that enables incremental searches.
+Data::DPath::Fast::Context - Abstraction for a current context that enables incremental searches.
 
 =head1 API METHODS
 

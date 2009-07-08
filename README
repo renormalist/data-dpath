@@ -1,8 +1,8 @@
 NAME
-    Data::DPath - DPath is not XPath!
+    Data::DPath::Fast - DPath is not XPath!
 
 SYNOPSIS
-        use Data::DPath 'dpath';
+        use Data::DPath::Fast 'dpath';
         my $data  = {
                      AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
                                RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -33,7 +33,7 @@ BUGS
 SUPPORT
     You can find documentation for this module with the perldoc command.
 
-        perldoc Data::DPath
+        perldoc Data::DPath::Fast
 
     You can also look for information at:
 

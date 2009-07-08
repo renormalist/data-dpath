@@ -5,13 +5,13 @@ use strict;
 use warnings;
 use Test::More tests => 140;
 use Test::Deep;
-use Data::DPath 'dpath', 'dpathr';
+use Data::DPath::Fast 'dpath', 'dpathr';
 use Data::Dumper;
 
-# local $Data::DPath::DEBUG = 1;
+# local $Data::DPath::Fast::DEBUG = 1;
 
 BEGIN {
-	use_ok( 'Data::DPath' );
+	use_ok( 'Data::DPath::Fast' );
 }
 
 my $data = {
@@ -125,9 +125,9 @@ cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'] ], 
 cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'] ], "2xANYWHERE + KEYs + ANYSTEP" );
 
 
-@resultlist = Data::DPath->match($data, '//AAA/*/CCC');
+@resultlist = Data::DPath::Fast->match($data, '//AAA/*/CCC');
 cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP as function" );
-@resultlist = Data::DPath->match($data, '///AAA/*/CCC');
+@resultlist = Data::DPath::Fast->match($data, '///AAA/*/CCC');
 cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP as function" );
 
 # from now on more via Perl 5.10 smart matching
@@ -335,18 +335,18 @@ TODO: {
         # --------------------
 
         # context objects for incremental searches
-        $context = Data::DPath->get_context($data, '//AAA/*/CCC');
+        $context = Data::DPath::Fast->get_context($data, '//AAA/*/CCC');
         @resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
         cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "context for incremental searches" );
 
         # is '*/..[0]' the same as ''?
-        $context = Data::DPath->get_context($data, '//AAA/*/..[0]/CCC'); # !!??
+        $context = Data::DPath::Fast->get_context($data, '//AAA/*/..[0]/CCC'); # !!??
         @resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
         cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ] );
 
-        # dpath inside context, same as: Data::DPath->match($data, '//AAA/*/CCC/*[2]')
+        # dpath inside context, same as: Data::DPath::Fast->match($data, '//AAA/*/CCC/*[2]')
         @resultlist = $context->search(dpath '/*[2]')->all;
         cmp_bag(\@resultlist, [ 'ZZZ' ], "incremental + FILTER int" );
 

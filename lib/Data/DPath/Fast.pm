@@ -2,24 +2,24 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath is dirty {
+class Data::DPath::Fast is dirty {
 
         our $DEBUG = 0;
 
-        use Data::DPath::Path;
-        use Data::DPath::Context;
+        use Data::DPath::Fast::Path;
+        use Data::DPath::Fast::Context;
 
         sub build_dpath {
                 return sub ($) {
                         my ($path) = @_;
-                        new Data::DPath::Path(path => $path);
+                        new Data::DPath::Fast::Path(path => $path);
                 };
         }
 
         sub build_dpathr {
                 return sub ($) {
                         my ($path) = @_;
-                        new Data::DPath::Path(path => $path, give_references => 1);
+                        new Data::DPath::Fast::Path(path => $path, give_references => 1);
                 };
         }
 
@@ -31,11 +31,11 @@ class Data::DPath is dirty {
         };
 
         method get_context ($class: Any $data, Str $path) {
-                new Data::DPath::Context(path => $path);
+                new Data::DPath::Fast::Context(path => $path);
         }
 
         method match ($class: Any $data, Str $path) {
-                Data::DPath::Path->new(path => $path)->match($data);
+                Data::DPath::Fast::Path->new(path => $path)->match($data);
         }
 
         # ------------------------------------------------------------
@@ -43,7 +43,7 @@ class Data::DPath is dirty {
 }
 
 # help the CPAN indexer
-package Data::DPath;
+package Data::DPath::Fast;
 our $VERSION = '0.12';
 
 1;
@@ -79,11 +79,11 @@ __END__
 
 =head1 NAME
 
-Data::DPath - DPath is not XPath!
+Data::DPath::Fast - DPath is not XPath!
 
 =head1 SYNOPSIS
 
-    use Data::DPath 'dpath';
+    use Data::DPath::Fast 'dpath';
     my $data  = {
                  AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
                            RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -156,8 +156,8 @@ not an own sub language as in XPath.
 
 =head2 dpath( $path )
 
-Meant as the front end function for everyday use of Data::DPath. It
-takes a path string and returns a C<Data::DPath::Path> object on which
+Meant as the front end function for everyday use of Data::DPath::Fast. It
+takes a path string and returns a C<Data::DPath::Fast::Path> object on which
 the match method can be called with data structures and the operator
 C<~~> is overloaded.
 
@@ -179,7 +179,7 @@ Returns an array of all values in C<$data> that match the C<$path>.
 
 =head2 get_context( $path )
 
-Returns a C<Data::DPath::Context> object that matches the path and can
+Returns a C<Data::DPath::Fast::Context> object that matches the path and can
 be used to incrementally dig into it.
 
 =head1 OPERATOR
@@ -361,7 +361,7 @@ subset of values. So you can write any condition like in a grep and
 also use the variable C<$_>.
 
 Additional filter functions are available that are usually written to
-use $_ by default. See L<Data::DPath::Filters|Data::DPath::Filters>
+use $_ by default. See L<Data::DPath::Fast::Filters|Data::DPath::Fast::Filters>
 for complete list of available filter functions.
 
 Here are some of them:
@@ -495,7 +495,7 @@ your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Data::DPath
+    perldoc Data::DPath::Fast
 
 
 You can also look for information at:
@@ -538,4 +538,4 @@ it under the same terms as Perl itself.
 
 =cut
 
-# End of Data::DPath
+# End of Data::DPath::Fast

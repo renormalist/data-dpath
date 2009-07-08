@@ -2,13 +2,13 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Data::DPath::Point {
+class Data::DPath::Fast::Point {
         has parent => ( is  => "rw", default => sub { undef } );
         has ref    => ( is  => "rw", default => sub { undef } );
 }
 
 # help the CPAN indexer
-package Data::DPath::Point;
+package Data::DPath::Fast::Point;
 
 1;
 
@@ -16,7 +16,7 @@ __END__
 
 =head1 NAME
 
-Data::DPath::Point - Abstraction for a single reference (a "point") in
+Data::DPath::Fast::Point - Abstraction for a single reference (a "point") in
 the datastructure
 
 Intermediate steps during execution are lists of currently covered

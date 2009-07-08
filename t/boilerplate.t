@@ -45,5 +45,5 @@ not_in_file_ok(ChangeLog =>
                "placeholder date/time"       => qr(Date/time)
               );
 
-module_boilerplate_ok('lib/Data/DPath.pm');
+module_boilerplate_ok('lib/Data/DPath/Fast.pm');
 
