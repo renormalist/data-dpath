@@ -1,6 +1,9 @@
 NAME
     Data::DPath::Fast - DPath is not XPath!
 
+    Data::DPath::Fast is a port of Data::DPath 
+    with old-school but faster Perl style.
+
 SYNOPSIS
         use Data::DPath::Fast 'dpath';
         my $data  = {
