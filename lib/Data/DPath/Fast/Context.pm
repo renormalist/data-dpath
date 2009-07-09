@@ -92,7 +92,7 @@ class Data::DPath::Fast::Context is dirty {
                 return @new_points;
         }
 
-        method _filter_points ($step, Item @points) {
+        method _filter_points ($step, Any @points) {
                 return () unless @points;
 
                 my $filter = $step->filter;

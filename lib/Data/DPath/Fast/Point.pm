@@ -1,11 +1,7 @@
 package Data::DPath::Fast::Point;
 
-use 5.010;
 use strict;
 use warnings;
-
-        # has parent => ( is  => "rw", default => sub { undef } );
-        # has ref    => ( is  => "rw", default => sub { undef } );
 
 sub new {
         my ($class, %args) = @_;
