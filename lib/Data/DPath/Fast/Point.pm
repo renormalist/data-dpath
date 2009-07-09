@@ -1,14 +1,29 @@
-use MooseX::Declare;
+package Data::DPath::Fast::Point;
 
 use 5.010;
+use strict;
+use warnings;
 
-class Data::DPath::Fast::Point {
-        has parent => ( is  => "rw", default => sub { undef } );
-        has ref    => ( is  => "rw", default => sub { undef } );
+        # has parent => ( is  => "rw", default => sub { undef } );
+        # has ref    => ( is  => "rw", default => sub { undef } );
+
+sub new {
+        my ($class, %args) = @_;
+        my $self = { %args };
+        return bless $self, $class;
 }
 
-# help the CPAN indexer
-package Data::DPath::Fast::Point;
+sub parent {
+        my ($self, $value) = @_;
+        $self->{parent} = $value if defined $value;
+        return $self->{parent};
+}
+
+sub ref {
+        my ($self, $value) = @_;
+        $self->{ref} = $value if defined $value;
+        return $self->{ref};
+}
 
 1;
 
