@@ -30,11 +30,13 @@ class Data::DPath::Fast is dirty {
                 groups  => { all   => [ 'dpath', 'dpathr' ] },
         };
 
-        method get_context ($class: $data, $path) {
+        sub get_context {
+                my ($class, $data, $path) = @_;
                 new Data::DPath::Fast::Context(path => $path);
         }
 
-        method match ($class: $data, $path) {
+        sub match {
+                my ($class, $data, $path) = @_;
                 Data::DPath::Fast::Path->new(path => $path)->match($data);
         }
 

@@ -46,7 +46,8 @@ class Data::DPath::Fast::Context is dirty {
         has current_points  => ( isa => "ArrayRef", is => "rw", auto_deref => 1 );
         has give_references => ( isa => "Int",      is => "rw", default => 0 );
 
-        method all {
+        sub all {
+                my ($self) = @_;
                 return
                     map { $self->give_references ? $_ : $$_ }
                         uniq
@@ -56,12 +57,14 @@ class Data::DPath::Fast::Context is dirty {
         }
 
         # filter current results by array index
-        method _filter_points_index ($index, @points) {
+        sub _filter_points_index {
+                my ($self, $index, @points) = @_;
                 return @points ? ($points[$index]) : ();
         }
 
         # filter current results by condition
-        method _filter_points_eval ($filter, @points) {
+        sub _filter_points_eval {
+                my ($self, $filter, @points) = @_;
                 return () unless @points;
                 return @points unless defined $filter;
 
@@ -92,7 +95,8 @@ class Data::DPath::Fast::Context is dirty {
                 return @new_points;
         }
 
-        method _filter_points ($step, Any @points) {
+        sub _filter_points {
+                my ($self, $step, @points) = @_;
                 return () unless @points;
 
                 my $filter = $step->filter;
@@ -115,7 +119,9 @@ class Data::DPath::Fast::Context is dirty {
                 }
         }
 
-        method search($path) {
+        sub search {
+                my ($self, $path) = @_;
+
                 my @current_points = $self->current_points;
                 foreach my $step ($path->_steps) {
                         my @new_points = ();
@@ -212,7 +218,8 @@ class Data::DPath::Fast::Context is dirty {
                 return $self;
         }
 
-        method match($path) {
+        sub match {
+                my ($self, $path) = @_;
                 $self->search($path)->all;
         }
 

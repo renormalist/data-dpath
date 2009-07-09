@@ -38,12 +38,14 @@ class Data::DPath::Fast::Path is dirty {
 
         use overload '~~' => \&op_match;
 
-        method op_match($data, $rhs) {
+        sub op_match {
+                my ($self, $data, $rhs) = @_;
                 return [ $self->match( $data ) ];
         }
 
         # essentially the Path parser
-        method _build__steps {
+        sub _build__steps {
+                my ($self) = @_;
                 my $remaining_path = $self->path;
                 my $extracted;
                 my @steps;
@@ -94,9 +96,10 @@ class Data::DPath::Fast::Path is dirty {
                 $self->_steps( \@steps );
         }
 
-        method match($data) {
+        sub match {
+                my ($self, $data) = @_;
                 my $context = new Data::DPath::Fast::Context ( current_points  => [ new Data::DPath::Fast::Point ( ref => \$data )],
-                                                         give_references => $self->give_references,
+                                                               give_references => $self->give_references,
                                                        );
                 return $context->match($self);
         }
