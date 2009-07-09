@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 140;
+use Test::More tests => 142;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -738,3 +738,59 @@ cmp_bag($resultlist, [
 
 $resultlist = $data6 ~~ dpath '//""/';
 cmp_bag($resultlist, [ "some value on empty key" ], "empty key");
+
+TODO: {
+        local $TODO = "deferred";
+
+        my $data7 =  [
+                      [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
+                      [ 1, 2, 3, 4 ],
+                      [ qw( AAA BBB CCC DDD ) ],
+                      [ 11, 22, 33 ],
+                      {
+                       hot => {
+                               stuff => {
+                                         ahead => [ qw( affe tiger fink star ) ],
+                                         ""    => "some value on empty key",
+                                        }
+                              }
+                      },
+                     ];
+
+        $resultlist = $data7 ~~ dpathr '//.[ size == 4 ]';
+
+        cmp_bag($resultlist, [ \($data7->[1]),
+                               \($data7->[2]),
+                               \($data7->[4]{hot}{stuff}{ahead}),
+                             ], "ANYWHERE + NOSTEP + FILTER int (REFERENCES)" );
+
+
+        $resultlist->[0] = [ qw(one two three four) ];
+        $resultlist->[1] = "there once was an array in LA";
+        $resultlist->[2] = { affe => "tiger",
+                             fink => "star",
+                           };
+
+        my $data7_expected_change = [
+                                     [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
+                                     [ 'one', 'two', 'three', 'four' ],
+                                     "there once was an array in LA",
+                                     [ 11, 22, 33 ],
+                                     {
+                                      hot => {
+                                              stuff => {
+                                                        ahead => { affe => "tiger",
+                                                                   fink => "star" },
+                                                        ""    => "some value on empty key",
+                                                       }
+                                             }
+                                     },
+                                    ];
+
+        diag Dumper($resultlist);
+        diag Dumper($data7_expected_change);
+        diag Dumper($data7);
+
+        cmp_bag($data7, $data7_expected_change, "ANYWHERE + NOSTEP + FILTER int (REFERENCES CHANGED)" );
+
+}
