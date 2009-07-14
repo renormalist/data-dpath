@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 142;
+use Test::More tests => 141;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -103,19 +103,19 @@ cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs 
 
 # --- same with operator ---
 
-cmp_bag(dpath('/AAA/BBB/CCC') ~~ $data,    [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
-cmp_bag(dpath('/AAA/BBB/CCC/..') ~~ $data, [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
-cmp_bag(dpath('/AAA/BBB/CCC/../..') ~~ $data, [
+cmp_bag($data ~~ dpath('/AAA/BBB/CCC'),    [ ['XXX', 'YYY', 'ZZZ'] ], "KEYs" );
+cmp_bag($data ~~ dpath('/AAA/BBB/CCC/..'), [ { CCC => ['XXX', 'YYY', 'ZZZ'] } ], "KEYs + PARENT" );
+cmp_bag($data ~~ dpath('/AAA/BBB/CCC/../..'), [
                                                  {
                                                   BBB => { CCC => ['XXX', 'YYY', 'ZZZ'] },
                                                   RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
                                                   DDD => { EEE => [ qw/ uuu vvv www / ] },
                                                  }
                                                 ], "KEYs + PARENT + PARENT" );
-cmp_bag(dpath('/AAA/BBB/CCC/../../DDD') ~~ $data, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
-cmp_bag(dpath('/AAA/*/CCC/../../DDD') ~~ $data, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
-cmp_bag(dpath('/') ~~ $data, [ $data ], "ROOT" );
-cmp_bag(dpath('/AAA/*/CCC') ~~ $data, [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANYSTEP" );
+cmp_bag($data ~~ dpath('/AAA/BBB/CCC/../../DDD'), [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY" );
+cmp_bag($data ~~ dpath('/AAA/*/CCC/../../DDD'), [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
+cmp_bag($data ~~ dpath('/'), [ $data ], "ROOT" );
+cmp_bag($data ~~ dpath('/AAA/*/CCC'), [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "KEYs + ANYSTEP" );
 
 # --- ---
 
@@ -136,9 +136,6 @@ cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
 $resultlist = $data ~~ dpath '/some//CCC';
 cmp_bag($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHERE + KEY" );
-
-$resultlist = dpath '/some//CCC' ~~ $data;
-cmp_bag($resultlist, [ 'affe' ], "left side without parens due to prototype" );
 
 $resultlist = $data ~~ dpath '//some//CCC';
 cmp_bag($resultlist, [ 'affe' ], "ANYWHERE + KEY + ANYWHERE + KEY" );
@@ -206,9 +203,9 @@ cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ],
 $resultlist = $data ~~ dpath '///AAA/*/CCC';
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens" );
 
-$resultlist = dpath '//AAA/*/CCC' ~~ $data;
+$resultlist = $data ~~ dpath '//AAA/*/CCC';
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "ANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
-$resultlist = dpath '///AAA/*/CCC' ~~ $data;
+$resultlist = $data ~~ dpath '///AAA/*/CCC';
 cmp_bag($resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ], "2xANYWHERE + KEYs + ANYSTEP with smartmatch and dpath without parens commutative" );
 
 $resultlist = $data ~~ dpath '/AAA/*/CCC/*';
