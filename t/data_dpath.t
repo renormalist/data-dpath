@@ -784,9 +784,9 @@ TODO: {
                                      },
                                     ];
 
-        diag Dumper($resultlist);
-        diag Dumper($data7_expected_change);
-        diag Dumper($data7);
+        # diag Dumper($resultlist);
+        # diag Dumper($data7_expected_change);
+        # diag Dumper($data7);
 
         cmp_bag($data7, $data7_expected_change, "ANYWHERE + NOSTEP + FILTER int (REFERENCES CHANGED)" );
 

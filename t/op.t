@@ -28,7 +28,7 @@ my $context;
 
 is_deeply($data ~~ dpath '/AAA/BBB/CCC', [ ['XXX', 'YYY', 'ZZZ'] ], "data ~~ dpath" );
 SKIP: {
-        skip "~~ no longer commutative in Perl 5.10.1";
+        skip "operator ~~ no longer commutative in Perl 5.10.1";
         is_deeply(dpath '/AAA/BBB/CCC' ~~ $data, [ ['XXX', 'YYY', 'ZZZ'] ], "dpath ~~ data (commutative)" );
 }
 
