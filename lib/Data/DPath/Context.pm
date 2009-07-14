@@ -160,7 +160,7 @@ class Data::DPath::Context is dirty {
                                                 # take point as array
                                                 my $ref = ${$point->ref};
                                                 my @step_points = ();
-                                                given (reftype $ref) {
+                                                given (reftype $ref // "") {
                                                         when ('HASH')
                                                         {
                                                                 @step_points = map {
