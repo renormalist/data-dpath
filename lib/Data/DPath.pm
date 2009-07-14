@@ -326,9 +326,7 @@ be used to incrementally dig into it.
 Does a C<match> of a dpath against a data structure.
 
 Due to the B<matching> nature of DPath the operator C<~~> should make
-your code more readable. It works commutative (meaning C<data ~~
-dpath> is the same as C<dpath ~~ data>).
-
+your code more readable.
 
 
 =head1 THE DPATH LANGUAGE
