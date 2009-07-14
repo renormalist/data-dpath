@@ -44,7 +44,7 @@ class Data::DPath is dirty {
 
 # help the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 1;
 
@@ -151,6 +151,143 @@ for data structures.
 
 DPath allows filter expressions that are in fact just Perl expressions
 not an own sub language as in XPath.
+
+=head2 Comparison with Data::Path
+
+There is a similar approach on CPAN, L<Data::Path|Data::Path>. Here is
+a comparison matrix between L<Data::Path|Data::Path> and
+L<Data::DPath|Data::DPath>.
+
+(Warning: B<alpha> grade comparison ahead, not yet fully verified,
+only evaluated by reading the source. Speed comparison not really
+benchmarked.)
+
+ ---------------------------------------------------------------------
+ Criteria             Data::Path           Data::DPath
+ ---------------------------------------------------------------------
+ 
+ real XPath syntax    no                   no
+ 
+ ---------------------------------------------------------------------
+ 
+ allow strange,       YES                  YES
+ non-xml but
+ perl-like            although
+ hash keys            limited,
+                      see next
+ ---------------------------------------------------------------------
+ 
+ allows special       no                   YES
+ chars of own
+ path syntax in                            you can quoting everything
+ hash keys
+ ("/[]|*.")
+ 
+ ---------------------------------------------------------------------
+ 
+ call subs in         YES                  no
+ data structure,
+ like:
+ /method()
+ ---------------------------------------------------------------------
+ 
+ callbacks on         YES                  no
+ not found keys
+ 
+ ---------------------------------------------------------------------
+ 
+ element "//"         no                   YES
+ for "ANYWHERE"
+ (//foo/bar)
+ 
+ ---------------------------------------------------------------------
+ 
+ element "."          no                   YES
+ for "NOSTEP" or
+ "actual position"
+ (/.[filter expr])
+ 
+ ---------------------------------------------------------------------
+ 
+ element "*"          no                   YES
+ for
+ "all subelements"
+ (/foo/*)
+ 
+ ---------------------------------------------------------------------
+ 
+ array access         YES                  YES
+ like /foo[4]
+                      although             including negative indexes
+                      limited              and whitespace awareness
+ ---------------------------------------------------------------------
+ 
+ complex              no                   YES
+ filter expressions
+ like                                      full Perl expressions
+ /foo[size == 3] or                        plus sugar functions,
+ /.[isa("Foo::Bar")]                       some minor limitations
+                                           (no "/" allowed in expr)
+ 
+ ---------------------------------------------------------------------
+ 
+ works with           YES                  YES
+ blessed subelements
+ 
+ ---------------------------------------------------------------------
+ 
+ arrays start         YES                  YES
+ with index 0
+ (in contrast
+ to 1 as in XPath)
+ 
+ ---------------------------------------------------------------------
+ 
+ handling of          croak               RETURN EMPTY
+ not matching
+ paths                but can be
+                      overwritten
+                      as callback
+ 
+ ---------------------------------------------------------------------
+ 
+ usage sugar          none                overloaded '~~' operator
+ 
+ ---------------------------------------------------------------------
+ 
+ Speed                FAST                slow
+ 
+                      - raw Perl          - based on Moose
+                      - considered fast   - slow startup time
+                                          - probably comparable
+                                            speed with expression
+                                            that Data::Path handles
+                                          - slow on fuzzy paths,
+                                            eg. with many "//" in it
+ 
+ ---------------------------------------------------------------------
+ 
+ Perl Versions        5.6 - 5.11          5.10
+ 
+ ---------------------------------------------------------------------
+ 
+ Install chance       100%                21%
+ (http://deps                             (for Perl 5.10)
+  .cpantesters
+  .org)
+ 
+ ---------------------------------------------------------------------
+
+
+=head3 Summary
+
+Generally L<Data::Path|Data::Path> is for simpler use cases but does
+not suffer from surrounding meta problems, it has few dependencies, is
+fast and works on practically every Perl version.
+
+Whereas L<Data::DPath|Data::DPath> provides more XPath like features
+but suffers from it's new-school dependency stack: Perl 5.10, Moose
+and MooseX::Declare.
 
 =head1 FUNCTIONS
 
