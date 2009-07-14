@@ -44,36 +44,11 @@ class Data::DPath is dirty {
 
 # help the CPAN indexer
 package Data::DPath;
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 1;
 
 __END__
-
-# Idea collection
-#
-# ::Tree
-#   ::Node   (references to current expressions)
-#     :: NodeSet   (collection of ::Node's)
-# ::Context
-#      same as ::NodeSet (?)
-# ::Step
-#       ::Step::Hashkey
-#       ::Step::Any
-#       ::Step::Parent
-#       ::Step::Filter::Grep
-#       ::Step::Filter::ArrayIndex
-# ::Expression (inside brackets)
-#    single int: array index
-#    else:       perl filter expression, as in grep, balanced quote
-#                $_ available
-# ::Grammar --> ::Step::(Hashkey, Any, Grep, ArrayIndex)
-#      ::Joins (path1 | path2)
-#      ::LocationPath vs. Path (first is a basic block, second the whole)
-#      // is just an empty step, make that empty step special, not the path string
-
-# Note, that hashes don't have an order, as they would have in XML documents.
-
 
 =pod
 
@@ -273,12 +248,12 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
- Perl Versions        5.6 - 5.11          5.10
+ Perl Versions        5.6 - 5.11          5.10 .. 5.11
  
  ---------------------------------------------------------------------
  
- Install chance       100%                21%
- (http://deps                             (for Perl 5.10)
+ Install chance       100%                40%
+ (http://deps                             (for Perl 5.10+)
   .cpantesters
   .org)
  
@@ -288,12 +263,12 @@ benchmarked.)
 =head3 Summary
 
 Generally L<Data::Path|Data::Path> is for simpler use cases but does
-not suffer from surrounding meta problems, it has few dependencies, is
+not suffer from surrounding meta problems: it has few dependencies, is
 fast and works on practically every Perl version.
 
 Whereas L<Data::DPath|Data::DPath> provides more XPath like features
-but suffers from it's new-school dependency stack: Perl 5.10, Moose
-and MooseX::Declare.
+but regarding speed and Perl compatibility suffers a bit from it's
+new-school dependency stack: Perl 5.10+, Moose and MooseX::Declare.
 
 =head1 FUNCTIONS
 

@@ -3,7 +3,9 @@
 	* v0.14
 
 	* The overloaded smart match "~~" does not work commutative
-	anymore. That aligns with Perl 5.10.1+ changes.
+	anymore in bleadperl and Perl 5.10.1.
+
+	* cleanup for bleadperl smart match warnings with undefined $_
 
 2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
 
