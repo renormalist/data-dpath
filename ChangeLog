@@ -1,11 +1,13 @@
-2009-07-14  Steffen Schwigon  <ss5@ss5-netbook>
+2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.14
 
-	* The overloaded smart match "~~" does not work commutative
-	anymore in bleadperl and Perl 5.10.1.
+	* The overloaded smartmatch "~~" does not work commutative anymore
+	in bleadperl and Perl 5.10.1.
 
-	* cleanup for bleadperl smart match warnings with undefined $_
+	* cleanup for bleadperl smartmatch warnings with undefined $_
+
+	* minor additions to the comparison section
 
 2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
 
