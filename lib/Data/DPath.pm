@@ -535,6 +535,34 @@ Copyright 2008,2009 Steffen Schwigon.
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
+=head1 SEE ALSO
+
+There are other modules on CPAN which are related to finding elements
+in data structures.
+
+=over 4
+
+=item Data::Path
+
+http://search.cpan.org/dist/Data-Path
+
+=item XML::XPathEngine
+
+http://search.cpan.org/dist/XML-XPathEngine
+
+=item Tree::XPathEngine
+
+http://search.cpan.org/dist/Tree-XPathEngine
+
+=item Class::XPath
+
+http://search.cpan.org/dist/Class-XPath
+
+=item Hash::Path
+
+http://search.cpan.org/dist/Hash-Path
+
+=back
 
 =cut
 
