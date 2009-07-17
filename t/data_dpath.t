@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 141;
+use Test::More tests => 143;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -469,6 +469,10 @@ $resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER int 0 + KEYs" );
 
+$resultlist = $data3 ~~ dpath '/*[key =~ m(neighbourhoods)]/*[0]/DDD/FFF';
+# ( 'interesting value' )
+cmp_bag($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER eval key matches m() + FILTER int 0 + KEYs" );
+
 $resultlist = $data3 ~~ dpath '/neighbourhoods/*[1]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'boring value' ], "ROOT + KEYs + FILTER int 1 + KEYs" );
@@ -531,13 +535,16 @@ TODO: {
         # print STDERR "resultlist = ", Dumper($resultlist);
         # print STDERR "\n\n**************************************************\n\n";
 
+        $resultlist = $data3 ~~ dpath '/*[key eq "neighbourhoods"]/*[0]/DDD/FFF';
+        # ( 'interesting value' )
+        cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + FILTER eval + FILTER int" );
         # filters on ANY
-        $resultlist = $data3 ~~ dpath '/*[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
+        $resultlist = $data3 ~~ dpath '/*[key =~ m(neigh.*hoods)]/*[0]/DDD/FFF';
         # ( 'interesting value' )
         cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + FILTER eval + FILTER int" );
 
         # filters on ANYWHERE (or is /[...]/ better the same as /*[...]/ ?)
-        $resultlist = $data3 ~~ dpath '/[key =~ qw(neigh.*hoods)]/*[0]/DDD/FFF';
+        $resultlist = $data3 ~~ dpath '/[key =~ m(neigh.*hoods)]/*[0]/DDD/FFF';
         # ( 'interesting value' )
         cmp_bag($resultlist, [ 'interesting value' ] );
 

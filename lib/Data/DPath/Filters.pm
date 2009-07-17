@@ -27,6 +27,7 @@ sub size
 sub key
 {
         no warnings 'uninitialized';
+        #print STDERR Dumper($_);
         return (keys %$_)[0] if Scalar::Util::reftype $_  eq 'HASH';
         return undef;
 }
