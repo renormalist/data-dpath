@@ -769,11 +769,11 @@ TODO: {
                              ], "ANYWHERE + NOSTEP + FILTER int (REFERENCES)" );
 
 
-        $resultlist->[0] = [ qw(one two three four) ];
-        $resultlist->[1] = "there once was an array in LA";
-        $resultlist->[2] = { affe => "tiger",
-                             fink => "star",
-                           };
+        ${$resultlist->[0]} = [ qw(one two three four) ];
+        ${$resultlist->[1]} = "there once was an array in LA";
+        ${$resultlist->[2]} = { affe => "tiger",
+                                fink => "star",
+                              };
 
         my $data7_expected_change = [
                                      [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],

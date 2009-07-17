@@ -270,6 +270,14 @@ Whereas L<Data::DPath|Data::DPath> provides more XPath like features
 but regarding speed and Perl compatibility suffers a bit from it's
 new-school dependency stack: Perl 5.10+, Moose and MooseX::Declare.
 
+=head1 Security warning
+
+B<Watch out!> This module C<eval>s parts of provided dpaths (filter
+expressions). Don't use it if you don't trust your paths.
+
+Maybe I will provide a switch-off-complex-filtering option in a later
+version. Tell me what you think or when you need it.
+
 =head1 FUNCTIONS
 
 =head2 dpath( $path )
