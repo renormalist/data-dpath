@@ -21,6 +21,8 @@ requires 'Parse::Method::Signatures'  => "1.003005";
 
 test_requires 'Test::More';
 test_requires 'Test::Deep';
+test_requires 'Clone';
+
 tests_recursive;
 
 #makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath.pm > README' } ;
