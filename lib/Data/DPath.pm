@@ -82,8 +82,7 @@ fitting to above data structure):
     $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
     $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
     $data ~~ dpath '//AAA/*[ key =~ m(CC) ]'    # filter by regex matching keys
-    $data ~~ dpath '//AAA/"*"[ key =~ /CC/ ]'   # when path is quoted, filter can contain slashes
-    $data ~~ dpath '//CCC/*[value eq "RR2"]'    # filter by values of hashes
+    $data ~~ dpath '//CCC/*[ value eq "RR2" ]'  # filter by values of hashes
 
 You can get references into the C<$data> data structure by using C<dpathr>:
 
@@ -333,7 +332,6 @@ your code more readable.
  /AAA/BBB/CCC/*[ idx == 1 ]
  //AAA/BBB/*[key eq "CCC"]
  //AAA/*[ key =~ m(CC) ]
- //AAA/"*"[ key =~ /CC/ ]
  //CCC/*[value eq "RR2"]
  //.[ size == 4 ]
  /.[ isa("Funky::Stuff") ]/.[ size == 5 ]/.[ reftype eq "ARRAY" ]
