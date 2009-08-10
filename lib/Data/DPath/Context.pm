@@ -27,13 +27,14 @@ class Data::DPath::Context is dirty {
                         my @values;
                         my $ref = $point->ref;
                         given (reftype $$ref // "") {
-                                when ('HASH')  { @values = values %{$$ref} }
-                                when ('ARRAY') { @values = @{$$ref}        }
+                                when ('HASH')  { @values = map { { val => $$ref->{$_}, key => $_ } } keys %{$$ref} }
+                                when ('ARRAY') { @values = map { { val => $_                     } }      @{$$ref} }
                                 default        { next }
                         }
                         foreach (@values) {
-                                push @newout, new Data::DPath::Point( ref => \$_, parent => $point );
-                                push @newin,  new Data::DPath::Point( ref => \$_, parent => $point );
+                                my %attrs = $_->{key} ? ( attrs => { key => $_->{key} } ) : ();
+                                push @newout, new Data::DPath::Point( ref => \($_->{val}), parent => $point, %attrs );
+                                push @newin,  new Data::DPath::Point( ref => \($_->{val}), parent => $point         );
                         }
                 }
                 push @$out,  @newout;
