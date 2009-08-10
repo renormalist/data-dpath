@@ -79,7 +79,8 @@ class Data::DPath::Context is dirty {
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
                                             # say STDERR "* $_";
-                                            no warnings 'uninitialized'; # having non-fitting values is the norm
+                                            # 'uninitialized' values are the norm
+                                            no warnings 'uninitialized';
                                             $res = eval $filter;
                                             say STDERR $@ if $@;
                                     } else {
