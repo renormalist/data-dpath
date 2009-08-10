@@ -195,10 +195,8 @@ class Data::DPath::Context is dirty {
                                         # '.'
                                         # no step (neither up nor down), just allow filtering
                                         foreach my $point (@current_points) {
-                                                $Data::DPath::DEBUG && say "    ,-----------------------------------";
                                                 my @step_points = ($point);
                                                 push @new_points, $self->_filter_points($step, @step_points);
-                                                $Data::DPath::DEBUG && say "    `-----------------------------------";
                                         }
                                 }
                                 when ('PARENT')
