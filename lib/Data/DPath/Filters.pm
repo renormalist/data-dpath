@@ -104,8 +104,11 @@ scalar it returns 1, everything else returns -1.
 
 =head2 key
 
-Returns the key of the current element if it is a hashref. Else it
-returns undef.
+If it is a hashref returns the key under which the current element is
+associated as value. Else it returns undef.
+
+This gives the key() function kind of a "look back" behaviour because
+the associated point is already after that key.
 
 =head2 value
 
