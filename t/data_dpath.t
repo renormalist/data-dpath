@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 155;
+use Test::More tests => 159;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -189,6 +189,35 @@ cmp_bag($resultlist, [
 
 $resultlist = $data ~~ dpath('//AAA/*[size == 3]');
 cmp_bag($resultlist, [ ], "ANYWHERE + KEY + ANYSTEP + FILTER size" );
+
+$resultlist = $data ~~ dpath('//AAA[size == 3]');
+cmp_bag($resultlist, [
+                      { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                        RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                        DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                      }
+                     ], "ANYWHERE + KEY + FILTER size == 3" );
+
+$resultlist = $data ~~ dpath('//AAA[size != 3]');
+cmp_bag($resultlist, [
+                      { BBB => { CCC => 'affe' } }
+                     ], "ANYWHERE + KEY + FILTER size != 3" );
+
+$resultlist = $data ~~ dpath('//AAA/*/*[size == 3]');
+cmp_bag($resultlist, [
+                      [ qw/ XXX YYY ZZZ / ],
+                      [ qw/ RR1 RR2 RR3 / ],
+                      [ qw/ uuu vvv www / ],
+                     ], "ANYWHERE + KEY + ANYSTEP + FILTER size" );
+
+$resultlist = $data ~~ dpath('//.[size == 3]');
+cmp_bag($resultlist, [
+                      $data,
+                      $data->{AAA},
+                      [ qw/ XXX YYY ZZZ / ],
+                      [ qw/ RR1 RR2 RR3 / ],
+                      [ qw/ uuu vvv www / ],
+                     ], "ANYWHERE + FILTER size" );
 
 $resultlist = $data ~~ dpath('//AAA/*[size == 1]');
 cmp_bag($resultlist, [
