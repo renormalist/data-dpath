@@ -448,16 +448,17 @@ The C<*> is a step that matches all elements after C<FOO>, but with
 the filter only those elements are chosen that are of index 2. This is
 actually the same as just C</FOO/*[2]>.
 
-=item C</FOO[key eq "CCC"]>
+=item C</FOO/*[key eq "CCC"]>
 
-On step C<FOO> it matches only those elements whose key is "CCC".
+In all elements after C<FOO> it matches only those elements whose key
+is "CCC".
 
-=item C</FOO[key =~ m(CCC) ]>
+=item C</FOO/*[key =~ m(CCC) ]>
 
-On step C<FOO> it matches only those elements whose key matches the
-regex C</CCC/>. It is actually just Perl code inside the filter but
-the C</> was avoided because it is the path separator, therefore the
-round parens around the regex.
+In all elements after step C<FOO> it matches only those elements whose
+key matches the regex C</CCC/>. It is actually just Perl code inside
+the filter but the C</> was avoided because it is the path separator,
+therefore the round parens around the regex.
 
 =item C<//FOO/*[value eq "RR2"]>
 
