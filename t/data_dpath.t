@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 150;
+use Test::More tests => 155;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -135,7 +135,7 @@ cmp_bag(\@resultlist, [ 'affe', ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 # --------------------
 
 $resultlist = $data ~~ dpath '/some//CCC';
-cmp_bag($resultlist, [ 'affe' ], "ROOT + KEY + ANYWHERE + KEY" );
+cmp_bag($resultlist, [ 'affe' ], "ROOT + ANYWHERE + KEY + KEY" );
 
 $resultlist = $data ~~ dpath '//some//CCC';
 cmp_bag($resultlist, [ 'affe' ], "ANYWHERE + KEY + ANYWHERE + KEY" );
@@ -335,7 +335,11 @@ TODO: {
         $context = Data::DPath->get_context($data, '//AAA/*/CCC');
         @resultlist = $context->all();
         # ( ['XXX', 'YYY', 'ZZZ'], 'affe' )
-        cmp_bag(\@resultlist, [ ['XXX', 'YYY', 'ZZZ'], ['RR1', 'RR2', 'RR3'], 'affe' ], "context for incremental searches" );
+        cmp_bag(\@resultlist, [
+                               ['XXX', 'YYY', 'ZZZ'],
+                               ['RR1', 'RR2', 'RR3'],
+                               'affe'
+                              ], "context for incremental searches" );
 
         # is '*/..[0]' the same as ''?
         $context = Data::DPath->get_context($data, '//AAA/*/..[0]/CCC'); # !!??
@@ -622,6 +626,41 @@ cmp_bag($resultlist, [
                       [ qw/ RR1 RR2 RR3 / ],
                       'affe',
                      ], "ANYWHERE + ANYSTEP + ANYSTEP + FILTER eval key eq string" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC';
+cmp_bag($resultlist, [
+                      [ qw/ XXX YYY ZZZ / ],
+                      [ qw/ RR1 RR2 RR3 / ],
+                      'affe',
+                     ], "ANYWHERE + STEP + ANYSTEP + STEP" );
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC/.[ key eq "CCC" ]';
+cmp_bag($resultlist, [
+                      [ qw/ XXX YYY ZZZ / ],
+                      [ qw/ RR1 RR2 RR3 / ],
+                      'affe',
+                     ], "ANYWHERE + STEP + ANYSTEP + STEP + FILTER eval key eq last STEP" );
+
+$resultlist = $data ~~ dpath '//.[ key eq "DD DD" ]';
+cmp_bag($resultlist, [
+                      { 'EE/E' => { CCC => 'zomtec' } }
+                     ], "ANYWHERE + NOSTEP + FILTER eval key" );
+
+TODO: {
+        local $TODO = "slash in filter expressions do not work yet";
+
+        $resultlist = $data ~~ dpath '//.[ key eq "EE/E" ]';
+        cmp_bag($resultlist, [
+                              { CCC => 'zomtec' }
+                             ], "ANYWHERE + NOSTEP + FILTER eval key + slash in eval" );
+}
+
+$resultlist = $data ~~ dpath '//AAA/*/CCC/.[ key eq "CCC" ]';
+cmp_bag($resultlist, [
+                      [ qw/ XXX YYY ZZZ / ],
+                      [ qw/ RR1 RR2 RR3 / ],
+                      'affe',
+                     ], "ANYWHERE + STEP + ANYSTEP + STEP + FILTER eval key eq last STEP" );
 
 $resultlist = $data ~~ dpath '//AAA/*[ key =~ m(...) ]';
 cmp_bag($resultlist, [
