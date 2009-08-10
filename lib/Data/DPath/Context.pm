@@ -148,8 +148,9 @@ class Data::DPath::Context is dirty {
                                                 next unless defined $point;
                                                 next unless reftype ${$point->ref} eq 'HASH';
                                                 # take point as hash, skip undefs
+                                                my $attrs = { key => $step->part };
                                                 my @step_points = map {
-                                                                       new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                       new Data::DPath::Point( ref => \$_, parent => $point, attrs => $attrs )
                                                                       } ( ${$point->ref}->{$step->part} || () );
                                                 push @new_points, $self->_filter_points($step, @step_points);
                                         }
