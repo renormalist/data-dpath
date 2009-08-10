@@ -278,7 +278,7 @@ is((scalar @isas), (scalar @steps), "isas3");
 
 # --------------------------------------------------
 
-$strange_path = q!/[2]!;
+$strange_path = q!/*[2]!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = $dpath->_steps;
 @kinds   = map { $_->{kind}   } @steps;
@@ -288,21 +288,22 @@ $dpath = new Data::DPath::Path( path => $strange_path );
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
+                       ANYSTEP
                       /],
           "kinds4");
 
 is_deeply(\@parts, [
                     '',
+                    '*',
                    ],
           "parts4");
-TODO: {
-        local $TODO = 'filters on ROOT/ANYWHERE not yet working';
 
-        is_deeply(\@filters, [
-                              '[2]',
-                             ],
-                  "filters4");
-}
+is_deeply(\@filters, [
+                      undef,
+                      '[2]',
+                     ],
+          "filters4");
+
 is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs4");
 is((scalar @isas), (scalar @steps), "isas4");
 
