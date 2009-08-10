@@ -3,9 +3,9 @@ use MooseX::Declare;
 use 5.010;
 
 class Data::DPath::Point {
-        has parent => ( is  => "rw", default => sub { undef } );
-        has ref    => ( is  => "rw", default => sub { undef } );
-        has attrs  => ( is  => "rw", default => sub { {}    } );
+        has parent => ( is  => "rw", isa => "Data::DPath::Point|Undef", default => sub { undef } );
+        has ref    => ( is  => "rw", isa => "Ref",                default => sub { undef } );
+        has attrs  => ( is  => "rw", isa => "HashRef",            default => sub { {}    } );
 }
 
 # help the CPAN indexer
