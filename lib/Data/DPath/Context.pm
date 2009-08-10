@@ -164,8 +164,10 @@ class Data::DPath::Context is dirty {
                                                         when ('HASH')
                                                         {
                                                                 @step_points = map {
-                                                                                    new Data::DPath::Point( ref => \$_, parent => $point )
-                                                                                   } values %$ref;
+                                                                                    my $v     = $ref->{$_};
+                                                                                    my $attrs = { key => $_ };
+                                                                                    new Data::DPath::Point( ref => \$v, parent => $point, attrs => $attrs )
+                                                                                   } keys %$ref;
                                                         }
                                                         when ('ARRAY')
                                                         {
