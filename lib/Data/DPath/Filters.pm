@@ -8,6 +8,7 @@ use Data::Dumper;
 use Scalar::Util;
 
 our $idx;
+our $p;   # current point
 
 sub affe {
         return $_ eq 'affe' ? 1 : 0;

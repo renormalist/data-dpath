@@ -74,7 +74,7 @@ class Data::DPath::Context is dirty {
                         @new_points =
                             grep {
                                     my $res;
-                                    my $p = $_;
+                                    local our $p = $_;
                                     local $_;
                                     if ( defined $p->ref ) {
                                             $_ = ${ $p->ref };
