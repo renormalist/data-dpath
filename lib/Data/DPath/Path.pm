@@ -63,18 +63,33 @@ class Data::DPath::Path is dirty {
                                         $kind                          = 'KEY'; # quoted is always a key
                                 }
                                 default {
+                                        my $filter_already_extracted = 0;
                                         ($extracted, $remaining_path) = extract_delimited($remaining_path,'/');
 
                                         if (not $extracted) {
                                                 ($extracted, $remaining_path) = ($remaining_path, undef); # END OF PATH
                                         } else {
-                                                $remaining_path = (chop $extracted) . $remaining_path;
+
+                                                # work around to recognize slashes in filter expressions and handle them:
+                                                #
+                                                # - 1) see if key unexpectedly contains opening "[" but no closing "]"
+                                                # - 2) use the part before "["
+                                                # - 3) unshift the rest to remaining
+                                                # - 4) extract_bracketed() explicitely
+                                                if ($extracted =~ /(.*)((?<!\\)\[.*)/ and $extracted !~ m|\]/\s*$|) {
+                                                        $remaining_path =  $2 . $remaining_path;
+                                                        ( $plain_part   =  $1 ) =~ s|^/||;
+                                                        ($filter, $remaining_path) = extract_bracketed($remaining_path);
+                                                        $filter_already_extracted = 1;
+                                                } else {
+                                                        $remaining_path = (chop $extracted) . $remaining_path;
+                                                }
                                         }
 
                                         ($plain_part, $filter) = $extracted =~ m,^/              # leading /
                                                                                  (.*?)           # path part
                                                                                  (\[.*\])?$      # optional filter
-                                                                                ,xg;
+                                                                                ,xg unless $filter_already_extracted;
                                         $plain_part = unescape $plain_part;
                                 }
                         }
