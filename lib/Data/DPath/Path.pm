@@ -10,7 +10,7 @@ class Data::DPath::Path is dirty {
         use Data::DPath::Context;
         use Text::Balanced qw (
                                       extract_delimited
-                                      extract_bracketed
+                                      extract_codeblock
                              );
 
         sub unescape {
@@ -58,7 +58,7 @@ class Data::DPath::Path is dirty {
                         {
                                 when ( \&quoted ) {
                                         ($plain_part, $remaining_path) = extract_delimited($remaining_path, q/'"/, "/"); # '
-                                        ($filter,     $remaining_path) = extract_bracketed($remaining_path);
+                                        ($filter,     $remaining_path) = extract_codeblock($remaining_path, "[]");
                                         $plain_part                    = unescape unquote $plain_part;
                                         $kind                          = 'KEY'; # quoted is always a key
                                 }
@@ -75,11 +75,11 @@ class Data::DPath::Path is dirty {
                                                 # - 1) see if key unexpectedly contains opening "[" but no closing "]"
                                                 # - 2) use the part before "["
                                                 # - 3) unshift the rest to remaining
-                                                # - 4) extract_bracketed() explicitely
+                                                # - 4) extract_codeblock() explicitely
                                                 if ($extracted =~ /(.*)((?<!\\)\[.*)/ and $extracted !~ m|\]/\s*$|) {
                                                         $remaining_path =  $2 . $remaining_path;
                                                         ( $plain_part   =  $1 ) =~ s|^/||;
-                                                        ($filter, $remaining_path) = extract_bracketed($remaining_path);
+                                                        ($filter, $remaining_path) = extract_codeblock($remaining_path, "[]");
                                                         $filter_already_extracted = 1;
                                                 } else {
                                                         $remaining_path = (chop $extracted) . $remaining_path;
