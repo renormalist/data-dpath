@@ -633,7 +633,7 @@ SKIP:
 {
         skip "quote semantics changed", 1;
         $resultlist = $data4 ~~ dpath '//AAA/BBB/CCC/"*"[ m/[A-Z]+/ ]';
-        cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with slashes needs quotes" );
+        cmp_bag($resultlist, [ 'XXX', 'YYY', 'ZZZ', 'XXXX', 'YYYY', 'ZZZZ', ], "FILTER eval regex with quotes and slashes" );
 }
 
 $resultlist = $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]';
@@ -675,14 +675,10 @@ cmp_bag($resultlist, [
                       { 'EE/E' => { CCC => 'zomtec' } }
                      ], "ANYWHERE + NOSTEP + FILTER eval key" );
 
-TODO: {
-        local $TODO = "slash in filter expressions do not work yet";
-
-        $resultlist = $data ~~ dpath '//.[ key eq "EE/E" ]';
-        cmp_bag($resultlist, [
-                              { CCC => 'zomtec' }
-                             ], "ANYWHERE + NOSTEP + FILTER eval key + slash in eval" );
-}
+$resultlist = $data ~~ dpath '//.[ key eq "EE/E" ]';
+cmp_bag($resultlist, [
+                      { CCC => 'zomtec' }
+                     ], "ANYWHERE + NOSTEP + FILTER eval key + slash in eval" );
 
 $resultlist = $data ~~ dpath '//AAA/*/CCC/.[ key eq "CCC" ]';
 cmp_bag($resultlist, [
