@@ -81,7 +81,7 @@ fitting to above data structure):
     $data ~~ dpath '/AAA/BBB/CCC/*[1]'     # filter by array index
     $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
     $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
-    $data ~~ dpath '//AAA/*[ key =~ m(CC) ]'    # filter by regex matching keys
+    $data ~~ dpath '//AAA/*[ key =~ /CC/ ]'     # filter by regex matching keys
     $data ~~ dpath '//CCC/*[ value eq "RR2" ]'  # filter by values of hashes
 
 You can get references into the C<$data> data structure by using C<dpathr>:
@@ -331,7 +331,7 @@ your code more readable.
  /AAA/BBB/CCC/*[1]
  /AAA/BBB/CCC/*[ idx == 1 ]
  //AAA/BBB/*[key eq "CCC"]
- //AAA/*[ key =~ m(CC) ]
+ //AAA/*[ key =~ /CC/ ]
  //CCC/*[value eq "RR2"]
  //.[ size == 4 ]
  /.[ isa("Funky::Stuff") ]/.[ size == 5 ]/.[ reftype eq "ARRAY" ]
@@ -453,12 +453,11 @@ actually the same as just C</FOO/*[2]>.
 In all elements after C<FOO> it matches only those elements whose key
 is "CCC".
 
-=item C</FOO/*[key =~ m(CCC) ]>
+=item C</FOO/*[key =~ /CCC/ ]>
 
 In all elements after step C<FOO> it matches only those elements whose
 key matches the regex C</CCC/>. It is actually just Perl code inside
-the filter but the C</> was avoided because it is the path separator,
-therefore the round parens around the regex.
+the filter which works in a grep{}-like context.
 
 =item C<//FOO/*[value eq "RR2"]>
 
