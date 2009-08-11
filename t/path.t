@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 33;
+use Test::More tests => 48;
 
 use 5.010;
 
@@ -360,8 +360,6 @@ is_deeply(\@filters, [
 is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs5");
 is((scalar @isas), (scalar @steps), "isas5");
 
-# --------------------------------------------------
-
 # ---------------------------- filter with slashes ----------------------
 
 $strange_path = q!//A1/*[2]/A3/.[//]/A5///A6!;
@@ -414,6 +412,167 @@ is_deeply(\@filters, [
           "filters6");
 is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs6");
 is((scalar @isas), (scalar @steps), "isas6");
+
+# ---------------------------- filter with strange perl variables ------------
+
+$strange_path = q!//A1/*[2]/A3/.[ local $/ = $/ ]/A5///A6!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       ANYSTEP
+                       KEY
+                       NOSTEP
+                       KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
+                      /],
+          "kinds7");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    '*',
+                    'A3',
+                    '.',
+                    'A5',
+                    '',
+                    '',
+                    'A6',
+                   ],
+          "parts7");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      '[ local $/ = $/ ]',
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters7");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs7");
+is((scalar @isas), (scalar @steps), "isas7");
+
+# ---------------------------- filter with strange perl variables ------------
+
+$strange_path = q!//A1/*[2]/A3/.[ local $] = $] ]/A5///A6!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       ANYSTEP
+                       KEY
+                       NOSTEP
+                       KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
+                      /],
+          "kinds8");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    '*',
+                    'A3',
+                    '.',
+                    'A5',
+                    '',
+                    '',
+                    'A6',
+                   ],
+          "parts8");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      '[ local $] = $] ]',
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters8");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs8");
+is((scalar @isas), (scalar @steps), "isas8");
+
+# --------------------------------------------------
+
+# ---------------------------- filter with perl variables $/ and $] combined ------------
+
+$strange_path = q!//A1/*[2]/A3/.[ local $/ = $/; local $] = $] ]/A5///A6!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       ANYSTEP
+                       KEY
+                       NOSTEP
+                       KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
+                      /],
+          "kinds9");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    '*',
+                    'A3',
+                    '.',
+                    'A5',
+                    '',
+                    '',
+                    'A6',
+                   ],
+          "parts9");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      '[ local $/ = $/; local $] = $] ]',
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters9");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs9");
+is((scalar @isas), (scalar @steps), "isas9");
 
 # --------------------------------------------------
 
