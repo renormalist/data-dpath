@@ -1,5 +1,14 @@
 2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
 
+	* v0.17
+
+	* understand even more strange perl'oid filter expressions by
+	using extract_codeblock instead of extract_bracketed
+
+	* tests for this
+
+2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
+
 	* v0.16
 
 	* filter expressions can now contain slashes (just as you would
