@@ -1,5 +1,12 @@
 2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
 
+	* v0.16
+
+	* filter expressions can now contain slashes (just as you would
+	naturally expect)
+
+2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
+
 	* v0.15
 
 	* fix semantics of filter function key(). It now provides the key
