@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 23;
+use Test::More tests => 33;
 
 use 5.010;
 
@@ -306,4 +306,114 @@ is_deeply(\@filters, [
 
 is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs4");
 is((scalar @isas), (scalar @steps), "isas4");
+
+# ---------------------------- filter with slashes ----------------------
+
+$strange_path = q!//A1/*[2]/A3/.[key =~ /neigh.*hoods/]/A5///A6!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       ANYSTEP
+                       KEY
+                       NOSTEP
+                       KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
+                      /],
+          "kinds5");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    '*',
+                    'A3',
+                    '.',
+                    'A5',
+                    '',
+                    '',
+                    'A6',
+                   ],
+          "parts5");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      '[key =~ /neigh.*hoods/]',
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters5");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs5");
+is((scalar @isas), (scalar @steps), "isas5");
+
+# --------------------------------------------------
+
+# ---------------------------- filter with slashes ----------------------
+
+$strange_path = q!//A1/*[2]/A3/.[//]/A5///A6!;
+$dpath = new Data::DPath::Path( path => $strange_path );
+@steps = $dpath->_steps;
+@kinds   = map { $_->{kind}   } @steps;
+@parts   = map { $_->{part}   } @steps;
+@filters = map { $_->{filter} } @steps;
+@refs    = map { ref $_       } @steps;
+@isas    = grep { $_->isa('Data::DPath::Step') } @steps;
+
+is_deeply(\@kinds, [qw/ROOT
+                       ANYWHERE
+                       KEY
+                       ANYSTEP
+                       KEY
+                       NOSTEP
+                       KEY
+                       ANYWHERE
+                       ANYWHERE
+                       KEY
+                      /],
+          "kinds6");
+
+is_deeply(\@parts, [
+                    '',
+                    '',
+                    'A1',
+                    '*',
+                    'A3',
+                    '.',
+                    'A5',
+                    '',
+                    '',
+                    'A6',
+                   ],
+          "parts6");
+is_deeply(\@filters, [
+                      undef,
+                      undef,
+                      undef,
+                      '[2]',
+                      undef,
+                      '[//]',
+                      undef,
+                      undef,
+                      undef,
+                      undef,
+                     ],
+          "filters6");
+is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs6");
+is((scalar @isas), (scalar @steps), "isas6");
+
+# --------------------------------------------------
 
