@@ -1,3 +1,16 @@
+2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.15
+
+	* fix semantics of filter function key(). It now provides the key
+	under which the value is associated.
+
+	* many more and fixed tests
+
+	* doc cleanups and fixes
+
+	* moved distro and development tests under xt/
+
 2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.14
