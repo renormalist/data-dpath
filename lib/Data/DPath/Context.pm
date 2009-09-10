@@ -41,7 +41,9 @@ class Data::DPath::Context is dirty {
                 return _any ($out, \@newin);
         }
 
-        clean unless $ENV{PERLDB_PIDS};
+        unless ($ENV{PERLDB_PIDS}) {
+                clean;
+        }
 
         # Points are the collected pointers into the datastructure
         has current_points  => ( isa => "ArrayRef", is => "rw", auto_deref => 1 );

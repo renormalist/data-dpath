@@ -30,7 +30,9 @@ class Data::DPath::Path is dirty {
 
         sub quoted { shift =~ m,^/["'],; }                                             # "
 
-        clean unless $ENV{PERLDB_PIDS};
+        unless ($ENV{PERLDB_PIDS}) {
+                clean;
+        }
 
         has path            => ( isa => "Str",      is => "rw" );
         has _steps          => ( isa => "ArrayRef", is => "rw", auto_deref => 1, lazy_build => 1 );

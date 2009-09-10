@@ -23,7 +23,9 @@ class Data::DPath is dirty {
                 };
         }
 
-        clean unless $ENV{PERLDB_PIDS};
+        unless ($ENV{PERLDB_PIDS}) {
+                clean;
+        }
 
         use Sub::Exporter -setup => {
                 exports => [ dpath => \&build_dpath, dpathr => \&build_dpathr ],
