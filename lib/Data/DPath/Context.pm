@@ -54,8 +54,8 @@ class Data::DPath::Context is dirty {
         clean;
 
         # Points are the collected pointers into the datastructure
-        has current_points  => ( isa => "ArrayRef", is => "rw", auto_deref => 1 );
-        has give_references => ( isa => "Int",      is => "rw", default => 0 );
+        has current_points  => ( is => "rw" );
+        has give_references => ( is => "rw", default => 0 );
 
         method all {
                 return
@@ -104,8 +104,8 @@ class Data::DPath::Context is dirty {
                 return @new_points;
         }
 
-        method _filter_points ($step, Item @points) {
-                return () unless @points;
+        method _filter_points ($step, $points) {
+                return [] unless @$points;
 
                 my $filter = $step->filter;
                 return @points unless defined $filter;

@@ -32,9 +32,9 @@ class Data::DPath::Path is dirty {
 
         clean;
 
-        has path            => ( isa => "Str",      is => "rw" );
-        has _steps          => ( isa => "ArrayRef", is => "rw", auto_deref => 1, lazy_build => 1 );
-        has give_references => ( isa => "Int",      is => "rw", default => 0 );
+        has path            => ( is => "rw" );
+        has _steps          => ( is => "rw", lazy_build => 1 );
+        has give_references => ( is => "rw", default => 0 );
 
         use overload '~~' => \&op_match;
 

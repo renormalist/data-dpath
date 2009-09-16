@@ -30,11 +30,11 @@ class Data::DPath is dirty {
                 groups  => { all   => [ 'dpath', 'dpathr' ] },
         };
 
-        method get_context ($class: Any $data, Str $path) {
+        method get_context ($class: $data, $path) {
                 new Data::DPath::Context(path => $path);
         }
 
-        method match ($class: Any $data, Str $path) {
+        method match ($class: $data, $path) {
                 Data::DPath::Path->new(path => $path)->match($data);
         }
 

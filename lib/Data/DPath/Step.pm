@@ -3,9 +3,9 @@ use MooseX::Declare;
 use 5.010;
 
 class Data::DPath::Step {
-        has kind   => ( isa => "Str", is  => "rw", default => sub { undef } );
-        has part   => ( isa => "Str", is  => "rw", default => sub { undef } );
-        has filter => ( isa => "Any", is  => "rw", default => sub { undef } );
+        has kind   => ( is  => "rw", default => sub { undef } );
+        has part   => ( is  => "rw", default => sub { undef } );
+        has filter => ( is  => "rw", default => sub { undef } );
 }
 
 # help the CPAN indexer
