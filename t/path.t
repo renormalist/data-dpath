@@ -22,7 +22,7 @@ my @isas;
 # -------------------- easy DPath --------------------
 
 $dpath    = new Data::DPath::Path( path => '/AAA/*[0]/CCC' );
-my @steps = $dpath->_steps;
+my @steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -40,7 +40,7 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs");
 my $strange_path = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"DD2\DD2"//EEE[ $_->isa("Foo::Bar") ]/"\"EE E2\""[ "\"affe\"" eq "Foo2::Bar2" ]/"\"EE E3\"[1]"/"\"EE E4\""[1]/"\"EE\E5\\\\\\""[1]/"\"FFF\""/"GGG[foo == bar]"/*/*[2]/XXX/YYY/ZZZ';
 
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -135,7 +135,7 @@ $strange_path = q!//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"D
 # "
 
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -227,7 +227,7 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
 
 $strange_path = q!//A1/[2]/A3/[key =~ qw(neigh.*hoods)]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -280,7 +280,7 @@ is((scalar @isas), (scalar @steps), "isas3");
 
 $strange_path = q!/*[2]!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -311,7 +311,7 @@ is((scalar @isas), (scalar @steps), "isas4");
 
 $strange_path = q!//A1/*[2]/A3/.[key =~ /neigh.*hoods/]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -364,7 +364,7 @@ is((scalar @isas), (scalar @steps), "isas5");
 
 $strange_path = q!//A1/*[2]/A3/.[//]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -417,7 +417,7 @@ is((scalar @isas), (scalar @steps), "isas6");
 
 $strange_path = q!//A1/*[2]/A3/.[ local $/ = $/ ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -470,7 +470,7 @@ is((scalar @isas), (scalar @steps), "isas7");
 
 $strange_path = q!//A1/*[2]/A3/.[ local $] = $] ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
@@ -525,7 +525,7 @@ is((scalar @isas), (scalar @steps), "isas8");
 
 $strange_path = q!//A1/*[2]/A3/.[ local $/ = $/; local $] = $] ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
-@steps = $dpath->_steps;
+@steps = @{$dpath->_steps};
 @kinds   = map { $_->{kind}   } @steps;
 @parts   = map { $_->{part}   } @steps;
 @filters = map { $_->{filter} } @steps;
