@@ -1,3 +1,19 @@
+2009-09-16  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.20
+
+	* aggressive speed optimizations, needed @ work:
+
+	* the ANYSTEP "//" not looks ahead to the following step and
+	reduces the intermediate point sets if it is a hash key, like in
+	"//AFFE"
+
+	* remove Moose type constraints
+
+	* more array references instead of arrays
+
+	* partially this led to more dirty code, I try to fix this later
+
 2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.17
