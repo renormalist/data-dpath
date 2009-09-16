@@ -12,8 +12,9 @@ class Data::DPath::Context is dirty {
         # only finds "inner" values; if you need the outer start value
         # then just wrap it into one more level of array brackets.
         sub _any {
-                my ($out, $in) = @_;
+                my ($out, $in, $lookahead_key) = @_;
 
+                no warnings 'uninitialized';
                 #print "    in: ", Dumper($in);
                 #sleep 3;
 
@@ -27,7 +28,16 @@ class Data::DPath::Context is dirty {
                         my @values;
                         my $ref = $point->ref;
                         given (reftype $$ref // "") {
-                                when ('HASH')  { @values = map { { val => $$ref->{$_}, key => $_ } } keys %{$$ref} }
+                                when ('HASH')  { @values =
+                                                     grep {
+                                                             # optimization: only consider a key if:
+                                                             not defined $lookahead_key
+                                                                 or $_->{key} eq $lookahead_key
+                                                                     or reftype($_->{val}) eq 'HASH'
+                                                                         or reftype($_->{val}) eq 'ARRAY';
+                                                     }
+                                                         map { { val => $$ref->{$_}, key => $_ } }
+                                                             keys %{$$ref} }
                                 when ('ARRAY') { @values = map { { val => $_                     } }      @{$$ref} }
                                 default        { next }
                         }
@@ -37,8 +47,8 @@ class Data::DPath::Context is dirty {
                                 push @newin,  new Data::DPath::Point( ref => \($_->{val}), parent => $point         );
                         }
                 }
-                push @$out,  @newout;
-                return _any ($out, \@newin);
+                push @$out, @newout;
+                return _any ($out, \@newin, $lookahead_key);
         }
 
         unless ($ENV{PERLDB_PIDS}) {
@@ -121,7 +131,10 @@ class Data::DPath::Context is dirty {
 
         method search($path) {
                 my @current_points = $self->current_points;
-                foreach my $step ($path->_steps) {
+                my @steps = $path->_steps;
+                for (my $i = 0; $i < @steps; $i++) {
+                        my $step = $steps[$i];
+                        my $lookahead = $steps[$i+1];
                         my @new_points = ();
                         given ($step->kind)
                         {
@@ -134,10 +147,16 @@ class Data::DPath::Context is dirty {
                                 }
                                 when ('ANYWHERE')
                                 {
+                                        # optimzation: only useful points added
+                                        my $lookahead_key;
+                                        if (defined $lookahead and $lookahead->kind eq 'KEY') {
+                                                $lookahead_key = $lookahead->part;
+                                        }
+
                                         # '//'
                                         # all hash/array nodes of a data structure
                                         foreach my $point (@current_points) {
-                                                my @step_points = (_any([], [ $point ]), $point);
+                                                my @step_points = (_any([], [ $point ], $lookahead_key), $point);
                                                 push @new_points, $self->_filter_points($step, @step_points);
                                         }
                                 }
