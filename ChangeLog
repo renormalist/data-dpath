@@ -17,6 +17,8 @@
 	-  4.2s (v0.21)
 	on my netbook. Yes, 15 times faster.
 
+	* thanks to Devel::NYTProf which helped a lot profiling this
+
 2009-09-16  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.20
