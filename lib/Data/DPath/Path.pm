@@ -1,17 +1,24 @@
-use MooseX::Declare;
+package Data::DPath::Path;
 
 use 5.010;
-
-class Data::DPath::Path is dirty {
+use strict;
+use warnings;
 
         use Data::Dumper;
         use Data::DPath::Step;
         use Data::DPath::Point;
         use Data::DPath::Context;
-        use Text::Balanced qw (
-                                      extract_delimited
-                                      extract_codeblock
-                             );
+        use Text::Balanced 'extract_delimited', 'extract_codeblock';
+
+use Object::Tiny::rw 'path', '_steps', 'give_references';
+
+sub new {
+        my $class = shift;
+        my $self  = $class->SUPER::new( @_ );
+        $self->_build__steps;
+        return $self;
+}
+
 
         sub unescape {
                 my ($str) = @_;
@@ -29,21 +36,18 @@ class Data::DPath::Path is dirty {
         }
 
         sub quoted { shift =~ m,^/["'],; }                                             # "
-
-        clean;
-
-        has path            => ( is => "rw" );
-        has _steps          => ( is => "rw", lazy_build => 1 );
-        has give_references => ( is => "rw", default => 0 );
-
         use overload '~~' => \&op_match;
 
-        method op_match($data, $rhs) {
+        sub op_match {
+                my ($self, $data, $rhs) = @_;
+
                 return [ $self->match( $data ) ];
         }
 
         # essentially the Path parser
-        method _build__steps {
+        sub _build__steps {
+                my ($self) = @_;
+
                 my $remaining_path = $self->path;
                 my $extracted;
                 my @steps;
@@ -109,16 +113,14 @@ class Data::DPath::Path is dirty {
                 $self->_steps( \@steps );
         }
 
-        method match($data) {
+        sub match {
+                my ($self, $data) = @_;
+
                 my $context = new Data::DPath::Context ( current_points  => [ new Data::DPath::Point ( ref => \$data )],
                                                          give_references => $self->give_references,
                                                        );
                 return $context->match($self);
         }
-}
-
-# help the CPAN indexer
-package Data::DPath::Path;
 
 1;
 

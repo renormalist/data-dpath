@@ -1,13 +1,16 @@
-use MooseX::Declare;
+package Data::DPath::Context;
 
 use 5.010;
-
-class Data::DPath::Context is dirty {
+use strict;
+use warnings;
 
         use Data::Dumper;
         use Data::DPath::Point;
         use List::MoreUtils 'uniq';
         use Scalar::Util 'reftype';
+
+# Points are the collected pointers into the datastructure
+use Object::Tiny::rw 'current_points', 'give_references';
 
         # only finds "inner" values; if you need the outer start value
         # then just wrap it into one more level of array brackets.
@@ -51,13 +54,9 @@ class Data::DPath::Context is dirty {
                 return _any ($out, \@newin, $lookahead_key);
         }
 
-        clean;
+        sub all {
+                my ($self) = @_;
 
-        # Points are the collected pointers into the datastructure
-        has current_points  => ( is => "rw" );
-        has give_references => ( is => "rw", default => 0 );
-
-        method all {
                 return
                     map { $self->give_references ? $_ : $$_ }
                         uniq
@@ -67,12 +66,16 @@ class Data::DPath::Context is dirty {
         }
 
         # filter current results by array index
-        method _filter_points_index ($index, $points) {
+        sub _filter_points_index {
+                my ($self, $index, $points) = @_;
+
                 return $points ? [$points->[$index]] : [];
         }
 
         # filter current results by condition
-        method _filter_points_eval ($filter, $points) {
+        sub _filter_points_eval {
+                my ($self, $filter, $points) = @_;
+
                 return [] unless @$points;
                 return $points unless defined $filter;
 
@@ -104,7 +107,9 @@ class Data::DPath::Context is dirty {
                 return $new_points;
         }
 
-        method _filter_points ($step, $points) {
+        sub _filter_points {
+                my ($self, $step, $points) = @_;
+
                 return [] unless @$points;
 
                 my $filter = $step->filter;
@@ -127,7 +132,9 @@ class Data::DPath::Context is dirty {
                 }
         }
 
-        method search($path) {
+        sub search {
+                my ($self, $path) = @_;
+
                 my $current_points = $self->current_points;
                 my $steps = $path->_steps;
                 for (my $i = 0; $i < @{$steps // []}; $i++) {
@@ -240,11 +247,12 @@ class Data::DPath::Context is dirty {
                 return $self;
         }
 
-        method match($path) {
+        sub match {
+                my ($self, $path) = @_;
+
                 $self->search($path)->all;
         }
 
-}
 
 # help the CPAN indexer
 package Data::DPath::Context;
