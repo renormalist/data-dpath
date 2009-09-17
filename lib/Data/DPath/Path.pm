@@ -177,6 +177,18 @@ This method is essentially the DPath parser as it tokenizes the path
 into single steps whose later execution is the base functionality of
 the whole DPath module.
 
+=head2 path
+
+Attribute / accessor.
+
+=head2 _steps
+
+Attribute / accessor.
+
+=head2 give_references
+
+Attribute / accessor.
+
 =head1 AUTHOR
 
 Steffen Schwigon, C<< <schwigon at cpan.org> >>

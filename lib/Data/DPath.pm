@@ -605,6 +605,19 @@ the first escaped double-quote is ok to be a single backslash.
 All strange, isn't it? At least it's (hopefully) consistent with
 something you know (Perl, Shell, etc.).
 
+=head1 INTERNAL METHODS
+
+To make pod coverage happy.
+
+=head2 build_dpath
+
+Prepares internal attributes for I<dpath>.
+
+=head2 build_dpathr
+
+Prepares internal attributes for I<dpathr>.
+
+
 =head1 AUTHOR
 
 Steffen Schwigon, C<< <schwigon at cpan.org> >>

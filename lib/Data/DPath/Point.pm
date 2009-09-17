@@ -20,4 +20,18 @@ references in the data structure, i.e., lists of such B<Point>s. The
 remaining B<Point>s at the end just need to be dereferenced and form
 the result.
 
+=head1 INTERNAL METHODS
+
+=head2 parent
+
+Attribute / accessor.
+
+=head2 ref
+
+Attribute / accessor.
+
+=head2 attrs
+
+Attribute / accessor.
+
 =cut

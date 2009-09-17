@@ -149,6 +149,7 @@ sub search
         my ($self, $path) = @_;
 
         no strict 'refs';
+        no warnings 'uninitialized';
 
         my $current_points = $self->current_points;
         my $steps = $path->_steps;
@@ -318,6 +319,14 @@ Evaluates the filter condition in brackets. It differenciates between
 simple integers, which are taken as array index, and all other
 conditions, which are taken as evaled perl expression in a grep like
 expression onto the set of points found by current step.
+
+=head2 current_points
+
+Attribute / accessor.
+
+=head2 give_references
+
+Attribute / accessor.
 
 =head1 AUTHOR
 

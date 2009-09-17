@@ -16,4 +16,18 @@ Data::DPath::Step - Abstraction for a single Step through a Path.
 
 When a DPath is evaluated it executes these B<Step>s of a B<Path>.
 
+=head1 INTERNAL METHODS
+
+=head2 kind
+
+Attribute / accessor.
+
+=head2 part
+
+Attribute / accessor.
+
+=head2 filter
+
+Attribute / accessor.
+
 =cut

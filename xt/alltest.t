@@ -1,6 +1,11 @@
 #! /usr/bin/env perl
 
-use Test::Aggregate;
+eval "use Test::Aggregate";
+
+if ($@) {
+        use Test::More;
+        plan skip_all => "Test::Aggregate required for testing aggregated";
+}
 
 use Data::DPath;
 #DB::enable_profile();
