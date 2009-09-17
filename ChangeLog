@@ -1,3 +1,22 @@
+2009-09-17  Steffen Schwigon  <ss5@ss5-netbook>
+
+	* v0.21
+
+	* even more aggressive speed optimizations:
+
+	* dropped Moose and MX::Declare completely in favor of
+	Object::Tiny::RW and classical old school subs
+
+	* cleaned up dirty code by partially using 
+	- no strict 'refs'
+	- no warnings 'uninitialized'
+
+	* the overall speed improvement for my "xt/large_data.t"
+	benchmark is an improved runtime from originally
+	- 65s   (v0.17) to
+	-  4.2s (v0.21)
+	on my netbook. Yes, 15 times faster.
+
 2009-09-16  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.20
