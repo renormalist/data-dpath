@@ -1,4 +1,4 @@
-2009-09-17  Steffen Schwigon  <ss5@ss5-netbook>
+2009-09-17  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.21
 
@@ -7,7 +7,7 @@
 	* dropped Moose and MX::Declare completely in favor of
 	Object::Tiny::RW and classical old school subs
 
-	* cleaned up dirty code by partially using 
+	* cleaned up dirty code by partially using
 	- no strict 'refs'
 	- no warnings 'uninitialized'
 
