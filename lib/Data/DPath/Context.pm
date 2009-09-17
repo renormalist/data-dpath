@@ -31,7 +31,7 @@ sub _any
         foreach my $point (@$in) {
                 my @values;
                 my $ref = $point->ref;
-                given (reftype $$ref // "") {
+                given (reftype $$ref) {
                         when ('HASH')  { @values =
                                              grep {
                                                      # optimization: only consider a key if:
@@ -61,12 +61,15 @@ sub _any
 sub all {
         my ($self) = @_;
 
+        no strict 'refs';
+        no warnings 'uninitialized';
+
         return
             map { $self->give_references ? $_ : $$_ }
                 uniq
                     map {
                          defined $_ ? $_->ref : ()
-                        } @{$self->current_points // []};
+                        } @{$self->current_points};
 }
 
 # filter current results by array index
@@ -116,6 +119,9 @@ sub _filter_points_eval
 sub _filter_points {
         my ($self, $step, $points) = @_;
 
+        no strict 'refs';
+        no warnings 'uninitialized';
+
         return [] unless @$points;
 
         my $filter = $step->filter;
@@ -142,9 +148,11 @@ sub search
 {
         my ($self, $path) = @_;
 
+        no strict 'refs';
+
         my $current_points = $self->current_points;
         my $steps = $path->_steps;
-        for (my $i = 0; $i < @{$steps // []}; $i++) {
+        for (my $i = 0; $i < @$steps; $i++) {
                 my $step = $steps->[$i];
                 my $lookahead = $steps->[$i+1];
                 my $new_points = [];
@@ -155,8 +163,8 @@ sub search
                         {
                                 # the root node
                                 # (only makes sense at first step, but currently not asserted)
-                                my $step_points = $self->_filter_points($step, $current_points // []);
-                                push @$new_points, @{$step_points // []};
+                                my $step_points = $self->_filter_points($step, $current_points);
+                                push @$new_points, @$step_points;
                         }
                         when ('ANYWHERE')
                         {
@@ -168,16 +176,16 @@ sub search
 
                                 # '//'
                                 # all hash/array nodes of a data structure
-                                foreach my $point (@{$current_points // []}) {
+                                foreach my $point (@$current_points) {
                                         my $step_points = [_any([], [ $point ], $lookahead_key), $point];
-                                        push @$new_points, @{$self->_filter_points($step, $step_points // []) // []};
+                                        push @$new_points, @{$self->_filter_points($step, $step_points)};
                                 }
                         }
                         when ('KEY')
                         {
                                 # the value of a key
                                 # say STDERR " * current_points: ", Dumper($current_points);
-                                foreach my $point (@{$current_points // []}) {
+                                foreach my $point (@$current_points) {
                                         no warnings 'uninitialized';
                                         next unless defined $point;
                                         my $pref = $point->ref;
@@ -191,19 +199,19 @@ sub search
                                         my $step_points = [ map {
                                                                  new Data::DPath::Point( ref => \$_, parent => $point, attrs => $attrs )
                                                                 } ( $$pref->{$step->part} || () ) ];
-                                        push @$new_points, @{$self->_filter_points($step, $step_points // []) // []};
+                                        push @$new_points, @{$self->_filter_points($step, $step_points)};
                                 }
                         }
                         when ('ANYSTEP')
                         {
                                 # '*'
                                 # all leaves of a data tree
-                                foreach my $point (@{$current_points // []}) {
+                                foreach my $point (@$current_points) {
                                 # take point as array
                                         my $pref = $point->ref;
                                         my $ref = $$pref;
                                         my $step_points = [];
-                                        given (reftype $ref // "") {
+                                        given (reftype $ref) {
                                                 when ('HASH')
                                                 {
                                                         $step_points = [ map {
@@ -228,25 +236,25 @@ sub search
                                                         }
                                                 }
                                         }
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points // []) // [] };
+                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
                         }
                         when ('NOSTEP')
                         {
                                 # '.'
                                 # no step (neither up nor down), just allow filtering
-                                foreach my $point (@{$current_points // []}) {
+                                foreach my $point (@{$current_points}) {
                                         my $step_points = [$point];
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points // []) // [] };
+                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
                         }
                         when ('PARENT')
                         {
                                 # '..'
                                 # the parent
-                                foreach my $point (@{$current_points // []}) {
+                                foreach my $point (@{$current_points}) {
                                         my $step_points = [$point->parent];
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points // []) // [] };
+                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
                         }
                 }
