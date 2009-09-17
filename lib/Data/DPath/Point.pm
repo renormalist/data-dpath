@@ -1,15 +1,10 @@
-use MooseX::Declare;
+package Data::DPath::Point;
 
 use 5.010;
+use strict;
+use warnings;
 
-class Data::DPath::Point {
-        has parent => ( is  => "rw", default => sub { undef } );
-        has ref    => ( is  => "rw", default => sub { undef } );
-        has attrs  => ( is  => "rw", default => sub { {}    } );
-}
-
-# help the CPAN indexer
-package Data::DPath::Point;
+use Object::Tiny::rw 'parent', 'ref', 'attrs';
 
 1;
 

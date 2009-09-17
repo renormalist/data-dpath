@@ -28,7 +28,8 @@ sub size
 sub key
 {
         no warnings 'uninitialized';
-        return $p->attrs->{key};
+        my $attrs = $p->attrs // {};
+        return $attrs->{key};
 }
 
 sub value

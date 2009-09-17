@@ -1,15 +1,10 @@
-use MooseX::Declare;
+package Data::DPath::Step;
 
 use 5.010;
+use strict;
+use warnings;
 
-class Data::DPath::Step {
-        has kind   => ( is  => "rw", default => sub { undef } );
-        has part   => ( is  => "rw", default => sub { undef } );
-        has filter => ( is  => "rw", default => sub { undef } );
-}
-
-# help the CPAN indexer
-package Data::DPath::Step;
+use Object::Tiny::rw 'kind', 'part', 'filter';
 
 1;
 
