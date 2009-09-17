@@ -4,7 +4,13 @@ use 5.010;
 use strict;
 use warnings;
 
-use Object::Tiny::RW 'kind', 'part', 'filter';
+use Class::XSAccessor
+    constructor => 'new',
+    accessors   => {
+                    kind   => 'kind',
+                    part   => 'part',
+                    filter => 'filter',
+                   };
 
 1;
 

@@ -10,11 +10,16 @@ use Data::DPath::Point;
 use Data::DPath::Context;
 use Text::Balanced 'extract_delimited', 'extract_codeblock';
 
-use Object::Tiny::RW 'path', '_steps', 'give_references';
+use Class::XSAccessor
+    accessors   => {
+                    path            => 'path',
+                    _steps          => '_steps',
+                    give_references => 'give_references',
+                   };
 
 sub new {
         my $class = shift;
-        my $self  = $class->SUPER::new( @_ );
+        my $self  = bless { @_ }, $class;
         $self->_build__steps;
         return $self;
 }

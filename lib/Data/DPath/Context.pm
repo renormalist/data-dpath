@@ -9,8 +9,12 @@ use Data::DPath::Point;
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 
-# Points are the collected pointers into the datastructure
-use Object::Tiny::RW 'current_points', 'give_references';
+use Class::XSAccessor
+    constructor => 'new',
+    accessors   => {
+                    current_points  => 'current_points',
+                    give_references => 'give_references',
+                   };
 
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
