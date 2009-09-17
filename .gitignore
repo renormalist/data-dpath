@@ -12,5 +12,5 @@ Debian*
 Data-DPath-*
 cover_db
 nytprof.out
-nytprof
-
+nytprof*
+benchmarks_*
