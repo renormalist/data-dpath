@@ -8,7 +8,7 @@ all_from 'lib/Data/DPath.pm';
 requires 'perl'                       => 5.010;
 requires 'parent'                     => 0;
 requires 'aliased'                    => 0;
-requires 'Object::Tiny::rw'           => 0;
+requires 'Object::Tiny::RW'           => 0;
 requires 'Scalar::Util'               => 0;
 requires 'List::MoreUtils'            => 0;
 requires 'Sub::Exporter'              => 0;

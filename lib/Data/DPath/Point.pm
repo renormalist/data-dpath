@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-use Object::Tiny::rw 'parent', 'ref', 'attrs';
+use Object::Tiny::RW 'parent', 'ref', 'attrs';
 
 1;
 

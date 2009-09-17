@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '0.20';
 
-use Object::Tiny::rw;
+use Object::Tiny::RW;
 
         our $DEBUG = 0;
 

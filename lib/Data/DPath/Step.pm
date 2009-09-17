@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-use Object::Tiny::rw 'kind', 'part', 'filter';
+use Object::Tiny::RW 'kind', 'part', 'filter';
 
 1;
 

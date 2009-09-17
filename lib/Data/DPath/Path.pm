@@ -10,7 +10,7 @@ use Data::DPath::Point;
 use Data::DPath::Context;
 use Text::Balanced 'extract_delimited', 'extract_codeblock';
 
-use Object::Tiny::rw 'path', '_steps', 'give_references';
+use Object::Tiny::RW 'path', '_steps', 'give_references';
 
 sub new {
         my $class = shift;
