@@ -17,6 +17,16 @@ use Class::XSAccessor::Array
                     give_references => 1,
                    };
 
+use constant { HASH     => 'HASH',
+               ARRAY    => 'ARRAY',
+               ROOT     => 'ROOT',
+               ANYWHERE => 'ANYWHERE',
+               KEY      => 'KEY',
+               ANYSTEP  => 'ANYSTEP',
+               NOSTEP   => 'NOSTEP',
+               PARENT   => 'PARENT',
+           };
+
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
 sub _any
@@ -38,17 +48,17 @@ sub _any
                 my @values;
                 my $ref = $point->ref;
                 given (reftype $$ref) {
-                        when ('HASH')  { @values =
+                        when (HASH)  { @values =
                                              grep {
                                                      # optimization: only consider a key if:
                                                      not defined $lookahead_key
                                                      or $_->{key} eq $lookahead_key
-                                                     or ($reftype = reftype($_->{val})) eq 'HASH'
-                                                     or $reftype eq 'ARRAY';
+                                                     or ($reftype = reftype($_->{val})) eq HASH
+                                                     or $reftype eq ARRAY;
                                              } map { { val => $$ref->{$_}, key => $_ } }
                                                  keys %{$$ref};
                                  }
-                        when ('ARRAY') { @values = map { { val => $_                     } }      @{$$ref} }
+                        when (ARRAY) { @values = map { { val => $_                     } }      @{$$ref} }
                         default        { next }
                 }
                 foreach (@values)
@@ -167,18 +177,18 @@ sub search
                 # say STDERR "+++ step.kind: ", Dumper($step);
                 given ($step->kind)
                 {
-                        when ('ROOT')
+                        when (ROOT)
                         {
                                 # the root node
                                 # (only makes sense at first step, but currently not asserted)
                                 my $step_points = $self->_filter_points($step, $current_points);
                                 push @$new_points, @$step_points;
                         }
-                        when ('ANYWHERE')
+                        when (ANYWHERE)
                         {
                                 # optimzation: only useful points added
                                 my $lookahead_key;
-                                if (defined $lookahead and $lookahead->kind eq 'KEY') {
+                                if (defined $lookahead and $lookahead->kind eq KEY) {
                                         $lookahead_key = $lookahead->part;
                                 }
 
@@ -189,7 +199,7 @@ sub search
                                         push @$new_points, @{$self->_filter_points($step, $step_points)};
                                 }
                         }
-                        when ('KEY')
+                        when (KEY)
                         {
                                 # the value of a key
                                 # say STDERR " * current_points: ", Dumper($current_points);
@@ -201,7 +211,7 @@ sub search
                                         # say STDERR "point.ref: ", Dumper($point->ref);
                                         # say STDERR "deref point.ref: ", Dumper(${$point->ref});
                                         # say STDERR "reftype deref point.ref: ", Dumper(reftype ${$point->ref});
-                                        next unless (defined $point && reftype $$pref eq 'HASH');
+                                        next unless (defined $point && reftype $$pref eq HASH);
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
@@ -214,7 +224,7 @@ sub search
                                         push @$new_points, @{$self->_filter_points($step, $step_points)};
                                 }
                         }
-                        when ('ANYSTEP')
+                        when (ANYSTEP)
                         {
                                 # '*'
                                 # all leaves of a data tree
@@ -224,7 +234,7 @@ sub search
                                         my $ref = $$pref;
                                         my $step_points = [];
                                         given (reftype $ref) {
-                                                when ('HASH')
+                                                when (HASH)
                                                 {
                                                         $step_points = [ map {
                                                                               my $v     = $ref->{$_};
@@ -232,7 +242,7 @@ sub search
                                                                               Data::DPath::Point->new->ref(\$v)->parent($point)->attrs($attrs)
                                                                              } keys %$ref ];
                                                 }
-                                                when ('ARRAY')
+                                                when (ARRAY)
                                                 {
                                                         $step_points = [ map {
                                                                               Data::DPath::Point->new->ref(\$_)->parent($point)
@@ -251,7 +261,7 @@ sub search
                                         push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
                         }
-                        when ('NOSTEP')
+                        when (NOSTEP)
                         {
                                 # '.'
                                 # no step (neither up nor down), just allow filtering
@@ -260,7 +270,7 @@ sub search
                                         push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
                         }
-                        when ('PARENT')
+                        when (PARENT)
                         {
                                 # '..'
                                 # the parent
