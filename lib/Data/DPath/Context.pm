@@ -195,7 +195,7 @@ sub search
                                         # say STDERR "point.ref: ", Dumper($point->ref);
                                         # say STDERR "deref point.ref: ", Dumper(${$point->ref});
                                         # say STDERR "reftype deref point.ref: ", Dumper(reftype ${$point->ref});
-                                        next unless (defined $point && defined $pref && reftype $$pref eq 'HASH');
+                                        next unless (defined $point && reftype $$pref eq 'HASH');
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
