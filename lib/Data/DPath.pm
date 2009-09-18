@@ -6,44 +6,41 @@ use warnings;
 
 our $VERSION = '0.21';
 
-use Object::Tiny::RW;
+our $DEBUG = 0;
 
-        our $DEBUG = 0;
+use Data::DPath::Path;
+use Data::DPath::Context;
 
-        use Data::DPath::Path;
-        use Data::DPath::Context;
-
-        sub build_dpath {
-                return sub ($) {
-                        my ($path) = @_;
-                        new Data::DPath::Path(path => $path);
-                };
-        }
-
-        sub build_dpathr {
-                return sub ($) {
-                        my ($path) = @_;
-                        new Data::DPath::Path(path => $path, give_references => 1);
-                };
-        }
-
-        use Sub::Exporter -setup => {
-                exports => [ dpath => \&build_dpath, dpathr => \&build_dpathr ],
-                groups  => { all   => [ 'dpath', 'dpathr' ] },
+sub build_dpath {
+        return sub ($) {
+                my ($path) = @_;
+                Data::DPath::Path->new(path => $path);
         };
+}
 
-                sub get_context {
-                        my ($class, $data, $path) = @_;
+sub build_dpathr {
+        return sub ($) {
+                my ($path) = @_;
+                Data::DPath::Path->new(path => $path, give_references => 1);
+        };
+}
 
-                        Data::DPath::Context->new(path => $path);
-                }
+use Sub::Exporter -setup => {
+                             exports => [ dpath => \&build_dpath, dpathr => \&build_dpathr ],
+                             groups  => { all   => [ 'dpath', 'dpathr' ] },
+                            };
 
-        sub match {
-                my ($class, $data, $path) = @_;
-                Data::DPath::Path->new(path => $path)->match($data);
-        }
+sub get_context {
+        my ($class, $data, $path) = @_;
+        Data::DPath::Context->new(path => $path);
+}
 
-        # ------------------------------------------------------------
+sub match {
+        my ($class, $data, $path) = @_;
+        Data::DPath::Path->new(path => $path)->match($data);
+}
+
+# ------------------------------------------------------------
 
 1;
 
@@ -57,15 +54,15 @@ Data::DPath - DPath is not XPath!
 
 =head1 SYNOPSIS
 
-    use Data::DPath 'dpath';
-    my $data  = {
-                 AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
-                           RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
-                           DDD => { EEE  => [ qw/ uuu vvv www / ] },
-                         },
-                };
-    @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
-    $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
+ use Data::DPath 'dpath';
+ my $data  = {
+              AAA  => { BBB => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                        RRR => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                        DDD => { EEE  => [ qw/ uuu vvv www / ] },
+                      },
+             };
+ @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+ $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
 Various other example paths from C<t/data_dpath.t> (not neccessarily
 fitting to above data structure):

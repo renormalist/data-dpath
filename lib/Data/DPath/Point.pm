@@ -4,7 +4,14 @@ use 5.010;
 use strict;
 use warnings;
 
-use Object::Tiny::RW 'parent', 'ref', 'attrs';
+use Class::XSAccessor::Array
+    chained     => 1,
+    constructor => 'new',
+    accessors   => {
+                    parent => 0,
+                    attrs  => 1,
+                    ref    => 2,
+                   };
 
 1;
 

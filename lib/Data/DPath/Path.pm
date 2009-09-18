@@ -10,11 +10,17 @@ use Data::DPath::Point;
 use Data::DPath::Context;
 use Text::Balanced 'extract_delimited', 'extract_codeblock';
 
-use Object::Tiny::RW 'path', '_steps', 'give_references';
+use Class::XSAccessor
+    chained     => 1,
+    accessors   => {
+                    path            => 'path',
+                    _steps          => '_steps',
+                    give_references => 'give_references',
+                   };
 
 sub new {
         my $class = shift;
-        my $self  = $class->SUPER::new( @_ );
+        my $self  = bless { @_ }, $class;
         $self->_build__steps;
         return $self;
 }
@@ -52,7 +58,7 @@ sub _build__steps {
         my $extracted;
         my @steps;
 
-        push @steps, new Data::DPath::Step( part => '', kind => 'ROOT' );
+        push @steps, Data::DPath::Step->new->part('')->kind('ROOT');
 
         while ($remaining_path) {
                 my $plain_part;
@@ -105,9 +111,7 @@ sub _build__steps {
                         when ('..') { $kind ||= 'PARENT'   }
                         default     { $kind ||= 'KEY'      }
                 }
-                push @steps, new Data::DPath::Step( part   => $plain_part,
-                                                    kind   => $kind,
-                                                    filter => $filter );
+                push @steps, Data::DPath::Step->new->part($plain_part)->kind($kind)->filter($filter);
         }
         pop @steps if $steps[-1]->kind eq 'ANYWHERE'; # ignore final '/'
         $self->_steps( \@steps );
@@ -116,9 +120,10 @@ sub _build__steps {
 sub match {
         my ($self, $data) = @_;
 
-        my $context = new Data::DPath::Context ( current_points  => [ new Data::DPath::Point ( ref => \$data )],
-                                                 give_references => $self->give_references,
-                                               );
+        my $context = Data::DPath::Context
+            ->new
+                ->current_points([ Data::DPath::Point->new->ref(\$data) ])
+                    ->give_references($self->give_references);
         return $context->match($self);
 }
 
