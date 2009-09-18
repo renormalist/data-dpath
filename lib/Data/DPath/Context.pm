@@ -8,6 +8,7 @@ use Data::Dumper;
 use aliased 'Data::DPath::Point';
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
+use Data::DPath::Filters;
 
 use Class::XSAccessor::Array
     chained     => 1,
@@ -106,13 +107,12 @@ sub _filter_points_eval
 
         #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @$points ]);
         my $new_points;
+        my $res;
         {
-                require Data::DPath::Filters;
                 package Data::DPath::Filters;
                 local our $idx = 0;
                 $new_points = [
                                grep {
-                                       my $res;
                                        local our $p = $_;
                                        local $_;
                                        my $pref = $p->ref;
