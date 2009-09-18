@@ -27,6 +27,7 @@ sub _any
 
         my @newin;
         my @newout;
+        my $reftype;
 
         foreach my $point (@$in) {
                 my @values;
@@ -37,8 +38,8 @@ sub _any
                                                      # optimization: only consider a key if:
                                                      not defined $lookahead_key
                                                      or $_->{key} eq $lookahead_key
-                                                     or reftype($_->{val}) eq 'HASH'
-                                                     or reftype($_->{val}) eq 'ARRAY';
+                                                     or ($reftype = reftype($_->{val})) eq 'HASH'
+                                                     or $reftype eq 'ARRAY';
                                              } map { { val => $$ref->{$_}, key => $_ } }
                                                  keys %{$$ref};
                                  }
