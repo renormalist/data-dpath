@@ -4,12 +4,13 @@ use 5.010;
 use strict;
 use warnings;
 
-use Class::XSAccessor
+use Class::XSAccessor::Array
+    chained     => 1,
     constructor => 'new',
     accessors   => {
-                    parent => 'parent',
-                    attrs  => 'attrs',
-                    ref    => 'ref',
+                    parent => 0,
+                    attrs  => 1,
+                    ref    => 2,
                    };
 
 1;

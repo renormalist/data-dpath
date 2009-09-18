@@ -9,11 +9,12 @@ use Data::DPath::Point;
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 
-use Class::XSAccessor
+use Class::XSAccessor::Array
+    chained     => 1,
     constructor => 'new',
     accessors   => {
-                    current_points  => 'current_points',
-                    give_references => 'give_references',
+                    current_points  => 0,
+                    give_references => 1,
                    };
 
 # only finds "inner" values; if you need the outer start value
@@ -53,9 +54,10 @@ sub _any
                 {
                         my $key = $_->{key};
                         my $val = $_->{val};
-                        my %attrs = $key ? ( attrs => { key => $key } ) : ();
-                        push @newout, Data::DPath::Point->new ( ref => \$val, parent => $point, %attrs );
-                        push @newin,  Data::DPath::Point->new ( ref => \$val, parent => $point         );
+                        my $newpoint = Data::DPath::Point->new->ref(\$val)->parent($point);
+                        $newpoint->attrs({ key => $key }) if $key;
+                        push @newout, $newpoint;
+                        push @newin, Data::DPath::Point->new->ref(\$val)->parent($point);
                 }
         }
         push @$out, @newout;
@@ -202,7 +204,11 @@ sub search
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
-                                                                 new Data::DPath::Point( ref => \$_, parent => $point, attrs => $attrs )
+                                                                 Data::DPath::Point
+                                                                 ->new
+                                                                 ->ref(\$_)
+                                                                 ->parent($point)
+                                                                 ->attrs($attrs)
                                                                 } ( $$pref->{$step->part} || () ) ];
                                         push @$new_points, @{$self->_filter_points($step, $step_points)};
                                 }
@@ -222,13 +228,13 @@ sub search
                                                         $step_points = [ map {
                                                                               my $v     = $ref->{$_};
                                                                               my $attrs = { key => $_ };
-                                                                              new Data::DPath::Point( ref => \$v, parent => $point, attrs => $attrs )
+                                                                              Data::DPath::Point->new->ref(\$v)->parent($point)->attrs($attrs)
                                                                              } keys %$ref ];
                                                 }
                                                 when ('ARRAY')
                                                 {
                                                         $step_points = [ map {
-                                                                              new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                              Data::DPath::Point->new->ref(\$_)->parent($point)
                                                                              } @$ref ];
                                                 }
                                                 default
@@ -236,7 +242,7 @@ sub search
                                                         if (reftype $pref eq 'SCALAR') {
                                                                 # TODO: without map, it's just one value
                                                                 $step_points = [ map {
-                                                                                      new Data::DPath::Point( ref => \$_, parent => $point )
+                                                                                      Data::DPath::Point->new->ref(\$_)->parent($point)
                                                                                      } $ref ];
                                                         }
                                                 }

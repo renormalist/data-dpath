@@ -21,7 +21,7 @@ sub build_dpath {
 sub build_dpathr {
         return sub ($) {
                 my ($path) = @_;
-                new Data::DPath::Path(path => $path, give_references => 1);
+                Data::DPath::Path->new(path => $path, give_references => 1);
         };
 }
 
