@@ -10,6 +10,13 @@ use Data::DPath::Point;
 use Data::DPath::Context;
 use Text::Balanced 'extract_delimited', 'extract_codeblock';
 
+use constant { ROOT     => 'ROOT',
+               ANYWHERE => 'ANYWHERE',
+               KEY      => 'KEY',
+               ANYSTEP  => 'ANYSTEP',
+               NOSTEP   => 'NOSTEP',
+               PARENT   => 'PARENT',
+           };
 use Object::Tiny::RW 'path', '_steps', 'give_references';
 
 sub new {
@@ -52,7 +59,7 @@ sub _build__steps {
         my $extracted;
         my @steps;
 
-        push @steps, new Data::DPath::Step( part => '', kind => 'ROOT' );
+        push @steps, new Data::DPath::Step( part => '', kind => ROOT );
 
         while ($remaining_path) {
                 my $plain_part;
@@ -64,7 +71,7 @@ sub _build__steps {
                                 ($plain_part, $remaining_path) = extract_delimited($remaining_path, q/'"/, "/"); # '
                                 ($filter,     $remaining_path) = extract_codeblock($remaining_path, "[]");
                                 $plain_part                    = unescape unquote $plain_part;
-                                $kind                          = 'KEY'; # quoted is always a key
+                                $kind                          = KEY; # quoted is always a key
                         }
                         default {
                                 my $filter_already_extracted = 0;
@@ -99,17 +106,17 @@ sub _build__steps {
                 }
 
                 given ($plain_part) {
-                        when ('')   { $kind ||= 'ANYWHERE' }
-                        when ('*')  { $kind ||= 'ANYSTEP'  }
-                        when ('.')  { $kind ||= 'NOSTEP'   }
-                        when ('..') { $kind ||= 'PARENT'   }
-                        default     { $kind ||= 'KEY'      }
+                        when ('')   { $kind ||= ANYWHERE }
+                        when ('*')  { $kind ||= ANYSTEP  }
+                        when ('.')  { $kind ||= NOSTEP   }
+                        when ('..') { $kind ||= PARENT   }
+                        default     { $kind ||= KEY      }
                 }
                 push @steps, new Data::DPath::Step( part   => $plain_part,
                                                     kind   => $kind,
                                                     filter => $filter );
         }
-        pop @steps if $steps[-1]->kind eq 'ANYWHERE'; # ignore final '/'
+        pop @steps if $steps[-1]->kind eq ANYWHERE; # ignore final '/'
         $self->_steps( \@steps );
 }
 
