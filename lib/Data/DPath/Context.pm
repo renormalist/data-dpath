@@ -47,13 +47,13 @@ sub _any
         foreach my $point (@$in) {
                 my @values;
                 my $ref = $point->ref;
-                given (reftype $$ref) {
+                given (ref $$ref) {
                         when (HASH)  { @values =
                                              grep {
                                                      # optimization: only consider a key if:
                                                      not defined $lookahead_key
                                                      or $_->{key} eq $lookahead_key
-                                                     or ($reftype = reftype($_->{val})) eq HASH
+                                                     or ($reftype = ref($_->{val})) eq HASH
                                                      or $reftype eq ARRAY;
                                              } map { { val => $$ref->{$_}, key => $_ } }
                                                  keys %{$$ref};
@@ -211,7 +211,7 @@ sub search
                                         # say STDERR "point.ref: ", Dumper($point->ref);
                                         # say STDERR "deref point.ref: ", Dumper(${$point->ref});
                                         # say STDERR "reftype deref point.ref: ", Dumper(reftype ${$point->ref});
-                                        next unless (defined $point && reftype $$pref eq HASH);
+                                        next unless (defined $point && ref $$pref eq HASH);
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
@@ -233,7 +233,7 @@ sub search
                                         my $pref = $point->ref;
                                         my $ref = $$pref;
                                         my $step_points = [];
-                                        given (reftype $ref) {
+                                        given (ref $ref) {
                                                 when (HASH)
                                                 {
                                                         $step_points = [ map {
@@ -250,7 +250,7 @@ sub search
                                                 }
                                                 default
                                                 {
-                                                        if (reftype $pref eq 'SCALAR') {
+                                                        if (ref $pref eq 'SCALAR') {
                                                                 # TODO: without map, it's just one value
                                                                 $step_points = [ map {
                                                                                       Point->new->ref(\$_)->parent($point)
