@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
-use Data::DPath::Point;
+use aliased 'Data::DPath::Point';
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 
@@ -65,10 +65,10 @@ sub _any
                 {
                         my $key = $_->{key};
                         my $val = $_->{val};
-                        my $newpoint = Data::DPath::Point->new->ref(\$val)->parent($point);
+                        my $newpoint = Point->new->ref(\$val)->parent($point);
                         $newpoint->attrs({ key => $key }) if $key;
                         push @newout, $newpoint;
-                        push @newin, Data::DPath::Point->new->ref(\$val)->parent($point);
+                        push @newin, Point->new->ref(\$val)->parent($point);
                 }
         }
         push @$out, @newout;
@@ -215,7 +215,7 @@ sub search
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
-                                                                 Data::DPath::Point
+                                                                 Point
                                                                  ->new
                                                                  ->ref(\$_)
                                                                  ->parent($point)
@@ -239,13 +239,13 @@ sub search
                                                         $step_points = [ map {
                                                                               my $v     = $ref->{$_};
                                                                               my $attrs = { key => $_ };
-                                                                              Data::DPath::Point->new->ref(\$v)->parent($point)->attrs($attrs)
+                                                                              Point->new->ref(\$v)->parent($point)->attrs($attrs)
                                                                              } keys %$ref ];
                                                 }
                                                 when (ARRAY)
                                                 {
                                                         $step_points = [ map {
-                                                                              Data::DPath::Point->new->ref(\$_)->parent($point)
+                                                                              Point->new->ref(\$_)->parent($point)
                                                                              } @$ref ];
                                                 }
                                                 default
@@ -253,7 +253,7 @@ sub search
                                                         if (reftype $pref eq 'SCALAR') {
                                                                 # TODO: without map, it's just one value
                                                                 $step_points = [ map {
-                                                                                      Data::DPath::Point->new->ref(\$_)->parent($point)
+                                                                                      Point->new->ref(\$_)->parent($point)
                                                                                      } $ref ];
                                                         }
                                                 }

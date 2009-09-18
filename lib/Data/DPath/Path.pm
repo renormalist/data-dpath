@@ -5,9 +5,9 @@ use strict;
 use warnings;
 
 use Data::Dumper;
-use Data::DPath::Step;
-use Data::DPath::Point;
-use Data::DPath::Context;
+use aliased 'Data::DPath::Step';
+use aliased 'Data::DPath::Point';
+use aliased 'Data::DPath::Context';
 use Text::Balanced 'extract_delimited', 'extract_codeblock';
 
 use Class::XSAccessor
@@ -66,7 +66,7 @@ sub _build__steps {
         my $extracted;
         my @steps;
 
-        push @steps, Data::DPath::Step->new->part('')->kind(ROOT);
+        push @steps, Step->new->part('')->kind(ROOT);
 
         while ($remaining_path) {
                 my $plain_part;
@@ -119,7 +119,7 @@ sub _build__steps {
                         when ('..') { $kind ||= PARENT   }
                         default     { $kind ||= KEY      }
                 }
-                push @steps, Data::DPath::Step->new->part($plain_part)->kind($kind)->filter($filter);
+                push @steps, Step->new->part($plain_part)->kind($kind)->filter($filter);
         }
         pop @steps if $steps[-1]->kind eq ANYWHERE; # ignore final '/'
         $self->_steps( \@steps );
@@ -128,9 +128,9 @@ sub _build__steps {
 sub match {
         my ($self, $data) = @_;
 
-        my $context = Data::DPath::Context
+        my $context = Context
             ->new
-                ->current_points([ Data::DPath::Point->new->ref(\$data) ])
+                ->current_points([ Point->new->ref(\$data) ])
                     ->give_references($self->give_references);
         return $context->match($self);
 }
