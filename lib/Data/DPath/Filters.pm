@@ -5,7 +5,12 @@ use strict;
 use warnings;
 
 use Data::Dumper;
-use Scalar::Util;
+use Scalar::Util 'blessed';
+use constant {
+              HASH   => 'HASH',
+              ARRAY  => 'ARRAY',
+              SCALAR => 'SCALAR',
+       };
 
 our $idx;
 our $p;   # current point
@@ -19,9 +24,10 @@ sub idx { $idx }
 sub size
 {
         no warnings 'uninitialized';
-        return scalar @$_      if Scalar::Util::reftype $_  eq 'ARRAY';
-        return scalar keys %$_ if Scalar::Util::reftype $_  eq 'HASH';
-        return  1              if Scalar::Util::reftype \$_ eq 'SCALAR';
+
+        return scalar @$_      if ref $_  eq ARRAY;
+        return scalar keys %$_ if ref $_  eq HASH;
+        return  1              if ref \$_ eq SCALAR;
         return -1;
 }
 
@@ -36,16 +42,26 @@ sub value
 {
         #print STDERR "*** value ", (keys %$_)[0], " ", Dumper($_ ? $_ : "UNDEF");
         no warnings 'uninitialized';
-        return (values %$_)[0] if (defined $_ and Scalar::Util::reftype  $_  eq 'HASH');
-        return $_              if (defined $_ and Scalar::Util::reftype \$_  eq 'SCALAR');
+        return (values %$_)[0] if ref  $_ eq HASH;
+        return $_              if ref \$_ eq SCALAR;
+        return undef;
+}
+
+sub val
+{
+        #print STDERR "*** value ", (keys %$_)[0], " ", Dumper($_ ? $_ : "UNDEF");
+        no warnings 'uninitialized';
+        return (values %$_)[0] if ref  $_ eq HASH;
+        return $_              if ref \$_ eq SCALAR;
         return undef;
 }
 
 sub isa {
         my ($classname) = @_;
 
+        no warnings 'uninitialized';
         #print STDERR "*** value ", Dumper($_ ? $_ : "UNDEF");
-        return $_->isa($classname) if (defined $_ and Scalar::Util::blessed $_);
+        return $_->isa($classname) if Scalar::Util::blessed $_;
         return undef;
 }
 
