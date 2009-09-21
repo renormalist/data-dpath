@@ -29,6 +29,10 @@ the result.
 
 =head1 INTERNAL METHODS
 
+=head2 new
+
+Constructor.
+
 =head2 parent
 
 Attribute / accessor.
