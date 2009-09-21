@@ -23,9 +23,9 @@ my @isas;
 
 $dpath    = new Data::DPath::Path( path => '/AAA/*[0]/CCC' );
 my @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
 @refs    = map { ref $_       } @steps;
 #print Dumper(@steps);
 #print Dumper(\@kinds);
@@ -41,10 +41,10 @@ my $strange_path = '//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/
 
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
                        ANYWHERE
@@ -136,10 +136,10 @@ $strange_path = q!//A1/A2/A3/AAA/"BB BB"/BB2 BB2/"CC CC"["foo bar"]/"DD / DD"/"D
 
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
                        ANYWHERE
@@ -228,10 +228,10 @@ is((scalar grep { $_ eq 'Data::DPath::Step' } @refs), (scalar @steps), "refs2");
 $strange_path = q!//A1/[2]/A3/[key =~ qw(neigh.*hoods)]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -281,10 +281,10 @@ is((scalar @isas), (scalar @steps), "isas3");
 $strange_path = q!/*[2]!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -312,10 +312,10 @@ is((scalar @isas), (scalar @steps), "isas4");
 $strange_path = q!//A1/*[2]/A3/.[key =~ /neigh.*hoods/]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -365,10 +365,10 @@ is((scalar @isas), (scalar @steps), "isas5");
 $strange_path = q!//A1/*[2]/A3/.[//]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -418,10 +418,10 @@ is((scalar @isas), (scalar @steps), "isas6");
 $strange_path = q!//A1/*[2]/A3/.[ local $/ = $/ ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -471,10 +471,10 @@ is((scalar @isas), (scalar @steps), "isas7");
 $strange_path = q!//A1/*[2]/A3/.[ local $] = $] ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT
@@ -526,10 +526,10 @@ is((scalar @isas), (scalar @steps), "isas8");
 $strange_path = q!//A1/*[2]/A3/.[ local $/ = $/; local $] = $] ]/A5///A6!;
 $dpath = new Data::DPath::Path( path => $strange_path );
 @steps = @{$dpath->_steps};
-@kinds   = map { $_->{kind}   } @steps;
-@parts   = map { $_->{part}   } @steps;
-@filters = map { $_->{filter} } @steps;
-@refs    = map { ref $_       } @steps;
+@kinds   = map { $_->kind   } @steps;
+@parts   = map { $_->part   } @steps;
+@filters = map { $_->filter } @steps;
+@refs    = map { ref $_     } @steps;
 @isas    = grep { $_->isa('Data::DPath::Step') } @steps;
 
 is_deeply(\@kinds, [qw/ROOT

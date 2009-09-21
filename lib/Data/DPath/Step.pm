@@ -25,6 +25,10 @@ When a DPath is evaluated it executes these B<Step>s of a B<Path>.
 
 =head1 INTERNAL METHODS
 
+=head2 new
+
+Constructor.
+
 =head2 kind
 
 Attribute / accessor.
