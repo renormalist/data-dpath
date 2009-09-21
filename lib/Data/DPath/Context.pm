@@ -20,6 +20,7 @@ use Class::XSAccessor::Array
 
 use constant { HASH     => 'HASH',
                ARRAY    => 'ARRAY',
+               SCALAR   => 'SCALAR',
                ROOT     => 'ROOT',
                ANYWHERE => 'ANYWHERE',
                KEY      => 'KEY',
@@ -43,24 +44,50 @@ sub _any
 
         my @newin;
         my @newout;
+        my $ref;
         my $reftype;
 
         foreach my $point (@$in) {
                 my @values;
                 my $ref = $point->ref;
+
+                # optimization: first try faster ref, then reftype
                 given (ref $$ref) {
                         when (HASH)  { @values =
                                              grep {
                                                      # optimization: only consider a key if:
                                                      not defined $lookahead_key
                                                      or $_->{key} eq $lookahead_key
-                                                     or ($reftype = ref($_->{val})) eq HASH
-                                                     or $reftype eq ARRAY;
+                                                     or ($ref = ref($_->{val}))         eq HASH
+                                                     or $ref                            eq ARRAY
+                                                     # XXX: it's unclear why just testing ref is good enough
+                                                     or ($reftype = reftype($_->{val})) eq HASH
+                                                     or $reftype                        eq ARRAY
                                              } map { { val => $$ref->{$_}, key => $_ } }
                                                  keys %{$$ref};
-                                 }
+                               }
                         when (ARRAY) { @values = map { { val => $_                     } }      @{$$ref} }
-                        default        { next }
+                        default        {
+                                given (reftype $$ref) {
+                                        when (HASH)  { @values =
+                                                           grep {
+                                                                   # optimization: only consider a key if:
+                                                                   not defined $lookahead_key
+                                                                   or $_->{key} eq $lookahead_key
+                                                                   or ($ref = ref($_->{val}))         eq HASH
+                                                                   or $ref                            eq ARRAY
+                                                                   # XXX: it's unclear why just testing ref is good enough
+                                                                   or ($reftype = reftype($_->{val})) eq HASH
+                                                                   or $reftype                        eq ARRAY
+                                                           } map { { val => $$ref->{$_}, key => $_ } }
+                                                               keys %{$$ref};
+                                               }
+                                        when (ARRAY) { @values = map { { val => $_                     } }      @{$$ref} }
+                                        default {
+                                                next
+                                        }
+                                }
+                        }
                 }
                 foreach (@values)
                 {
@@ -210,8 +237,8 @@ sub search
                                         # say STDERR "point: ", Dumper($point);
                                         # say STDERR "point.ref: ", Dumper($point->ref);
                                         # say STDERR "deref point.ref: ", Dumper(${$point->ref});
-                                        # say STDERR "reftype deref point.ref: ", Dumper(reftype ${$point->ref});
-                                        next unless (defined $point && ref $$pref eq HASH);
+                                        # say STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
+                                        next unless (defined $point && reftype $$pref eq HASH);
                                         # take point as hash, skip undefs
                                         my $attrs = { key => $step->part };
                                         my $step_points = [ map {
@@ -233,7 +260,7 @@ sub search
                                         my $pref = $point->ref;
                                         my $ref = $$pref;
                                         my $step_points = [];
-                                        given (ref $ref) {
+                                        given (reftype $ref) {
                                                 when (HASH)
                                                 {
                                                         $step_points = [ map {
@@ -250,7 +277,7 @@ sub search
                                                 }
                                                 default
                                                 {
-                                                        if (ref $pref eq 'SCALAR') {
+                                                        if (reftype $pref eq SCALAR) {
                                                                 # TODO: without map, it's just one value
                                                                 $step_points = [ map {
                                                                                       Point->new->ref(\$_)->parent($point)
