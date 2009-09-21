@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 159;
+use Test::More tests => 162;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -445,11 +445,11 @@ my $data3  = {
                                             AAA => { BBB => { CCC => 'affe' } }, # plain BBB
                                            } } },
               neighbourhoods => [
-                                 { 'DDD' => { EEE => { F1 => 'affe',
+                                 { 'DDD' => { EEE => bless( { F1 => 'affe',
                                                        F2 => 'tiger',
                                                        F3 => 'fink',
                                                        F4 => 'star',
-                                                     },
+                                                     }, "Affe"),
                                               FFF => 'interesting value' }
                                  },
                                  { 'DDD' => { EEE => { F1 => 'bla',
@@ -480,6 +480,12 @@ my $data3  = {
 
 $resultlist = $data3 ~~ dpath '//AAA/BBB/CCC';
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + KEYs in blessed structs" );
+
+$resultlist = $data3 ~~ dpath '//AAA//BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + ANYWHERE + KEYs in blessed structs" );
+
+$resultlist = $data3 ~~ dpath '//AAA//BBB//CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + ANYWHERE + ANYWHERE + KEYs in blessed structs" );
 
 $resultlist = $data3 ~~ dpath '//AAA[ reftype("HASH") ]/BBB/CCC';
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
@@ -867,4 +873,23 @@ TODO: {
 
         cmp_bag($data7, $data7_expected_change, "ANYWHERE + NOSTEP + FILTER int (REFERENCES CHANGED)" );
 
-}
+};
+
+my $data8 = {
+             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                       RRR   => { CCC  => bless([
+                                                 [ qw/ RR1 RR2 RR3 /],
+                                                 [ 11, 22, 33 ],
+                                                ], "Zomtec") },
+                       DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                     },
+             some => { where => { else => {
+                                           AAA => { BBB => { CCC => 'affe' } },
+                                          } } },
+             strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
+            };
+
+$resultlist = $data8 ~~ dpath('//CCC/*[value eq "RR2"]/../');
+print STDERR "resultlist = ", Dumper($resultlist);
+cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + bless" );
+
