@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 162;
+use Test::More tests => 163;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -889,7 +889,20 @@ my $data8 = {
              strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
             };
 
-$resultlist = $data8 ~~ dpath('//CCC/*[value eq "RR2"]/../');
-print STDERR "resultlist = ", Dumper($resultlist);
-cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + bless" );
 
+TODO: {
+        local $TODO = "REAL TODO FIX ME SOON!";
+
+        $resultlist = $data8 ~~ dpath('//CCC//*[ value eq "RR3" ]/..'); # /../*[1]');
+        print STDERR "resultlist = ", Dumper($resultlist);
+        cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + PARENT + bless" );
+
+}
+
+TODO: {
+        local $TODO = "REAL TODO FIX ME SOON! (but depends on test before)";
+
+        $resultlist = $data8 ~~ dpath('//CCC//*[ value eq "RR3" ]/../../*[1]');
+        print STDERR "resultlist = ", Dumper($resultlist);
+        cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + FILTER int + bless" );
+}
