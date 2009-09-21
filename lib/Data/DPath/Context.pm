@@ -61,8 +61,8 @@ sub _any
                                                      or ($ref = ref($_->{val}))         eq HASH
                                                      or $ref                            eq ARRAY
                                                      # XXX: it's unclear why just testing ref is good enough
-                                                     or ($reftype = reftype($_->{val})) eq HASH
-                                                     or $reftype                        eq ARRAY
+                                                     # or ($reftype = reftype($_->{val})) eq HASH
+                                                     # or $reftype                        eq ARRAY
                                              } map { { val => $$ref->{$_}, key => $_ } }
                                                  keys %{$$ref};
                                }
@@ -77,8 +77,8 @@ sub _any
                                                                    or ($ref = ref($_->{val}))         eq HASH
                                                                    or $ref                            eq ARRAY
                                                                    # XXX: it's unclear why just testing ref is good enough
-                                                                   or ($reftype = reftype($_->{val})) eq HASH
-                                                                   or $reftype                        eq ARRAY
+                                                                   # or ($reftype = reftype($_->{val})) eq HASH
+                                                                   # or $reftype                        eq ARRAY
                                                            } map { { val => $$ref->{$_}, key => $_ } }
                                                                keys %{$$ref};
                                                }
