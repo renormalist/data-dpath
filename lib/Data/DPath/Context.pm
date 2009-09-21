@@ -51,44 +51,28 @@ sub _any
                 my @values;
                 my $ref = $point->ref;
 
-                # optimization: first try faster ref, then reftype
-                given (ref $$ref) {
-                        when (HASH)  { @values =
-                                             grep {
-                                                     # optimization: only consider a key if:
-                                                     not defined $lookahead_key
-                                                     or $_->{key} eq $lookahead_key
-                                                     or ($ref = ref($_->{val}))         eq HASH
-                                                     or $ref                            eq ARRAY
-                                                     # XXX: it's unclear why just testing ref is good enough
-                                                     # or ($reftype = reftype($_->{val})) eq HASH
-                                                     # or $reftype                        eq ARRAY
-                                             } map { { val => $$ref->{$_}, key => $_ } }
-                                                 keys %{$$ref};
-                               }
-                        when (ARRAY) { @values = map { { val => $_                     } }      @{$$ref} }
-                        default        {
-                                given (reftype $$ref) {
-                                        when (HASH)  { @values =
-                                                           grep {
-                                                                   # optimization: only consider a key if:
-                                                                   not defined $lookahead_key
-                                                                   or $_->{key} eq $lookahead_key
-                                                                   or ($ref = ref($_->{val}))         eq HASH
-                                                                   or $ref                            eq ARRAY
-                                                                   # XXX: it's unclear why just testing ref is good enough
-                                                                   # or ($reftype = reftype($_->{val})) eq HASH
-                                                                   # or $reftype                        eq ARRAY
-                                                           } map { { val => $$ref->{$_}, key => $_ } }
-                                                               keys %{$$ref};
-                                               }
-                                        when (ARRAY) { @values = map { { val => $_                     } }      @{$$ref} }
-                                        default {
-                                                next
-                                        }
-                                }
-                        }
+                # speed optimization: first try faster ref, then reftype
+                if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
+                        @values =
+                            grep {
+                                    # speed optimization: only consider a key if lookahead looks promising
+                                    not defined $lookahead_key
+                                    or $_->{key} eq $lookahead_key
+                                    or ($ref = ref($_->{val}))         eq HASH
+                                    or $ref                            eq ARRAY
+                                    # XXX: it's unclear why just testing ref is good enough
+                                    # or ($reftype = reftype($_->{val})) eq HASH
+                                    # or $reftype                        eq ARRAY
+                            } map { { val => $$ref->{$_}, key => $_ } }
+                                keys %{$$ref};
                 }
+                elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
+                        @values = map { { val => $_ } } @{$$ref}
+                }
+                else {
+                        next
+                }
+
                 foreach (@values)
                 {
                         my $key = $_->{key};
@@ -173,18 +157,19 @@ sub _filter_points {
 
         $filter =~ s/^\[\s*(.*?)\s*\]$/$1/; # strip brackets and whitespace
 
-        given ($filter) {
-                when (/^-?\d+$/) {
-                        # say "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @$points));
-                        return $self->_filter_points_index($filter, $points); # simple array index
-                }
-                when (/\S/) {
-                                #say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @$points));
-                        return $self->_filter_points_eval($filter, $points); # full condition
-                }
-                default {
-                        return $points;
-                }
+        if ($filter =~ /^-?\d+$/)
+        {
+                # say "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @$points));
+                return $self->_filter_points_index($filter, $points); # simple array index
+        }
+        elsif ($filter =~ /\S/)
+        {
+                #say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @$points));
+                return $self->_filter_points_eval($filter, $points); # full condition
+        }
+        else
+        {
+                return $points;
         }
 }
 
@@ -202,109 +187,110 @@ sub search
                 my $lookahead = $steps->[$i+1];
                 my $new_points = [];
                 # say STDERR "+++ step.kind: ", Dumper($step);
-                given ($step->kind)
+                if ($step->kind eq ROOT)
                 {
-                        when (ROOT)
-                        {
-                                # the root node
-                                # (only makes sense at first step, but currently not asserted)
-                                my $step_points = $self->_filter_points($step, $current_points);
-                                push @$new_points, @$step_points;
+                        # the root node
+                        # (only makes sense at first step, but currently not asserted)
+                        my $step_points = $self->_filter_points($step, $current_points);
+                        push @$new_points, @$step_points;
+                }
+                elsif ($step->kind eq ANYWHERE)
+                {
+                        # speed optimization: only useful points added
+                        my $lookahead_key;
+                        if (defined $lookahead and $lookahead->kind eq KEY) {
+                                $lookahead_key = $lookahead->part;
                         }
-                        when (ANYWHERE)
-                        {
-                                # optimzation: only useful points added
-                                my $lookahead_key;
-                                if (defined $lookahead and $lookahead->kind eq KEY) {
-                                        $lookahead_key = $lookahead->part;
-                                }
 
-                                # '//'
-                                # all hash/array nodes of a data structure
-                                foreach my $point (@$current_points) {
-                                        my $step_points = [_any([], [ $point ], $lookahead_key), $point];
-                                        push @$new_points, @{$self->_filter_points($step, $step_points)};
-                                }
+                        # '//'
+                        # all hash/array nodes of a data structure
+                        foreach my $point (@$current_points) {
+                                my $step_points = [_any([], [ $point ], $lookahead_key), $point];
+                                push @$new_points, @{$self->_filter_points($step, $step_points)};
                         }
-                        when (KEY)
-                        {
-                                # the value of a key
-                                # say STDERR " * current_points: ", Dumper($current_points);
-                                foreach my $point (@$current_points) {
-                                        no warnings 'uninitialized';
-                                        next unless defined $point;
-                                        my $pref = $point->ref;
-                                        # say STDERR "point: ", Dumper($point);
-                                        # say STDERR "point.ref: ", Dumper($point->ref);
-                                        # say STDERR "deref point.ref: ", Dumper(${$point->ref});
-                                        # say STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
-                                        next unless (defined $point && reftype $$pref eq HASH);
-                                        # take point as hash, skip undefs
-                                        my $attrs = { key => $step->part };
-                                        my $step_points = [ map {
-                                                                 Point
-                                                                 ->new
-                                                                 ->ref(\$_)
-                                                                 ->parent($point)
-                                                                 ->attrs($attrs)
-                                                                } ( $$pref->{$step->part} || () ) ];
-                                        push @$new_points, @{$self->_filter_points($step, $step_points)};
-                                }
+                }
+                elsif ($step->kind eq KEY)
+                {
+                        # the value of a key
+                        # say STDERR " * current_points: ", Dumper($current_points);
+                        foreach my $point (@$current_points) {
+                                no warnings 'uninitialized';
+                                next unless defined $point;
+                                my $pref = $point->ref;
+                                # say STDERR "point: ", Dumper($point);
+                                # say STDERR "point.ref: ", Dumper($point->ref);
+                                # say STDERR "deref point.ref: ", Dumper(${$point->ref});
+                                # say STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
+                                next unless (defined $point && (
+                                                                # speed optimization:
+                                                                # first try faster ref, then reftype
+                                                                ref($$pref)     eq HASH or
+                                                                reftype($$pref) eq HASH
+                                                               ));
+                                # take point as hash, skip undefs
+                                my $attrs = { key => $step->part };
+                                my $step_points = [ map {
+                                                         Point
+                                                         ->new
+                                                         ->ref(\$_)
+                                                         ->parent($point)
+                                                         ->attrs($attrs)
+                                                        } ( $$pref->{$step->part} || () ) ];
+                                push @$new_points, @{$self->_filter_points($step, $step_points)};
                         }
-                        when (ANYSTEP)
-                        {
-                                # '*'
-                                # all leaves of a data tree
-                                foreach my $point (@$current_points) {
+                }
+                elsif ($step->kind eq ANYSTEP)
+                {
+                        # '*'
+                        # all leaves of a data tree
+                        foreach my $point (@$current_points) {
                                 # take point as array
-                                        my $pref = $point->ref;
-                                        my $ref = $$pref;
-                                        my $step_points = [];
-                                        given (reftype $ref) {
-                                                when (HASH)
-                                                {
-                                                        $step_points = [ map {
-                                                                              my $v     = $ref->{$_};
-                                                                              my $attrs = { key => $_ };
-                                                                              Point->new->ref(\$v)->parent($point)->attrs($attrs)
-                                                                             } keys %$ref ];
-                                                }
-                                                when (ARRAY)
-                                                {
-                                                        $step_points = [ map {
-                                                                              Point->new->ref(\$_)->parent($point)
-                                                                             } @$ref ];
-                                                }
-                                                default
-                                                {
-                                                        if (reftype $pref eq SCALAR) {
-                                                                # TODO: without map, it's just one value
-                                                                $step_points = [ map {
-                                                                                      Point->new->ref(\$_)->parent($point)
-                                                                                     } $ref ];
-                                                        }
-                                                }
+                                my $pref = $point->ref;
+                                my $ref = $$pref;
+                                my $step_points = [];
+                                # speed optimization: first try faster ref, then reftype
+                                if (ref($ref) eq HASH or reftype($ref) eq HASH)
+                                {
+                                        $step_points = [ map {
+                                                              my $v     = $ref->{$_};
+                                                              my $attrs = { key => $_ };
+                                                              Point->new->ref(\$v)->parent($point)->attrs($attrs)
+                                                             } keys %$ref ];
+                                }
+                                elsif (ref($ref) eq ARRAY or reftype($ref) eq ARRAY)
+                                {
+                                        $step_points = [ map {
+                                                              Point->new->ref(\$_)->parent($point)
+                                                             } @$ref ];
+                                }
+                                else
+                                {
+                                        if (ref($pref) eq SCALAR or reftype($pref) eq SCALAR) {
+                                                # TODO: without map, it's just one value
+                                                $step_points = [ map {
+                                                                      Point->new->ref(\$_)->parent($point)
+                                                                     } $ref ];
                                         }
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
                                 }
+                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
                         }
-                        when (NOSTEP)
-                        {
-                                # '.'
-                                # no step (neither up nor down), just allow filtering
-                                foreach my $point (@{$current_points}) {
-                                        my $step_points = [$point];
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
-                                }
+                }
+                elsif ($step->kind eq NOSTEP)
+                {
+                        # '.'
+                        # no step (neither up nor down), just allow filtering
+                        foreach my $point (@{$current_points}) {
+                                my $step_points = [$point];
+                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
                         }
-                        when (PARENT)
-                        {
-                                # '..'
-                                # the parent
-                                foreach my $point (@{$current_points}) {
-                                        my $step_points = [$point->parent];
-                                        push @$new_points, @{ $self->_filter_points($step, $step_points) };
-                                }
+                }
+                elsif ($step->kind eq PARENT)
+                {
+                        # '..'
+                        # the parent
+                        foreach my $point (@{$current_points}) {
+                                my $step_points = [$point->parent];
+                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
                         }
                 }
                 $current_points = $new_points;

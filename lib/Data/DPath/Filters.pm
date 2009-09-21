@@ -25,7 +25,7 @@ sub size
 {
         no warnings 'uninitialized';
 
-        # optimization: first try faster ref, then reftype
+        # speed optimization: first try faster ref, then reftype
         # ref
         return scalar @$_      if (defined $_ and ref $_  eq ARRAY);
         return scalar keys %$_ if (defined $_ and ref $_  eq HASH);
