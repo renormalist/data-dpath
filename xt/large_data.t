@@ -1,6 +1,5 @@
 #! /usr/bin/env perl
 
-use 5.010;
 use strict;
 use warnings;
 use Test::Deep;
@@ -13,7 +12,7 @@ use Benchmark ':all', ':hireswallclock';
 # local $Data::DPath::DEBUG = 1;
 
 BEGIN {
-        say "TAP Version 13";
+        print "TAP Version 13\n";
         plan tests => 3;
 	use_ok( 'Data::DPath' );
 }
@@ -428,7 +427,7 @@ my $resultlist;
 my $path          = '//lines//description[ value =~ m(use Data::DPath) ]/../_children//data//name[ value eq "Hash two"]/../value';
 my $expected      = "2";
 
-$resultlist = $base_data ~~ dpath $path;
+$resultlist = [ dpath($path)->match($base_data) ];
 # diag Dumper($resultlist);
 cmp_deeply $resultlist, [ $expected ], "base_data";
 
@@ -441,7 +440,7 @@ SKIP: {
         my @huge_expected = map   { $expected  }         1..$multi;
         $huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
         my $count = 3;
-        my $t = timeit ($count, sub { $resultlist = $huge_data ~~ dpath $path });
+        my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
         my $n = $t->[5];
         my $throughput = $n / $t->[0];
         #diag Dumper($huge_data);
@@ -449,13 +448,13 @@ SKIP: {
         # diag Dumper($resultlist);
         diag Dumper($t);
         cmp_deeply $resultlist, [ @huge_expected ], "huge_data";
-        say "  ---";
-        say "  benchmark:";
-        say "    timestr:    ".timestr($t);
-        say "    wallclock:  $t->[0]";
-        say "    usr:        $t->[1]";
-        say "    sys:        $t->[2]";
-        say "    throughput: $throughput";
-        say "  ...";
+        print "  ---\n";
+        print "  benchmark:\n";
+        print "    timestr:    ".timestr($t), "\n";
+        print "    wallclock:  $t->[0]\n";
+        print "    usr:        $t->[1]\n";
+        print "    sys:        $t->[2]\n";
+        print "    throughput: $throughput\n";
+        print "  ...\n";
 
 }
