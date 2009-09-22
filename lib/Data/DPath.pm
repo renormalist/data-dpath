@@ -3,7 +3,7 @@ package Data::DPath;
 use strict;
 use warnings;
 
-our $VERSION = '0.21';
+our $VERSION = '0.30';
 
 our $DEBUG = 0;
 
