@@ -134,7 +134,6 @@ sub _filter_points_eval
                                                $_ = $$pref;
                                                # 'uninitialized' values are the norm
                                                no warnings 'uninitialized';
-                                               #print STDERR "filter <<$filter>>\n";
                                                $res = eval $filter;
                                                print STDERR ($@, "\n") if $@;
                                        } else {
