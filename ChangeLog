@@ -1,5 +1,11 @@
 2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
 
+	* v0.31
+
+	* fix docs and changelog of 0.30 which appeared rather incomplete
+
+2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
+
 	* v0.30
 
 	* Yet more speed optimizations:
@@ -14,8 +20,8 @@
 
 	* Enable 5.10 features by default if Perl >= 5.10 available
 	- in particular the overloading of the smartmatch '~~' operator
-	- clones and backported large parts of the test suite to only
-	  use 5.8 features and skip 5.10 specific suite on 5.8
+	- cloned and backported large parts of the test suite to only
+	use 5.8 features and skip 5.10 specific suite on 5.8
 	- drop some redundant test scripts
 
 	* INCOMPATIBLE CHANGE:

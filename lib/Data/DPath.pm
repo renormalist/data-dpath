@@ -3,7 +3,7 @@ package Data::DPath;
 use strict;
 use warnings;
 
-our $VERSION = '0.30';
+our $VERSION = '0.31';
 
 our $DEBUG = 0;
 
@@ -60,8 +60,16 @@ Data::DPath - DPath is not XPath!
                         DDD => { EEE  => [ qw/ uuu vvv www / ] },
                       },
              };
+ 
+ # Perl 5.8 style
  @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+ 
+ # Perl 5.10 style using overloaded smartmatch operator
  $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
+
+Not that the C<match()> function returns an array but the overloaded
+C<~~> operator returns an array reference (that's a limitation of
+overloading).
 
 Various other example paths from C<t/data_dpath.t> (not neccessarily
 fitting to above data structure):
