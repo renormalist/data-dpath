@@ -907,7 +907,7 @@ TODO: {
         local $TODO = "REAL TODO FIX ME SOON!";
 
         $resultlist = $data8 ~~ dpath('//CCC//*[ value eq "RR3" ]/..'); # /../*[1]');
-        print STDERR "resultlist = ", Dumper($resultlist);
+        # print STDERR "resultlist = ", Dumper($resultlist);
         cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + PARENT + bless" );
 
 }
@@ -916,6 +916,6 @@ TODO: {
         local $TODO = "REAL TODO FIX ME SOON! (but depends on test before)";
 
         $resultlist = $data8 ~~ dpath('//CCC//*[ value eq "RR3" ]/../../*[1]');
-        print STDERR "resultlist = ", Dumper($resultlist);
+        # print STDERR "resultlist = ", Dumper($resultlist);
         cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + FILTER int + bless" );
 }
