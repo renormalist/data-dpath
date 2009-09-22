@@ -1,6 +1,5 @@
 package Data::DPath::Filters;
 
-use 5.010;
 use strict;
 use warnings;
 
@@ -21,7 +20,7 @@ sub affe {
 
 sub idx { $idx }
 
-sub size
+sub size()
 {
         no warnings 'uninitialized';
 
@@ -38,14 +37,14 @@ sub size
         return -1;
 }
 
-sub key
+sub key()
 {
         no warnings 'uninitialized';
-        my $attrs = $p->attrs // {};
+        my $attrs = defined $p->attrs ? $p->attrs : {};
         return $attrs->{key};
 }
 
-sub value
+sub value()
 {
         no warnings 'uninitialized';
 
@@ -60,7 +59,7 @@ sub value
         return undef;
 }
 
-sub isa {
+sub isa($) {
         my ($classname) = @_;
 
         no warnings 'uninitialized';
@@ -69,12 +68,12 @@ sub isa {
         return undef;
 }
 
-sub reftype {
-        my ($refname) = @_;
+sub reftype() {
+        return Scalar::Util::reftype($_);
+}
 
-        #print STDERR "*** value ", Dumper($_ ? $_ : "UNDEF");
-        return Scalar::Util::reftype($_) if not $refname;
-        return (Scalar::Util::reftype($_) eq $refname);
+sub is_reftype($) {
+        return (Scalar::Util::reftype($_) eq shift);
 }
 
 1;
@@ -131,12 +130,16 @@ class.
 
 Frontend to Scalar::Util::reftype.
 
-If argument given it checks whether reftype($_) equals the argument
-and returns true/false.
+Returns Scalar::Util::reftype of current element $_. With this you can
+do comparison by yourself with C<eq>, C<=~>, C<~~> or whatever in
+filter expressions.
 
-If no argument is given it returns reftype of current element $_ and
-you can do comparison by yourself with C<eq>, C<=~>, C<~~> or
-whatever.
+=head2 is_reftype($EXPECTED_TYPE)
+
+Frontend to Scalar::Util::reftype.
+
+Checks whether Scalar::Util::reftype of current element $_ equals the
+provided argument $EXPECTED_TYPE and returns true/false.
 
 =head1 AUTHOR
 

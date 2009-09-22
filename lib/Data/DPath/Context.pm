@@ -1,6 +1,5 @@
 package Data::DPath::Context;
 
-use 5.010;
 use strict;
 use warnings;
 
@@ -9,6 +8,9 @@ use aliased 'Data::DPath::Point';
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 use Data::DPath::Filters;
+
+# print "use $]\n" if $] >= 5.010; # allow new-school Perl inside filter expressions
+# eval "use $]" if $] >= 5.010; # allow new-school Perl inside filter expressions
 
 use Class::XSAccessor::Array
     chained     => 1,
@@ -39,7 +41,7 @@ sub _any
         #print "    in: ", Dumper($in);
         #sleep 3;
 
-        $in //= [];
+        $in = defined $in ? $in : [];
         return @$out unless @$in;
 
         my @newin;
@@ -121,6 +123,7 @@ sub _filter_points_eval
         my $res;
         {
                 package Data::DPath::Filters;
+
                 local our $idx = 0;
                 $new_points = [
                                grep {
@@ -132,7 +135,7 @@ sub _filter_points_eval
                                                # 'uninitialized' values are the norm
                                                no warnings 'uninitialized';
                                                $res = eval $filter;
-                                               say STDERR $@ if $@;
+                                               print STDERR ($@, "\n") if $@;
                                        } else {
                                                $res = 0;
                                        }
@@ -159,12 +162,12 @@ sub _filter_points {
 
         if ($filter =~ /^-?\d+$/)
         {
-                # say "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @$points));
+                # print "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @$points));
                 return $self->_filter_points_index($filter, $points); # simple array index
         }
         elsif ($filter =~ /\S/)
         {
-                #say "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @$points));
+                #print "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @$points));
                 return $self->_filter_points_eval($filter, $points); # full condition
         }
         else
@@ -186,7 +189,7 @@ sub search
                 my $step = $steps->[$i];
                 my $lookahead = $steps->[$i+1];
                 my $new_points = [];
-                # say STDERR "+++ step.kind: ", Dumper($step);
+                # print STDERR "+++ step.kind: ", Dumper($step);
                 if ($step->kind eq ROOT)
                 {
                         # the root node
@@ -212,15 +215,15 @@ sub search
                 elsif ($step->kind eq KEY)
                 {
                         # the value of a key
-                        # say STDERR " * current_points: ", Dumper($current_points);
+                        # print STDERR " * current_points: ", Dumper($current_points);
                         foreach my $point (@$current_points) {
                                 no warnings 'uninitialized';
                                 next unless defined $point;
                                 my $pref = $point->ref;
-                                # say STDERR "point: ", Dumper($point);
-                                # say STDERR "point.ref: ", Dumper($point->ref);
-                                # say STDERR "deref point.ref: ", Dumper(${$point->ref});
-                                # say STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
+                                # print STDERR "point: ", Dumper($point);
+                                # print STDERR "point.ref: ", Dumper($point->ref);
+                                # print STDERR "deref point.ref: ", Dumper(${$point->ref});
+                                # print STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
                                 next unless (defined $point && (
                                                                 # speed optimization:
                                                                 # first try faster ref, then reftype
