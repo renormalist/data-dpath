@@ -1,3 +1,18 @@
+2009-09-21  Steffen Schwigon  <ss5@ss5-netbook>
+
+	* v0.30
+
+	* yet more speed optimizations:
+
+	* switch from Object::Tiny::RW to Class::XSAccessor::Array
+
+	* try fast ref() before falling back to slower reftype()
+
+	* use constants
+
+	* en passant try to potentially come back to 5.8, e.g., by using
+	if/else cascades instead of given/when
+
 2009-09-17  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.21

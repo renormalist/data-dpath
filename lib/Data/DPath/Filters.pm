@@ -10,7 +10,7 @@ use constant {
               HASH   => 'HASH',
               ARRAY  => 'ARRAY',
               SCALAR => 'SCALAR',
-       };
+      };
 
 our $idx;
 our $p;   # current point
@@ -76,17 +76,6 @@ sub reftype {
         return Scalar::Util::reftype($_) if not $refname;
         return (Scalar::Util::reftype($_) eq $refname);
 }
-
-# sub parent, Eltern-Knoten liefern
-# nextchild, von parent und mir selbst
-# previous child
-# "." als aktueller Knoten, kind of "no-op", daran aber Filter verknüpfbar, löst //.[filter] und /.[filter]
-
-# IDEA: functions that return always true, but track stack of values, eg. last taken index
-#
-#    //AAA/*[ _push_idx ]/CCC[ condition ]/../../*[ idx == pop_idx + 1]/
-#
-# This would take a way down to a filtered CCC, then back again and take the next neighbor.
 
 1;
 
@@ -161,3 +150,15 @@ This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
+# sub parent, Eltern-Knoten liefern
+# nextchild, von parent und mir selbst
+# previous child
+# "." als aktueller Knoten, kind of "no-op", daran aber Filter verknüpfbar, löst //.[filter] und /.[filter]
+
+# IDEA: functions that return always true, but track stack of values, eg. last taken index
+#
+#    //AAA/*[ _push_idx ]/CCC[ condition ]/../../*[ idx == pop_idx + 1]/
+#
+# This would take a way down to a filtered CCC, then back again and take the next neighbor.
+
