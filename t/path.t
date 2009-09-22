@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use Test::More tests => 48;
 
-use 5.010;
-
 use Data::Dumper;
 
 BEGIN {

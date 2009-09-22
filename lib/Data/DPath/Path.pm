@@ -1,6 +1,5 @@
 package Data::DPath::Path;
 
-use 5.010;
 use strict;
 use warnings;
 
@@ -50,7 +49,7 @@ sub unquote {
 
 sub quoted { shift =~ m,^/["'],; }                                             # "
 
-use overload '~~' => \&op_match;
+eval 'use overload "~~" => \&op_match' if $] >= 5.010;
 
 sub op_match {
         my ($self, $data, $rhs) = @_;

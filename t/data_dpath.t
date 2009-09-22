@@ -1,16 +1,23 @@
 #! /usr/bin/env perl
 
-use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 163;
+
+use Test::More;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
 
 # local $Data::DPath::DEBUG = 1;
 
+
 BEGIN {
+        if ($] < 5.010) {
+                plan skip_all => "Perl 5.010 required";
+        } else {
+                plan tests => 163;
+        }
+
 	use_ok( 'Data::DPath' );
 }
 
@@ -488,13 +495,13 @@ $resultlist = $data3 ~~ dpath '//AAA//BBB//CCC';
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + ANYWHERE + ANYWHERE + KEYs in blessed structs" );
 
 $resultlist = $data3 ~~ dpath '//AAA[ reftype("HASH") ]/BBB/CCC';
-cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype funcall + KEYs" );
 
 $resultlist = $data3 ~~ dpath '//AAA[ reftype eq "HASH" ]/BBB/CCC';
-cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype eq + KEYs" );
 
-$resultlist = $data3 ~~ dpath '//AAA[ reftype =~ /ASH/ ]/BBB/CCC';
-cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype + KEYs" );
+$resultlist = $data3 ~~ dpath '//AAA[ reftype ~~ /ASH/ ]/BBB/CCC';
+cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype smartmatch + KEYs" );
 
 $resultlist = $data3 ~~ dpath '//AAA[ isa("Foo::Bar") ]/BBB/CCC';
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'] ], "ANYWHERE + FILTER isa + KEYs" );
@@ -508,15 +515,15 @@ $resultlist = $data3 ~~ dpath '/neighbourhoods/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + KEYs + FILTER int 0 + KEYs" );
 
-$resultlist = $data3 ~~ dpath '/*[key =~ /neighbourhoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*[key ~~ /neighbourhoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + FILTER eval key matches + FILTER int 0 + KEYs" );
 
-$resultlist = $data3 ~~ dpath '/*/.[key =~ /neighbourhoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*/.[key ~~ /neighbourhoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + NOSTEP + FILTER eval key matches + FILTER int 0 + KEYs" );
 
-$resultlist = $data3 ~~ dpath '/*/*/../.[key =~ /neighbourhoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*/*/../.[key ~~ /neighbourhoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + PARENT + NOSTEP + FILTER eval key matches + FILTER int 0 + KEYs" );
 
@@ -576,15 +583,15 @@ $resultlist = $data3 ~~ dpath '/*/*/../.[key eq "neighbourhoods"]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + PARENT + NOSTEP + FILTER eval key eq + FILTER int" );
 
-$resultlist = $data3 ~~ dpath '/*[key =~ /neigh.*hoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*[key ~~ /neigh.*hoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + FILTER eval key matches + FILTER int" );
 
-$resultlist = $data3 ~~ dpath '/*/.[key =~ /neigh.*hoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*/.[key ~~ /neigh.*hoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + NOSTEP + FILTER eval key matches + FILTER int" );
 
-$resultlist = $data3 ~~ dpath '/*/*/../.[key =~ /neigh.*hoods/]/*[0]/DDD/FFF';
+$resultlist = $data3 ~~ dpath '/*/*/../.[key ~~ /neigh.*hoods/]/*[0]/DDD/FFF';
 # ( 'interesting value' )
 cmp_bag($resultlist, [ 'interesting value' ], "ROOT + ANYSTEP + PARENT + NOSTEP + FILTER eval key matches + FILTER int" );
 
@@ -693,7 +700,7 @@ cmp_bag($resultlist, [
                       'affe',
                      ], "ANYWHERE + STEP + ANYSTEP + STEP + FILTER eval key eq last STEP" );
 
-$resultlist = $data ~~ dpath '//AAA/*[ key =~ /.../ ]';
+$resultlist = $data ~~ dpath '//AAA/*[ key ~~ /.../ ]';
 cmp_bag($resultlist, [
                       { CCC  => [ qw/ XXX YYY ZZZ / ] },
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -701,7 +708,7 @@ cmp_bag($resultlist, [
                       { CCC => 'affe' },
                      ], "ANYWHERE + STEP + ANYSTEP + FILTER eval key matches" );
 
-$resultlist = $data ~~ dpath '//AAA/*[ key =~ qr(...) ]';
+$resultlist = $data ~~ dpath '//AAA/*[ key ~~ qr(...) ]';
 cmp_bag($resultlist, [
                       { CCC  => [ qw/ XXX YYY ZZZ / ] },
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -709,7 +716,7 @@ cmp_bag($resultlist, [
                       { CCC  => 'affe' },
                      ], "ROOT + ANYSTEP + FILTER eval key matches qr()" );
 
-$resultlist = $data ~~ dpath '//AAA/*[ key =~ m(...) ]';
+$resultlist = $data ~~ dpath '//AAA/*[ key ~~ m(...) ]';
 cmp_bag($resultlist, [
                       { CCC  => [ qw/ XXX YYY ZZZ / ] },
                       { CCC  => [ qw/ RR1 RR2 RR3 / ] },
@@ -717,10 +724,10 @@ cmp_bag($resultlist, [
                       { CCC  => 'affe' },
                      ], "ROOT + ANYSTEP + FILTER eval with key matches m(...)" );
 
-$resultlist = $data ~~ dpath '//AAA/*[ key =~ /CC/ ]';
+$resultlist = $data ~~ dpath '//AAA/*[ key ~~ /CC/ ]';
 cmp_bag($resultlist, [ ], "ROOT + ANYSTEP + FILTER eval with key matches /CC/" );
 
-$resultlist = $data ~~ dpath '//AAA/*/*[ key =~ /CC/ ]';
+$resultlist = $data ~~ dpath '//AAA/*/*[ key ~~ /CC/ ]';
 cmp_bag($resultlist, [
                       [ qw/ XXX YYY ZZZ / ],
                       [ qw/ RR1 RR2 RR3 / ],

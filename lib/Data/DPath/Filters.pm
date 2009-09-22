@@ -1,6 +1,5 @@
 package Data::DPath::Filters;
 
-use 5.010;
 use strict;
 use warnings;
 
@@ -41,7 +40,7 @@ sub size
 sub key
 {
         no warnings 'uninitialized';
-        my $attrs = $p->attrs // {};
+        my $attrs = defined $p->attrs ? $p->attrs : {};
         return $attrs->{key};
 }
 

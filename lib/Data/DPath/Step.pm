@@ -1,6 +1,5 @@
 package Data::DPath::Step;
 
-use 5.010;
 use strict;
 use warnings;
 
