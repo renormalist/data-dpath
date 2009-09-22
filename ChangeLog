@@ -2,15 +2,28 @@
 
 	* v0.30
 
-	* yet more speed optimizations:
+	* Yet more speed optimizations:
 	- switch from Object::Tiny::RW to Class::XSAccessor::Array
 	- try fast ref() before falling back to slower reftype()
 	- use constants
 
-	* backported code to Perl 5.8
+	* We are now at 3.2sec runtime for my benchmark, compared to
+	original 65sec v0.17, so we are now 20 times faster.
 
-	* enable Perl 5.10 by default features if 5.10 available
+	* Backported code to Perl 5.8
+
+	* Enable 5.10 features by default if Perl >= 5.10 available
 	- in particular the overloading of the smartmatch '~~' operator
+	- clones and backported large parts of the test suite to only
+	  use 5.8 features and skip 5.10 specific suite on 5.8
+	- drop some redundant test scripts
+
+	* INCOMPATIBLE CHANGE:
+	Filter functions are now hard prototyped, no more behaviour
+	depending on optional params. You now have to use explicit
+	check functions for this, like this:
+	- //ZOMTEC[ reftype eq "Foo::Bar"  ]   # reftype just returns value
+	- //ZOMTEC[ is_reftype("Foo::Bar") ]   # is_reftype checks against arg
 
 2009-09-17  Steffen Schwigon  <ss5@renormalist.net>
 
