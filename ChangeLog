@@ -1,17 +1,16 @@
-2009-09-21  Steffen Schwigon  <ss5@ss5-netbook>
+2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.30
 
 	* yet more speed optimizations:
+	- switch from Object::Tiny::RW to Class::XSAccessor::Array
+	- try fast ref() before falling back to slower reftype()
+	- use constants
 
-	* switch from Object::Tiny::RW to Class::XSAccessor::Array
+	* backported code to Perl 5.8
 
-	* try fast ref() before falling back to slower reftype()
-
-	* use constants
-
-	* en passant try to potentially come back to 5.8, e.g., by using
-	if/else cascades instead of given/when
+	* enable Perl 5.10 by default features if 5.10 available
+	- in particular the overloading of the smartmatch '~~' operator
 
 2009-09-17  Steffen Schwigon  <ss5@renormalist.net>
 
