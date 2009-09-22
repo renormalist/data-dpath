@@ -484,7 +484,7 @@ cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + ANYWHERE + K
 $resultlist = [ dpath('//AAA//BBB//CCC')->match($data3) ];
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + ANYWHERE + ANYWHERE + KEYs in blessed structs" );
 
-$resultlist = [ dpath('//AAA[ reftype("HASH") ]/BBB/CCC')->match($data3) ];
+$resultlist = [ dpath('//AAA[ is_reftype("HASH") ]/BBB/CCC')->match($data3) ];
 cmp_bag($resultlist, [ ['XXX', 'YYY', 'ZZZ'], 'affe' ], "ANYWHERE + FILTER reftype funcall + KEYs" );
 
 $resultlist = [ dpath('//AAA[ reftype eq "HASH" ]/BBB/CCC')->match($data3) ];
@@ -815,31 +815,31 @@ cmp_bag($resultlist, [
 $resultlist = [ dpath('//""/')->match($data6) ];
 cmp_bag($resultlist, [ "some value on empty key" ], "empty key");
 
+my $data7 =  [
+              [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
+              [ 1, 2, 3, 4 ],
+              [ qw( AAA BBB CCC DDD ) ],
+              [ 11, 22, 33 ],
+              {
+               hot => {
+                       stuff => {
+                                 ahead => [ qw( affe tiger fink star ) ],
+                                 ""    => "some value on empty key",
+                                }
+                      }
+              },
+             ];
+
+$resultlist = [ dpathr('//.[ size == 4 ]')->match($data7) ];
+
+cmp_bag($resultlist, [
+                      \($data7->[1]),
+                      \($data7->[2]),
+                      \($data7->[4]{hot}{stuff}{ahead}),
+                     ], "ANYWHERE + NOSTEP + FILTER int (REFERENCES)" );
+
 TODO: {
         local $TODO = "deferred";
-
-        my $data7 =  [
-                      [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
-                      [ 1, 2, 3, 4 ],
-                      [ qw( AAA BBB CCC DDD ) ],
-                      [ 11, 22, 33 ],
-                      {
-                       hot => {
-                               stuff => {
-                                         ahead => [ qw( affe tiger fink star ) ],
-                                         ""    => "some value on empty key",
-                                        }
-                              }
-                      },
-                     ];
-
-        $resultlist = [ dpathr('//.[ size == 4 ]')->match($data7) ];
-
-        cmp_bag($resultlist, [ \($data7->[1]),
-                               \($data7->[2]),
-                               \($data7->[4]{hot}{stuff}{ahead}),
-                             ], "ANYWHERE + NOSTEP + FILTER int (REFERENCES)" );
-
 
         ${$resultlist->[0]} = [ qw(one two three four) ];
         ${$resultlist->[1]} = "there once was an array in LA";

@@ -5,7 +5,7 @@ use inc::Module::Install;
 name 'Data-DPath';
 all_from 'lib/Data/DPath.pm';
 
-requires 'perl'                       => 5.010;
+requires 'perl'                       => 5.008;
 requires 'parent'                     => 0;
 requires 'aliased'                    => 0;
 requires 'Class::XSAccessor'          => 0;
