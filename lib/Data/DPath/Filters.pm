@@ -130,12 +130,16 @@ class.
 
 Frontend to Scalar::Util::reftype.
 
-If argument given it checks whether reftype($_) equals the argument
-and returns true/false.
+Returns Scalar::Util::reftype of current element $_. With this you can
+do comparison by yourself with C<eq>, C<=~>, C<~~> or whatever in
+filter expressions.
 
-If no argument is given it returns reftype of current element $_ and
-you can do comparison by yourself with C<eq>, C<=~>, C<~~> or
-whatever.
+=head2 is_reftype($EXPECTED_TYPE)
+
+Frontend to Scalar::Util::reftype.
+
+Checks whether Scalar::Util::reftype of current element $_ equals the
+provided argument $EXPECTED_TYPE and returns true/false.
 
 =head1 AUTHOR
 
