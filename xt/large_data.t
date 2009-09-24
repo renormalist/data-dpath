@@ -431,30 +431,25 @@ $resultlist = [ dpath($path)->match($base_data) ];
 # diag Dumper($resultlist);
 cmp_deeply $resultlist, [ $expected ], "base_data";
 
-SKIP: {
-        skip "Set env DPATH_BENCHMARK=1 to enable benchmark", 1 unless $ENV{DPATH_BENCHMARK};
-
-        diag "Running benchmark. Can take some time ...";
-        my $huge_data;
-        my $multi = 100;
-        my @huge_expected = map   { $expected  }         1..$multi;
-        $huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
-        my $count = 3;
-        my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
-        my $n = $t->[5];
-        my $throughput = $n / $t->[0];
-        #diag Dumper($huge_data);
-        # diag Dumper(\@huge_expected);
-        # diag Dumper($resultlist);
-        diag Dumper($t);
-        cmp_deeply $resultlist, [ @huge_expected ], "huge_data";
-        print "  ---\n";
-        print "  benchmark:\n";
-        print "    timestr:    ".timestr($t), "\n";
-        print "    wallclock:  $t->[0]\n";
-        print "    usr:        $t->[1]\n";
-        print "    sys:        $t->[2]\n";
-        print "    throughput: $throughput\n";
-        print "  ...\n";
-
-}
+diag "Running benchmark. Can take some time ...";
+my $huge_data;
+my $multi = 100;
+my @huge_expected = map   { $expected  }         1..$multi;
+$huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
+my $count = 3;
+my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
+my $n = $t->[5];
+my $throughput = $n / $t->[0];
+#diag Dumper($huge_data);
+# diag Dumper(\@huge_expected);
+# diag Dumper($resultlist);
+diag Dumper($t);
+cmp_deeply $resultlist, [ @huge_expected ], "huge_data";
+print "  ---\n";
+print "  benchmark:\n";
+print "    timestr:    ".timestr($t), "\n";
+print "    wallclock:  $t->[0]\n";
+print "    usr:        $t->[1]\n";
+print "    sys:        $t->[2]\n";
+print "    throughput: $throughput\n";
+print "  ...\n";
