@@ -204,14 +204,14 @@ benchmarked.)
  like /foo[4]
                       although             including negative indexes
                       limited              and whitespace awareness
+ 
  ---------------------------------------------------------------------
  
  complex              no                   YES
  filter expressions
  like                                      full Perl expressions
- /foo[size == 3] or                        plus sugar functions,
- /.[isa("Foo::Bar")]                       some minor limitations
-                                           (no "/" allowed in expr)
+ /foo[size == 3] or                        plus sugar functions
+ /.[isa("Foo::Bar")]
  
  ---------------------------------------------------------------------
  
@@ -227,7 +227,12 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
- handling of          croak               RETURN EMPTY
+ array semantics      /foo[2]              /foo/*[2]
+ is a bit different
+ 
+ ---------------------------------------------------------------------
+ 
+ handling of          croak                RETURN EMPTY
  not matching
  paths                but can be
                       overwritten
@@ -235,28 +240,26 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
- usage sugar          none                overloaded '~~' operator
+ usage sugar          none                 overloaded '~~' operator
  
  ---------------------------------------------------------------------
  
- Speed                FAST                slow
+ Speed                FAST                 quite fast
  
-                      - raw Perl          - based on Moose
-                      - considered fast   - slow startup time
-                                          - probably comparable
-                                            speed with expression
-                                            that Data::Path handles
-                                          - slow on fuzzy paths,
-                                            eg. with many "//" in it
+                      - raw Perl           - probably comparable
+                      - considered fast      speed with expressions
+                                             that Data::Path handles
+                                           - slower on fuzzy paths,
+                                             eg. with many "//" in it
  
  ---------------------------------------------------------------------
  
- Perl Versions        5.6 - 5.11          5.10 .. 5.11
+ Perl Versions        5.6 - 5.11           5.8 .. 5.11
  
  ---------------------------------------------------------------------
  
- Install chance       100%                40%
- (http://deps                             (for Perl 5.10+)
+ Install chance       100%                 66%
+ (http://deps
   .cpantesters
   .org)
  
@@ -275,8 +278,9 @@ new-school dependency stack: Perl 5.10+, Moose and MooseX::Declare.
 
 =head1 Security warning
 
-B<Watch out!> This module C<eval>s parts of provided dpaths (filter
-expressions). Don't use it if you don't trust your paths.
+B<Watch out!> This module C<eval>s parts of provided dpaths (in
+particular: the filter expressions). Don't use it if you don't trust
+your paths.
 
 Maybe I will provide a switch-off-complex-filtering option in a later
 version. Tell me what you think or when you need it.
@@ -427,15 +431,54 @@ key names, just quote them:
 vs. C</step/*[filter]>
 
 The filter applies to the matched points of the step to which it is
-applied, therefore C</part[filter]> is the normal form. The "no step"
-stays on the current step, therefore C</part/.[filter]> should be the
-same as C</part[filter]>.
+applied, therefore C</part[filter]> is the normal form, but see below
+how this affects array access.
 
-It's different for C</part/*[filter]>. That means, take all the sub
-elements ("*") after "step" and apply the filter to those. The most
-common use is to take "all" elements of an array and chose one element
-via index: C</step/*[4]/>. This takes the fifth element of the array
-inside "step".
+The "no step" "/." stays on the current step, therefore
+C</part/.[filter]> should be the same as C</part[filter]>.
+
+Lastly, C</part/*[filter]> means: take all the sub elements ("*")
+B<below> "step" and apply the filter to those. The most common use is
+to take "all" elements of an array and chose one element via index:
+C</step/*[4]/>. This takes the fifth element of the array inside
+"step". This is explained in even more depth in the next section.
+
+=head2 Difference between C</affe[2]> vs. C</affe/*[2]>
+
+B<Read carefully.> This is different from what you probably expect
+when you know XPath.
+
+In B<XPath> "/affe[2]" would address an item of all elements named
+"affe" on this step. This is because in XPath elements with the same
+name can be repeated, like this:
+
+  <coolanimals>
+    <affe>Pavian</affe>
+    <affe>Gorilla</affe>
+    <affe>Schimpanse</affe>
+  </coolanimals>
+
+and "//affe[2]" would get "Schimpanse" (we ignore the fact that in
+XPath array indexes start with 1, not 0 as in DPath, so we would
+actually get "Gorilla"; anyway, both are funky fellows).
+
+So what does "/affe[2]" return in DPath? Nothing! It makes no sense,
+because "affe" is interpreted as a hash key and hash keys can not
+repeat in Perl data structures.
+
+So what you often want in DPath is to look at the elements B<below>
+"affe" and takes the third of them, e.g. in such a structure:
+
+ { affe => [
+            'Pavian',
+            'Gorilla',
+            'Schimpanse'
+           ]
+ }
+
+the path "/affe/*[2]" would return "Schimpanse".
+
+
 
 =head2 Filters
 
