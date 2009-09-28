@@ -1,3 +1,10 @@
+2009-09-25  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.32
+
+	* I cannot believe that I forgot to define the dependency to
+	Text::Balanced! Let's see if this fixes some FAIL reports.
+
 2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.31
