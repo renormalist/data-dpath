@@ -8,6 +8,7 @@ use Data::DPath 'dpath';
 use Data::Dumper;
 use Clone 'clone';
 use Benchmark ':all', ':hireswallclock';
+use Devel::Size 'total_size';
 
 # local $Data::DPath::DEBUG = 1;
 
@@ -431,11 +432,14 @@ $resultlist = [ dpath($path)->match($base_data) ];
 # diag Dumper($resultlist);
 cmp_deeply $resultlist, [ $expected ], "base_data";
 
-diag "Running benchmark. Can take some time ...";
+diag "Prepare big data...";
 my $huge_data;
 my $multi = 100;
 my @huge_expected = map   { $expected  }         1..$multi;
 $huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
+diag "Data size: ".total_size ($huge_data);
+
+diag "Running benchmark. Can take some time ...";
 my $count = 3;
 my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
 my $n = $t->[5];

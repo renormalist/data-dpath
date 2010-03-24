@@ -15,6 +15,7 @@ requires 'List::MoreUtils'            => 0;
 requires 'Sub::Exporter'              => 0;
 requires 'Text::Balanced'             => '2.02';
 
+test_requires 'Devel::Size';
 test_requires 'Test::More';
 test_requires 'Test::Deep';
 test_requires 'Clone';
