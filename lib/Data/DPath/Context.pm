@@ -57,6 +57,7 @@ sub _any
                 if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
                         @values =
                             grep {
+                                    1 or
                                     # speed optimization: only consider a key if lookahead looks promising
                                     not defined $lookahead_key
                                     or $_->{key} eq $lookahead_key
