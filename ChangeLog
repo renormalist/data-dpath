@@ -1,3 +1,17 @@
+2010-03-24  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.33
+
+	* Fix regression that sneaked in with the //KEY-look-ahead
+	optimization
+
+	* testsuite maintenance
+
+	* documentation maintenance
+	- comparison with Data::Path reworked
+	- more verbose array semantics described
+	- 
+
 2009-09-25  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.32
