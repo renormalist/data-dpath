@@ -3,16 +3,12 @@
 use strict;
 use warnings;
 
-use Test::More tests => 163;
+use Test::More tests => 162;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
 
 # local $Data::DPath::DEBUG = 1;
-
-BEGIN {
-	use_ok( 'Data::DPath' );
-}
 
 my $data = {
             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
