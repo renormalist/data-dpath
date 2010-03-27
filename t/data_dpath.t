@@ -11,7 +11,7 @@ use Data::Dumper;
 # local $Data::DPath::DEBUG = 1;
 
 if ($] < 5.010) {
-        plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests.";
+        plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests. This is ".$];
 } else {
         plan tests => 164;
 }
