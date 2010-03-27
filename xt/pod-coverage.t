@@ -15,4 +15,8 @@ eval "use Pod::Coverage $min_pc";
 plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
     if $@;
 
+unless ($ENV{AUTOMATED_TESTING} or $ENV{RELEASE_TESTING}) {
+	plan skip_all => "Author tests not required for installation";
+}
+
 all_pod_coverage_ok();
