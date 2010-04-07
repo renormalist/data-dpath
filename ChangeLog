@@ -4,6 +4,12 @@
 
 	* Bummer! Fixed stupid perl version checking in tests.
 
+2010-03-27  Steffen Schwigon  <ss5@vinyl.webit.de>
+
+	* v0.34
+
+	* solve some CPAN testing issues
+
 2010-03-24  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.33

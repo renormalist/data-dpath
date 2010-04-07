@@ -365,6 +365,17 @@ Attribute / accessor.
 
 Attribute / accessor.
 
+=head1 aliased classes
+
+That's just to make Pod::Coverage happy which does not handle aliased
+modules.
+
+=head2 Context
+
+=head2 Point
+
+=head2 Step
+
 =head1 AUTHOR
 
 Steffen Schwigon, C<< <schwigon at cpan.org> >>

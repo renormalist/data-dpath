@@ -12,7 +12,7 @@ use Data::Dumper;
 
 BEGIN {
         if ($] < 5.010) {
-                plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests.";
+                plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests. This is ".$];
         } else {
                 plan tests => 164;
         }
