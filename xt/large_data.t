@@ -434,7 +434,7 @@ cmp_deeply $resultlist, [ $expected ], "base_data";
 
 diag "Prepare big data...";
 my $huge_data;
-my $multi = 100;
+my $multi = 1000;
 my @huge_expected = map   { $expected  }         1..$multi;
 $huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
 diag "Data size: ".total_size ($huge_data);
