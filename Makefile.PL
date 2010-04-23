@@ -23,6 +23,6 @@ test_requires 'Clone';
 
 tests_recursive;
 
-#makemaker_args dist => { PREOP => 'pod2text lib/Data/DPath.pm > README' } ;
+repository 'git://github.com/renormalist/data-dpath.git';
 
 WriteAll;
