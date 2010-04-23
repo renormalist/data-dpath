@@ -15,14 +15,17 @@ requires 'List::MoreUtils'            => 0;
 requires 'Sub::Exporter'              => 0;
 requires 'Text::Balanced'             => '2.02';
 
+author_requires 'Module::Install::AuthorTests';
+
 test_requires 'Test::Aggregate::Nested';
 test_requires 'Devel::Size';
-test_requires 'Test::More';
 test_requires 'Test::Deep';
 test_requires 'Clone';
+test_requires 'Test::More' => 0.88;
 
-tests_recursive;
+author_tests('xt');
 
 repository 'git://github.com/renormalist/data-dpath.git';
+bugtracker 'http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath';
 
 WriteAll;
