@@ -4,7 +4,7 @@ use 5.008;
 use strict;
 use warnings;
 
-our $VERSION = '0.32';
+our $VERSION = '0.35';
 
 our $DEBUG = 0;
 
@@ -258,7 +258,7 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
- Install chance       100%                 66%
+ Install chance       100%                 90%
  (http://deps
   .cpantesters
   .org)
@@ -269,12 +269,11 @@ benchmarked.)
 =head3 Summary
 
 Generally L<Data::Path|Data::Path> is for simpler use cases but does
-not suffer from surrounding meta problems: it has few dependencies, is
+not suffer from surrounding meta problems: it has no dependencies, is
 fast and works on practically every Perl version.
 
-Whereas L<Data::DPath|Data::DPath> provides more XPath like features
-but regarding speed and Perl compatibility suffers a bit from it's
-new-school dependency stack: Perl 5.10+, Moose and MooseX::Declare.
+Whereas L<Data::DPath|Data::DPath> provides more XPath-alike features,
+but isn't quite as fast and has a few more dependencies.
 
 =head1 Security warning
 

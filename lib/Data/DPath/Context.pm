@@ -62,9 +62,9 @@ sub _any
                                     or $_->{key} eq $lookahead_key
                                     or ($ref = ref($_->{val}))         eq HASH
                                     or $ref                            eq ARRAY
-                                    # XXX: it's unclear why just testing ref is good enough
-                                    # or ($reftype = reftype($_->{val})) eq HASH
-                                    # or $reftype                        eq ARRAY
+                                    or ($reftype = reftype($_->{val})) eq HASH
+                                    # not yet sure whether I also need this:
+                                    #or $reftype                        eq ARRAY
                             } map { { val => $$ref->{$_}, key => $_ } }
                                 keys %{$$ref};
                 }
@@ -364,6 +364,17 @@ Attribute / accessor.
 =head2 give_references
 
 Attribute / accessor.
+
+=head1 aliased classes
+
+That's just to make Pod::Coverage happy which does not handle aliased
+modules.
+
+=head2 Context
+
+=head2 Point
+
+=head2 Step
 
 =head1 AUTHOR
 

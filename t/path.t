@@ -6,9 +6,7 @@ use Test::More tests => 48;
 
 use Data::Dumper;
 
-BEGIN {
-	use_ok( 'Data::DPath::Path' );
-}
+use_ok( 'Data::DPath::Path' );
 
 my $dpath;
 my @kinds;

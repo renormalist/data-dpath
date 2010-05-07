@@ -3,16 +3,12 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More tests => 2;
 use Test::Deep;
 use Data::DPath 'dpath';
 use Data::Dumper;
 
 # local $Data::DPath::DEBUG = 1;
-
-BEGIN {
-	use_ok( 'Data::DPath' );
-}
 
 my $data = {};
 

@@ -10,16 +10,15 @@ use Data::Dumper;
 
 # local $Data::DPath::DEBUG = 1;
 
-
 BEGIN {
         if ($] < 5.010) {
-                plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests.";
+                plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests. This is ".$];
         } else {
                 plan tests => 164;
         }
-
-	use_ok( 'Data::DPath' );
 }
+
+use_ok( 'Data::DPath' );
 
 my $data = {
             AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
