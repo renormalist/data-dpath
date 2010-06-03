@@ -15,7 +15,7 @@ use Devel::Size 'total_size';
 BEGIN {
         print "TAP Version 13\n";
         plan tests => 3;
-	use_ok( 'Data::DPath' );
+        use_ok( 'Data::DPath' );
 }
 
 my $base_data = {

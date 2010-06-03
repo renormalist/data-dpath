@@ -8,7 +8,7 @@ if ($@) {
 }
 
 unless ($ENV{AUTOMATED_TESTING} or $ENV{RELEASE_TESTING}) {
-	plan skip_all => "Author tests not required for installation";
+        plan skip_all => "Author tests not required for installation";
 }
 
 use Data::DPath;

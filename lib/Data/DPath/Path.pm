@@ -7,7 +7,7 @@ use Data::Dumper;
 use aliased 'Data::DPath::Step';
 use aliased 'Data::DPath::Point';
 use aliased 'Data::DPath::Context';
-use Text::Balanced 'extract_delimited', 'extract_codeblock';
+use Text::Balanced 2.02 'extract_delimited', 'extract_codeblock';
 
 use Class::XSAccessor
     chained     => 1,

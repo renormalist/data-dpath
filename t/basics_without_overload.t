@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 162;
+use Test::More 0.88;
 use Test::Deep;
 use Data::DPath 'dpath', 'dpathr';
 use Data::Dumper;
@@ -898,3 +898,5 @@ TODO: {
         # print STDERR "resultlist = ", Dumper($resultlist);
         cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + FILTER int + bless" );
 }
+
+done_testing;

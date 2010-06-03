@@ -1,10 +1,9 @@
 package Data::DPath;
+# ABSTRACT: DPath is not XPath!
 
 use 5.008;
 use strict;
 use warnings;
-
-our $VERSION = '0.35';
 
 our $DEBUG = 0;
 
@@ -45,12 +44,6 @@ sub match {
 1;
 
 __END__
-
-=pod
-
-=head1 NAME
-
-Data::DPath - DPath is not XPath!
 
 =head1 SYNOPSIS
 
@@ -709,21 +702,6 @@ L<http://cpanratings.perl.org/d/Data-DPath>
 L<http://search.cpan.org/dist/Data-DPath>
 
 =back
-
-
-=head1 REPOSITORY
-
-The public repository is hosted on github:
-
-  git clone git://github.com/renormalist/data-dpath.git
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008,2009 Steffen Schwigon.
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
