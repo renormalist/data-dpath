@@ -178,6 +178,41 @@ sub _filter_points {
         }
 }
 
+
+# '*'
+# all leaves of a data tree
+sub _anystep {
+        my ($self, $step, $current_points, $new_points) = @_;
+
+        no warnings 'uninitialized';
+        foreach my $point (@$current_points) {
+                # take point as array
+                my $pref = $point->ref;
+                my $ref = $$pref;
+                my $step_points = [];
+                # speed optimization: first try faster ref, then reftype
+                if (ref($ref) eq HASH or reftype($ref) eq HASH) {
+                        $step_points = [ map {
+                                my $v     = $ref->{$_};
+                                my $attrs = { key => $_ };
+                                Point->new->ref(\$v)->parent($point)->attrs($attrs)
+                        } keys %$ref ];
+                } elsif (ref($ref) eq ARRAY or reftype($ref) eq ARRAY) {
+                        $step_points = [ map {
+                                Point->new->ref(\$_)->parent($point)
+                        } @$ref ];
+                } else {
+                        if (ref($pref) eq SCALAR or reftype($pref) eq SCALAR) {
+                                # TODO: without map, it's just one value
+                                $step_points = [ map {
+                                        Point->new->ref(\$_)->parent($point)
+                                } $ref ];
+                        }
+                }
+                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+        }
+}
+
 # '.'
 # no step (neither up nor down), just allow filtering
 sub _nostep {
@@ -308,39 +343,7 @@ sub search
                 }
                 elsif ($step->kind eq ANYSTEP)
                 {
-                        # '*'
-                        # all leaves of a data tree
-                        foreach my $point (@$current_points) {
-                                # take point as array
-                                my $pref = $point->ref;
-                                my $ref = $$pref;
-                                my $step_points = [];
-                                # speed optimization: first try faster ref, then reftype
-                                if (ref($ref) eq HASH or reftype($ref) eq HASH)
-                                {
-                                        $step_points = [ map {
-                                                              my $v     = $ref->{$_};
-                                                              my $attrs = { key => $_ };
-                                                              Point->new->ref(\$v)->parent($point)->attrs($attrs)
-                                                             } keys %$ref ];
-                                }
-                                elsif (ref($ref) eq ARRAY or reftype($ref) eq ARRAY)
-                                {
-                                        $step_points = [ map {
-                                                              Point->new->ref(\$_)->parent($point)
-                                                             } @$ref ];
-                                }
-                                else
-                                {
-                                        if (ref($pref) eq SCALAR or reftype($pref) eq SCALAR) {
-                                                # TODO: without map, it's just one value
-                                                $step_points = [ map {
-                                                                      Point->new->ref(\$_)->parent($point)
-                                                                     } $ref ];
-                                        }
-                                }
-                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
-                        }
+                        $self->_anystep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq NOSTEP)
                 {
