@@ -40,8 +40,6 @@ sub _any
         my ($out, $in, $lookahead_key) = @_;
 
         no warnings 'uninitialized';
-        #print "    in: ", Dumper($in);
-        #sleep 3;
 
         $in = defined $in ? $in : [];
         return @$out unless @$in;
@@ -98,11 +96,10 @@ sub all {
         no warnings 'uninitialized';
 
         return
-            map { $self->give_references ? $_ : $$_ }
-                uniq
-                    map {
-                         defined $_ ? $_->ref : ()
-                        } @{$self->current_points};
+          map { $self->give_references ? $_ : $$_ }
+          uniq
+          map { defined $_ ? $_->ref : () }
+          @{$self->current_points};
 }
 
 # filter current results by array index
@@ -120,7 +117,6 @@ sub _filter_points_eval
         return [] unless @$points;
         return $points unless defined $filter;
 
-        #print STDERR "_filter_points_eval: $filter | ".Dumper([ map { $_->ref } @$points ]);
         my $new_points;
         my $res;
         {
@@ -164,12 +160,10 @@ sub _filter_points {
 
         if ($filter =~ /^-?\d+$/)
         {
-                # print "INT Filter: $filter <-- ".Dumper(\(map { $_ ? $_->ref : () } @$points));
                 return $self->_filter_points_index($filter, $points); # simple array index
         }
         elsif ($filter =~ /\S/)
         {
-                #print "EVAL Filter: $filter, ".Dumper(\(map {$_->ref} @$points));
                 return $self->_filter_points_eval($filter, $points); # full condition
         }
         else
