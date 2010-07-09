@@ -213,6 +213,9 @@ cmp_deeply(\@resultlist, [
 @resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[4]')->match($data);
 cmp_deeply(\@resultlist, [ ], "KEYs + ANCESTOR_OR_SELF + FILTER int outofbound" );
 
+@resultlist = dpath('/AAA/BBB/CCC/"::ancestor-or-self"')->match($data);
+cmp_deeply(\@resultlist, [ ], "KEYs + quoted ANCESTOR_OR_SELF" );
+
 # -------------------- misc --------------------
 
 @resultlist = dpath('/')->match($data);
