@@ -1,3 +1,19 @@
+2010-07-09  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.36
+
+	* New axis ::ancestor
+        - selects all ancestors (parent, grandparent, etc.) of the current node
+
+	* New axis ::ancestor-or-self
+        - selects all ancestors (parent, grandparent, etc.) of the current node and the current node itself
+
+	* Code refactoring
+	- more readable internal data structure to ease debugging
+	- factored out subs
+	- this might make the code a bit slower again, but I hope it helps
+	  profiling and optimizing on encapsulated small parts in the long run
+
 2010-04-07  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.35

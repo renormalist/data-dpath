@@ -11,3 +11,7 @@ t/00-suite-meta.t
 nytprof.out
 nytprof
 benchmarks
+xt/large_tapdom.t
+xt/regexp-common-small.tap
+xt/regexp-common.tap
+
