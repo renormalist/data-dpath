@@ -82,7 +82,7 @@ sub _any
                         my $newpoint = Point->new->ref(\$val)->parent($point);
                         $newpoint->attrs({ key => $key }) if $key;
                         push @newout, $newpoint;
-                        push @newin, Point->new->ref(\$val)->parent($point);
+                        push @newin,  $newpoint;
                 }
         }
         push @$out, @newout;
