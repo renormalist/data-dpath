@@ -99,6 +99,8 @@ cmp_bag(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + PARENT + KEY
 @resultlist = dpath('/AAA/*/CCC/../../DDD')->match($data);
 cmp_bag(\@resultlist, [ { EEE => [ qw/ uuu vvv www / ] } ], "KEYs + ANYSTEP + PARENT + KEY no double results" );
 
+# -------------------- ::ancestor --------------------
+
 @resultlist = dpath('/AAA/BBB/CCC/::ancestor')->match($data);
 cmp_deeply(\@resultlist, [
                           # order matters!
@@ -150,6 +152,68 @@ cmp_deeply(\@resultlist, [
 
 @resultlist = dpath('/AAA/BBB/CCC/::ancestor[3]')->match($data);
 cmp_deeply(\@resultlist, [ ], "KEYs + ANCESTOR + FILTER int outofbound" );
+
+# -------------------- ::ancestor-or-self --------------------
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self')->match($data);
+cmp_deeply(\@resultlist, [
+                          # order matters!
+                          [ qw/ XXX YYY ZZZ / ],
+                          { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                          {
+                           BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                           RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                           DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                          },
+                          {
+                           AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                                     RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                                     DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                                   },
+                           some => { where => { else => {
+                                                         AAA => { BBB => { CCC => 'affe' } },
+                                                        } } },
+                           strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
+                          },
+                         ], "KEYs + ANCESTOR_OR_SELF" );
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[0]')->match($data);
+cmp_deeply(\@resultlist, [
+                          [ qw/ XXX YYY ZZZ / ],
+                         ], "KEYs + ANCESTOR_OR_SELF + FILTER int 0" );
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[1]')->match($data);
+cmp_deeply(\@resultlist, [
+                          { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                         ], "KEYs + ANCESTOR_OR_SELF + FILTER int 1" );
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[2]')->match($data);
+cmp_deeply(\@resultlist, [
+                          {
+                           BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                           RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                           DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                          },
+                         ], "KEYs + ANCESTOR_OR_SELF + FILTER int 2" );
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[3]')->match($data);
+cmp_deeply(\@resultlist, [
+                          {
+                           AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
+                                     RRR   => { CCC  => [ qw/ RR1 RR2 RR3 / ] },
+                                     DDD   => { EEE  => [ qw/ uuu vvv www / ] },
+                                   },
+                           some => { where => { else => {
+                                                         AAA => { BBB => { CCC => 'affe' } },
+                                                        } } },
+                           strange_keys => { 'DD DD' => { 'EE/E' => { CCC => 'zomtec' } } },
+                          },
+                         ], "KEYs + ANCESTOR_OR_SELF + FILTER int 3" );
+
+@resultlist = dpath('/AAA/BBB/CCC/::ancestor-or-self[4]')->match($data);
+cmp_deeply(\@resultlist, [ ], "KEYs + ANCESTOR_OR_SELF + FILTER int outofbound" );
+
+# -------------------- misc --------------------
 
 @resultlist = dpath('/')->match($data);
 cmp_bag(\@resultlist, [ $data ], "ROOT" );
