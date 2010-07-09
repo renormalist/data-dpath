@@ -111,6 +111,7 @@ sub _build__steps {
                         $plain_part = unescape $plain_part;
                 }
 
+                no warnings 'uninitialized';
                 if    ($plain_part eq '')                   { $kind ||= ANYWHERE }
                 elsif ($plain_part eq '*')                  { $kind ||= ANYSTEP  }
                 elsif ($plain_part eq '.')                  { $kind ||= NOSTEP   }
