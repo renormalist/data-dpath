@@ -3,14 +3,19 @@ package Data::DPath::Point;
 use strict;
 use warnings;
 
-use Class::XSAccessor::Array
+use Class::XSAccessor # ::Array
     chained     => 1,
     constructor => 'new',
-    accessors   => {
-                    parent => 0,
-                    attrs  => 1,
-                    ref    => 2,
-                   };
+    accessors   => [qw( parent
+                        attrs
+                        ref
+                     )];
+    # # ::Array
+    # accessors   => {
+    #                 parent => 0,
+    #                 attrs  => 1,
+    #                 ref    => 2,
+    #                };
 
 1;
 
