@@ -180,7 +180,7 @@ sub _filter_points {
 
 # the root node
 # (only makes sense at first step, but currently not asserted)
-sub _root {
+sub _select_root {
         my ($self, $step, $current_points, $new_points) = @_;
 
         my $step_points = $self->_filter_points($step, $current_points);
@@ -190,7 +190,7 @@ sub _root {
 
 # //
 # anywhere in the tree
-sub _anywhere {
+sub _select_anywhere {
         my ($self, $step, $current_points, $lookahead, $new_points) = @_;
 
         # speed optimization: only useful points added
@@ -209,7 +209,7 @@ sub _anywhere {
 
 # /key
 # the value of a key
-sub _key {
+sub _select_key {
         my ($self, $step, $current_points, $new_points) = @_;
 
         foreach my $point (@$current_points) {
@@ -236,7 +236,7 @@ sub _key {
 
 # '*'
 # all leaves of a data tree
-sub _anystep {
+sub _select_anystep {
         my ($self, $step, $current_points, $new_points) = @_;
 
         no warnings 'uninitialized';
@@ -270,7 +270,7 @@ sub _anystep {
 
 # '.'
 # no step (neither up nor down), just allow filtering
-sub _nostep {
+sub _select_nostep {
         my ($self, $step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
@@ -281,7 +281,7 @@ sub _nostep {
 
 # '..'
 # the parent
-sub _parent {
+sub _select_parent {
         my ($self, $step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
@@ -292,7 +292,7 @@ sub _parent {
 
 # '::ancestor'
 # all ancestors (parent, grandparent, etc.) of the current node
-sub _ancestor {
+sub _select_ancestor {
         my ($self, $step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
@@ -307,7 +307,7 @@ sub _ancestor {
 
 # '::ancestor-or-self'
 # all ancestors (parent, grandparent, etc.) of the current node and the current node itself
-sub _ancestor_or_self {
+sub _select_ancestor_or_self {
         my ($self, $step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
@@ -336,35 +336,35 @@ sub search
 
                 if ($step->kind eq ROOT)
                 {
-                        $self->_root($step, $current_points, $new_points);
+                        $self->_select_root($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYWHERE)
                 {
-                        $self->_anywhere($step, $current_points, $lookahead, $new_points);
+                        $self->_select_anywhere($step, $current_points, $lookahead, $new_points);
                 }
                 elsif ($step->kind eq KEY)
                 {
-                        $self->_key($step, $current_points, $new_points);
+                        $self->_select_key($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYSTEP)
                 {
-                        $self->_anystep($step, $current_points, $new_points);
+                        $self->_select_anystep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq NOSTEP)
                 {
-                        $self->_nostep($step, $current_points, $new_points);
+                        $self->_select_nostep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq PARENT)
                 {
-                        $self->_parent($step, $current_points, $new_points);
+                        $self->_select_parent($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANCESTOR)
                 {
-                        $self->_ancestor($step, $current_points, $new_points);
+                        $self->_select_ancestor($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANCESTOR_OR_SELF)
                 {
-                        $self->_ancestor_or_self($step, $current_points, $new_points);
+                        $self->_select_ancestor_or_self($step, $current_points, $new_points);
                 }
                 $current_points = $new_points;
         }
