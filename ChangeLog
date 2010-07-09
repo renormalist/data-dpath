@@ -1,3 +1,12 @@
+2010-07-10  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.37
+
+	* Introduce Iterator style context usage
+	- dpathi($data, $path_str) returns an iterator on which you can
+	  do incremental searches using isearch($path_str)
+	- API still experimental
+
 2010-07-09  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.36
