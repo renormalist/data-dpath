@@ -20,16 +20,16 @@ use Class::XSAccessor::Array
                     give_references => 1,
                    };
 
-use constant { HASH     => 'HASH',
-               ARRAY    => 'ARRAY',
-               SCALAR   => 'SCALAR',
-               ROOT     => 'ROOT',
-               ANYWHERE => 'ANYWHERE',
-               KEY      => 'KEY',
-               ANYSTEP  => 'ANYSTEP',
-               NOSTEP   => 'NOSTEP',
-               PARENT   => 'PARENT',
-               ANCESTOR => 'ANCESTOR',
+use constant { HASH             => 'HASH',
+               ARRAY            => 'ARRAY',
+               SCALAR           => 'SCALAR',
+               ROOT             => 'ROOT',
+               ANYWHERE         => 'ANYWHERE',
+               KEY              => 'KEY',
+               ANYSTEP          => 'ANYSTEP',
+               NOSTEP           => 'NOSTEP',
+               PARENT           => 'PARENT',
+               ANCESTOR         => 'ANCESTOR',
                ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
            };
 
