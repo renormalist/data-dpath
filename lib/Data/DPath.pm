@@ -193,6 +193,17 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
+ element "::ancestor" no                   YES
+ for "ANCESTOR"
+ (//foo/::ancestor)
+ 
+ ---------------------------------------------------------------------
+ 
+ element              no                   YES
+ "::ancestor-or-self"
+ 
+ ---------------------------------------------------------------------
+ 
  element "*"          no                   YES
  for "ANYSTEP" or
  "all subelements"
@@ -395,6 +406,15 @@ the step before.
 
 Matches the parent element relative to the current points.
 
+=item * C<::ancestor>
+
+Matches all ancestors (parent, grandparent, etc.) of the current node.
+
+=item * C<::ancestor-or-self>
+
+Matches all ancestors (parent, grandparent, etc.) of the current node
+and the current node itself.
+
 =item * C<.>
 
 A "no step". This keeps passively at the current points, but allows
@@ -417,6 +437,7 @@ key names, just quote them:
 
  /"*"/
  /"*"[ filter ]/
+ /"::ancestor"/
  /".."/
  /".."[ filter ]/
  /"."/
