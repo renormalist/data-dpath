@@ -13,8 +13,6 @@ use Data::Dumper;
 BEGIN {
         if ($] < 5.010) {
                 plan skip_all => "Perl 5.010 required for the smartmatch overloaded tests. This is ".$];
-        } else {
-                plan tests => 164;
         }
 }
 
@@ -918,3 +916,5 @@ TODO: {
         # print STDERR "resultlist = ", Dumper($resultlist);
         cmp_bag($resultlist, [ [ 11, 22, 33 ] ], "ANYWHERE + ANYSTEP + FILTER eval value + 2xPARENT + FILTER int + bless" );
 }
+
+done_testing();
