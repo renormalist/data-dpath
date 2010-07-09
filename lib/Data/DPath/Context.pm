@@ -333,16 +333,6 @@ sub search
                 my $step = $steps->[$i];
                 my $lookahead = $steps->[$i+1];
                 my $new_points = [];
-                # print STDERR "+++ step.kind: ", Dumper($step);
-                # {
-                #         ROOT => sub {
-                #                 # ...
-                #         },
-                #         ANYWHERE => sub {
-                #                 # ...
-                #         },
-                # }->{$step->kind}->();   # or ->[$step->kind]->();
-                # Idea: order most frequent to top
 
                 if ($step->kind eq ROOT)
                 {
