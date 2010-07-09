@@ -30,6 +30,7 @@ use constant { HASH     => 'HASH',
                NOSTEP   => 'NOSTEP',
                PARENT   => 'PARENT',
                ANCESTOR => 'ANCESTOR',
+               ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
            };
 
 # only finds "inner" values; if you need the outer start value
@@ -303,6 +304,19 @@ sub search
                         # all ancestors (parent, grandparent, etc.) of the current node
                         foreach my $point (@{$current_points}) {
                                 my $step_points = [];
+                                my $parent = $point;
+                                while ($parent = $parent->parent) {
+                                        push @$step_points, $parent; # order matters
+                                }
+                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                        }
+                }
+                elsif ($step->kind eq ANCESTOR_OR_SELF)
+                {
+                        # '::ancestor-or-self'
+                        # all ancestors (parent, grandparent, etc.) of the current node and the current node itself
+                        foreach my $point (@{$current_points}) {
+                                my $step_points = [$point];
                                 my $parent = $point;
                                 while ($parent = $parent->parent) {
                                         push @$step_points, $parent; # order matters

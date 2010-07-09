@@ -24,6 +24,7 @@ use constant { ROOT     => 'ROOT',
                NOSTEP   => 'NOSTEP',
                PARENT   => 'PARENT',
                ANCESTOR => 'ANCESTOR',
+               ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
            };
 
 sub new {
@@ -115,6 +116,7 @@ sub _build__steps {
                 elsif ($plain_part eq '.')  { $kind ||= NOSTEP   }
                 elsif ($plain_part eq '..') { $kind ||= PARENT   }
                 elsif ($plain_part eq '::ancestor') { $kind ||= ANCESTOR   }
+                elsif ($plain_part eq '::ancestor-or-self') { $kind ||= ANCESTOR_OR_SELF   }
                 else                        { $kind ||= KEY      }
 
                 push @steps, Step->new->part($plain_part)->kind($kind)->filter($filter);
