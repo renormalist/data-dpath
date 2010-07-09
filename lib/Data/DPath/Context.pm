@@ -178,6 +178,18 @@ sub _filter_points {
         }
 }
 
+# the root node
+# (only makes sense at first step, but currently not asserted)
+sub _root {
+        my ($self, $step, $current_points, $new_points) = @_;
+
+        my $step_points = $self->_filter_points($step, $current_points);
+        push @$new_points, @$step_points;
+}
+
+
+# //
+# anywhere in the tree
 sub _anywhere {
         my ($self, $step, $current_points, $lookahead, $new_points) = @_;
 
@@ -334,10 +346,7 @@ sub search
 
                 if ($step->kind eq ROOT)
                 {
-                        # the root node
-                        # (only makes sense at first step, but currently not asserted)
-                        my $step_points = $self->_filter_points($step, $current_points);
-                        push @$new_points, @$step_points;
+                        $self->_root($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYWHERE)
                 {
