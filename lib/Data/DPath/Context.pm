@@ -178,6 +178,23 @@ sub _filter_points {
         }
 }
 
+sub _anywhere {
+        my ($self, $step, $current_points, $lookahead, $new_points) = @_;
+
+        # speed optimization: only useful points added
+        my $lookahead_key;
+        if (defined $lookahead and $lookahead->kind eq KEY) {
+                $lookahead_key = $lookahead->part;
+        }
+
+        # '//'
+        # all hash/array nodes of a data structure
+        foreach my $point (@$current_points) {
+                my $step_points = [_any([], [ $point ], $lookahead_key), $point];
+                push @$new_points, @{$self->_filter_points($step, $step_points)};
+        }
+}
+
 # /key
 # the value of a key
 sub _key {
@@ -324,18 +341,7 @@ sub search
                 }
                 elsif ($step->kind eq ANYWHERE)
                 {
-                        # speed optimization: only useful points added
-                        my $lookahead_key;
-                        if (defined $lookahead and $lookahead->kind eq KEY) {
-                                $lookahead_key = $lookahead->part;
-                        }
-
-                        # '//'
-                        # all hash/array nodes of a data structure
-                        foreach my $point (@$current_points) {
-                                my $step_points = [_any([], [ $point ], $lookahead_key), $point];
-                                push @$new_points, @{$self->_filter_points($step, $step_points)};
-                        }
+                        $self->_anywhere($step, $current_points, $lookahead, $new_points);
                 }
                 elsif ($step->kind eq KEY)
                 {
