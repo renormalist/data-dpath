@@ -14,4 +14,8 @@ benchmarks
 xt/large_tapdom.t
 xt/regexp-common-small.tap
 xt/regexp-common.tap
+xt/alltest.t
+xt/large_data.t
+xt/pod-coverage.t
+xt/pod.t
 
