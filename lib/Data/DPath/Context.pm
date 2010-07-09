@@ -178,6 +178,17 @@ sub _filter_points {
         }
 }
 
+# '.'
+# no step (neither up nor down), just allow filtering
+sub _nostep {
+        my ($self, $step, $current_points, $new_points) = @_;
+
+        foreach my $point (@{$current_points}) {
+                my $step_points = [$point];
+                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+        }
+}
+
 # '..'
 # the parent
 sub _parent {
@@ -333,12 +344,7 @@ sub search
                 }
                 elsif ($step->kind eq NOSTEP)
                 {
-                        # '.'
-                        # no step (neither up nor down), just allow filtering
-                        foreach my $point (@{$current_points}) {
-                                my $step_points = [$point];
-                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
-                        }
+                        $self->_nostep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq PARENT)
                 {
