@@ -8,6 +8,7 @@ use aliased 'Data::DPath::Point';
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 use Data::DPath::Filters;
+use Iterator::Util;
 
 # print "use $]\n" if $] >= 5.010; # allow new-school Perl inside filter expressions
 # eval "use $]" if $] >= 5.010; # allow new-school Perl inside filter expressions
@@ -312,6 +313,29 @@ sub _select_ancestor_or_self {
                 }
                 push @$new_points, @{ $self->_filter_points($step, $step_points) };
         }
+}
+
+sub first_point {
+        my ($self) = @_;
+        $self->current_points->[0];
+}
+
+sub all_points {
+        my ($self) = @_;
+        iarray $self->current_points;
+}
+
+sub _iter {
+        my ($self) = @_;
+
+        my $iter = iarray $self->current_points;
+        return imap { __PACKAGE__->new->current_points([ $_ ]) } $iter;
+}
+
+sub isearch
+{
+        my ($self, $path_str) = @_;
+        $self->search(Data::DPath::Path->new(path => $path_str))->_iter;
 }
 
 sub search
