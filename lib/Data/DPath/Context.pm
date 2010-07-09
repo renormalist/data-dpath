@@ -178,6 +178,32 @@ sub _filter_points {
         }
 }
 
+# /key
+# the value of a key
+sub _key {
+        my ($self, $step, $current_points, $new_points) = @_;
+
+        foreach my $point (@$current_points) {
+                no warnings 'uninitialized';
+                next unless defined $point;
+                my $pref = $point->ref;
+                next unless (defined $point && (
+                                                # speed optimization:
+                                                # first try faster ref, then reftype
+                                                ref($$pref)     eq HASH or
+                                                reftype($$pref) eq HASH
+                                               ));
+                                # take point as hash, skip undefs
+                my $attrs = { key => $step->part };
+                my $step_points = [ map { Point
+                                            ->new
+                                              ->ref(\$_)
+                                                ->parent($point)
+                                                  ->attrs($attrs)
+                                          } ( $$pref->{$step->part} || () ) ];
+                push @$new_points, @{$self->_filter_points($step, $step_points)};
+        }
+}
 
 # '*'
 # all leaves of a data tree
@@ -313,33 +339,7 @@ sub search
                 }
                 elsif ($step->kind eq KEY)
                 {
-                        # the value of a key
-                        # print STDERR " * current_points: ", Dumper($current_points);
-                        foreach my $point (@$current_points) {
-                                no warnings 'uninitialized';
-                                next unless defined $point;
-                                my $pref = $point->ref;
-                                # print STDERR "point: ", Dumper($point);
-                                # print STDERR "point.ref: ", Dumper($point->ref);
-                                # print STDERR "deref point.ref: ", Dumper(${$point->ref});
-                                # print STDERR "reftype deref point.ref: ", Dumper(ref ${$point->ref});
-                                next unless (defined $point && (
-                                                                # speed optimization:
-                                                                # first try faster ref, then reftype
-                                                                ref($$pref)     eq HASH or
-                                                                reftype($$pref) eq HASH
-                                                               ));
-                                # take point as hash, skip undefs
-                                my $attrs = { key => $step->part };
-                                my $step_points = [ map {
-                                                         Point
-                                                         ->new
-                                                         ->ref(\$_)
-                                                         ->parent($point)
-                                                         ->attrs($attrs)
-                                                        } ( $$pref->{$step->part} || () ) ];
-                                push @$new_points, @{$self->_filter_points($step, $step_points)};
-                        }
+                        $self->_key($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYSTEP)
                 {
