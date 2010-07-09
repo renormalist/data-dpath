@@ -13,15 +13,15 @@ use Data::DPath::Context;
 
 sub build_dpath {
         return sub ($) {
-                my ($path) = @_;
-                Data::DPath::Path->new(path => $path);
+                my ($path_str) = @_;
+                Data::DPath::Path->new(path => $path_str);
         };
 }
 
 sub build_dpathr {
         return sub ($) {
-                my ($path) = @_;
-                Data::DPath::Path->new(path => $path, give_references => 1);
+                my ($path_str) = @_;
+                Data::DPath::Path->new(path => $path_str, give_references => 1);
         };
 }
 
@@ -31,13 +31,13 @@ use Sub::Exporter -setup => {
                             };
 
 sub get_context {
-        my ($class, $data, $path) = @_;
-        Data::DPath::Context->new(path => $path);
+        my ($class, $data, $path_str) = @_;
+        Data::DPath::Context->new(path => $path_str);
 }
 
 sub match {
-        my ($class, $data, $path) = @_;
-        Data::DPath::Path->new(path => $path)->match($data);
+        my ($class, $data, $path_str) = @_;
+        Data::DPath::Path->new(path => $path_str)->match($data);
 }
 
 # ------------------------------------------------------------
