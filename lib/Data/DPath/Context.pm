@@ -178,6 +178,19 @@ sub _filter_points {
         }
 }
 
+sub _ancestor {
+        my ($self, $step, $current_points, $new_points) = @_;
+
+        foreach my $point (@{$current_points}) {
+                my $step_points = [];
+                my $parent = $point;
+                while ($parent = $parent->parent) {
+                        push @$step_points, $parent; # order matters
+                }
+                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+        }
+}
+
 sub search
 {
         my ($self, $path) = @_;
@@ -312,14 +325,7 @@ sub search
                 {
                         # '::ancestor'
                         # all ancestors (parent, grandparent, etc.) of the current node
-                        foreach my $point (@{$current_points}) {
-                                my $step_points = [];
-                                my $parent = $point;
-                                while ($parent = $parent->parent) {
-                                        push @$step_points, $parent; # order matters
-                                }
-                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
-                        }
+                        $self->_ancestor($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANCESTOR_OR_SELF)
                 {
