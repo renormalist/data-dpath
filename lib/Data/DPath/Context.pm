@@ -29,6 +29,7 @@ use constant { HASH     => 'HASH',
                ANYSTEP  => 'ANYSTEP',
                NOSTEP   => 'NOSTEP',
                PARENT   => 'PARENT',
+               ANCESTOR => 'ANCESTOR',
            };
 
 # only finds "inner" values; if you need the outer start value
@@ -293,6 +294,19 @@ sub search
                         # the parent
                         foreach my $point (@{$current_points}) {
                                 my $step_points = [$point->parent];
+                                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                        }
+                }
+                elsif ($step->kind eq ANCESTOR)
+                {
+                        # '::ancestor'
+                        # all ancestors (parent, grandparent, etc.) of the current node
+                        foreach my $point (@{$current_points}) {
+                                my $step_points = [];
+                                my $parent = $point;
+                                while ($parent = $parent->parent) {
+                                        push @$step_points, $parent; # order matters
+                                }
                                 push @$new_points, @{ $self->_filter_points($step, $step_points) };
                         }
                 }

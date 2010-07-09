@@ -23,6 +23,7 @@ use constant { ROOT     => 'ROOT',
                ANYSTEP  => 'ANYSTEP',
                NOSTEP   => 'NOSTEP',
                PARENT   => 'PARENT',
+               ANCESTOR => 'ANCESTOR',
            };
 
 sub new {
@@ -113,6 +114,7 @@ sub _build__steps {
                 elsif ($plain_part eq '*')  { $kind ||= ANYSTEP  }
                 elsif ($plain_part eq '.')  { $kind ||= NOSTEP   }
                 elsif ($plain_part eq '..') { $kind ||= PARENT   }
+                elsif ($plain_part eq '::ancestor') { $kind ||= ANCESTOR   }
                 else                        { $kind ||= KEY      }
 
                 push @steps, Step->new->part($plain_part)->kind($kind)->filter($filter);
