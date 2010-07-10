@@ -315,6 +315,16 @@ sub _select_ancestor_or_self {
         }
 }
 
+sub ref {
+        my ($self) = @_;
+        $self->first_point->{ref};
+}
+
+sub deref {
+        my ($self) = @_;
+        ${$self->ref};
+}
+
 sub first_point {
         my ($self) = @_;
         $self->current_points->[0];
