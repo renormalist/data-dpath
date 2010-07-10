@@ -39,7 +39,7 @@ sub build_dpathi {
 }
 
 use Sub::Exporter -setup => {
-                             exports => [ dpath => \&build_dpath,
+                             exports => [ dpath  => \&build_dpath,
                                           dpathr => \&build_dpathr,
                                           dpathi => \&build_dpathi,
                                         ],
@@ -111,17 +111,20 @@ You can get references into the C<$data> data structure by using C<dpathr>:
     $data ~~ dpathr '//AAA'
     # etc.
 
-You can request iterators that allow incremental searches
-based on current intermediate results:
+You can request iterators that allow incremental searches.
 
- my $benchmarks = dpathi $RESULTS, "//Benchmark";
- while ($benchmarks->isnt_exhausted) {
-     my @keys;
-     my $benchmark = $benchmarks->value;
-     my $ancestors = $benchmark->isearch ("/::ancestor");
-     while ($ancestors->isnt_exhausted) {
-         my $ancestor = $ancestors->value;
-         my $key = $ancestor->first_point->{attrs}{key};
+Example: Find all elements anywhere behind a key "Benchmark"
+and for each one found print all its ancestors, respectively:
+
+ my $benchmarks_iter = dpathi($data)->isearch("//Benchmark");
+ while ($benchmarks_iter->isnt_exhausted)
+ {
+     my $benchmark = $benchmarks_iter->value;
+     my $ancestors_iter = $benchmark->isearch ("/::ancestor");
+     while ($ancestors_iter->isnt_exhausted)
+     {
+         my $ancestor = $ancestors_iter->value;
+         print Dumper( $ancestor->deref );
      }
  }
 
