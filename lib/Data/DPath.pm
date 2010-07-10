@@ -26,14 +26,15 @@ sub build_dpathr {
 }
 
 sub build_dpathi {
-        return sub ($$) {
+        return sub ($) {
                 my ($data, $path_str) = @_;
 
                 Data::DPath::Context
                           ->new
                             ->current_points([ Data::DPath::Point->new->ref(\$data) ])
-                              ->search(Data::DPath::Path->new(path => $path_str))
-                                ->_iter;
+                              ->search(Data::DPath::Path->new(path => "/"))
+                                ->_iter
+                                  ->value; # there is always exactly one root "/"
         };
 }
 
