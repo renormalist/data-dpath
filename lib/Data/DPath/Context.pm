@@ -431,9 +431,9 @@ matched points in the data structure.
 
 =back
 
-=head2 all
+=head2 match( $dpath )
 
-Returns all values covered by current context.
+Return all data that match the given DPath.
 
 If C<give_references> is set to true value then results are references
 to the matched points in the data structure.
@@ -447,6 +447,17 @@ Return new context with path relative to current context.
 Same as C<< search($path)->all() >>;
 
 =head1 UTILITY SUBS/METHODS
+
+=head2 _all
+
+Returns all values covered by current context.
+
+If C<give_references> is set to true value then results are references
+to the matched points in the data structure.
+
+=head2 _search( $dpath )
+
+Return new context for a DPath relative to current context.
 
 =head2 _filter_points
 

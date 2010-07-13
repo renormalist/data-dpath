@@ -79,37 +79,34 @@ Data::DPath - DPath is not XPath!
  # Perl 5.10 style using overloaded smartmatch operator
  $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
-Not that the C<match()> function returns an array but the overloaded
+Note that the C<match()> function returns an array but the overloaded
 C<~~> operator returns an array reference (that's a limitation of
 overloading).
 
 Various other example paths from C<t/data_dpath.t> (not neccessarily
 fitting to above data structure):
 
-    $data ~~ dpath '/AAA/*/CCC'
-    $data ~~ dpath '/AAA/BBB/CCC/../..'    # parents  (..)
-    $data ~~ dpath '//AAA'                 # anywhere (//)
-    $data ~~ dpath '//AAA/*'               # anywhere + anystep
-    $data ~~ dpath '//AAA/*[size == 3]'    # filter by arrays/hash size
-    $data ~~ dpath '//AAA/*[size != 3]'    # filter by arrays/hash size
-    $data ~~ dpath '/"EE/E"/CCC'           # quote strange keys
-    $data ~~ dpath '/AAA/BBB/CCC/*[1]'     # filter by array index
-    $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
-    $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
-    $data ~~ dpath '//AAA/*[ key =~ /CC/ ]'     # filter by regex matching keys
-    $data ~~ dpath '//CCC/*[ value eq "RR2" ]'  # filter by values of hashes
+ $data ~~ dpath '/AAA/*/CCC'
+ $data ~~ dpath '/AAA/BBB/CCC/../..'    # parents  (..)
+ $data ~~ dpath '//AAA'                 # anywhere (//)
+ $data ~~ dpath '//AAA/*'               # anywhere + anystep
+ $data ~~ dpath '//AAA/*[size == 3]'    # filter by arrays/hash size
+ $data ~~ dpath '//AAA/*[size != 3]'    # filter by arrays/hash size
+ $data ~~ dpath '/"EE/E"/CCC'           # quote strange keys
+ $data ~~ dpath '/AAA/BBB/CCC/*[1]'     # filter by array index
+ $data ~~ dpath '/AAA/BBB/CCC/*[ idx == 1 ]' # same, filter by array index
+ $data ~~ dpath '//AAA/BBB/*[key eq "CCC"]'  # filter by exact keys
+ $data ~~ dpath '//AAA/*[ key =~ /CC/ ]'     # filter by regex matching keys
+ $data ~~ dpath '//CCC/*[ value eq "RR2" ]'  # filter by values of hashes
+
+See full details in C<t/data_dpath.t>.
 
 You can get references into the C<$data> data structure by using C<dpathr>:
 
-    $data ~~ dpathr '/AAA/*/CCC'
-    $data ~~ dpathr '/AAA/BBB/CCC/../..'
-    $data ~~ dpathr '//AAA'
-    # etc.
+ $data ~~ dpathr '//AAA/BBB/*'
+ # etc.
 
-You can request iterators that allow incremental searches.
-
-Example: Find all elements anywhere behind a key "Benchmark"
-and for each one found print all its ancestors, respectively:
+You can request iterators to do incremental searches using C<dpathi>:
 
  my $benchmarks_iter = dpathi($data)->isearch("//Benchmark");
  while ($benchmarks_iter->isnt_exhausted)
@@ -123,7 +120,9 @@ and for each one found print all its ancestors, respectively:
      }
  }
 
-See full details in C<t/data_dpath.t>.
+This finds all elements anywhere behind a key "Benchmark" and for each
+one found print all its ancestors, respectively. See also chapter
+L<Iterator style|/"Iterator style">.
 
 =head1 ABOUT
 
@@ -293,7 +292,7 @@ benchmarked.)
  
  ---------------------------------------------------------------------
  
- Perl Versions        5.6 - 5.11           5.8 .. 5.11
+ Perl Versions        5.6+                 5.8+
  
  ---------------------------------------------------------------------
  
@@ -312,7 +311,7 @@ not suffer from surrounding meta problems: it has no dependencies, is
 fast and works on practically every Perl version.
 
 Whereas L<Data::DPath|Data::DPath> provides more XPath-alike features,
-but isn't quite as fast and has a few more dependencies.
+but isn't quite as fast and has more dependencies.
 
 =head1 Security warning
 
@@ -325,7 +324,7 @@ version. Tell me what you think or when you need it.
 
 =head1 FUNCTIONS
 
-=head2 dpath( $path )
+=head2 dpath( $path_str )
 
 Meant as the front end function for everyday use of Data::DPath. It
 takes a path string and returns a C<Data::DPath::Path> object on which
@@ -337,21 +336,26 @@ can omit the parens in many cases.
 
 See SYNOPSIS.
 
-=head2 dpathr( $dpath )
+=head2 dpathr( $path_str )
 
 Same as C<dpath> but toggles that results are references to the
 matched points in the data structure.
 
-=head1 METHODS
+=head2 dpathi( $data )
+
+=head2 match( $data, $path )
+
+You provide the data structure on which to work and get back a current
+context containing the root element (as if you had searched for the
+path C</>), and now you can do incremental searches using C<isearch>.
+
+See chapter L<Iterator style|/"Iterator style"> below for details.
+
+=head1 API METHODS
 
 =head2 match( $data, $path )
 
 Returns an array of all values in C<$data> that match the C<$path>.
-
-=head2 get_context( $path )
-
-Returns a C<Data::DPath::Context> object that matches the path and can
-be used to incrementally dig into it.
 
 =head1 OPERATOR
 

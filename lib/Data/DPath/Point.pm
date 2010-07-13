@@ -10,12 +10,6 @@ use Class::XSAccessor # ::Array
                         attrs
                         ref
                      )];
-    # # ::Array
-    # accessors   => {
-    #                 parent => 0,
-    #                 attrs  => 1,
-    #                 ref    => 2,
-    #                };
 
 1;
 
