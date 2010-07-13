@@ -607,7 +607,7 @@ defined order if resulting from anything else than arrays.
 
 =item size
 
-Returns the size of the current element. If it is a arrayref it
+Returns the size of the current element. If it is an arrayref it
 returns number of elements, if it's a hashref it returns number of
 keys, if it's a scalar it returns 1, everything else returns -1.
 
@@ -618,8 +618,8 @@ returns undef.
 
 =item value
 
-Returns the value of the current element. If it is a hashref return
-the value. If a scalar return the scalar. Else return undef.
+Returns the value of the current element. If it is a hashref, return
+the value. If a scalar, return the scalar. Else return undef.
 
 =back
 
@@ -707,15 +707,15 @@ something you know (Perl, Shell, etc.).
 
 =head1 Iterator style
 
-The iterator style approach is an alternative to the
-I<get-all-results-at-once> approach. Here you iterate over the results
-one by one and even allow relative searches on each. The iterators use
-the L<Iterator|Iterator> API.
+The I<iterator style> approach is an alternative to the already
+describe I<get-all-results-at-once> approach. With it you iterate over
+the results one by one and even allow relative sub searches on
+each. The iterators use the L<Iterator|Iterator> API.
 
 Please note, that the iterators do B<not> save memory, they are just
-holding the context for subsequent searches. Each iterator needs to
-evaluate its whole result set first. So in fact with nested iterators
-your memory might go up.
+holding the context to go step-by-step and to start subsequent
+searches. Each iterator needs to evaluate its whole result set
+first. So in fact with nested iterators your memory might even go up.
 
 =head2 Basic usage by example
 
@@ -740,15 +740,15 @@ Iterate over affe results:
 
 This example is taken from the
 L<Benchmark::Perl::Formance|Benchmark::Perl::Formance> suite, where
-the several plugins are allowed to provide their results B<anywhere>
+the several plugins are allowed to provide their results anywhere
 at any level down in the result hash.
 
 When the results are printed we look for all keys C<Benchmark> and
-regenerate the path to each in order to name it accordingly, .e.g.,
-C<plugin.name.subname>. 
+regenerate the path to each so we can name it accordingly, e.g.,
+C<plugin.name.subname>.
 
 For this we need an iterator to get the single C<Benchmark> points one
-by one and evaluate the corresponding ancestors to fetch the hash
+by one and evaluate the corresponding ancestors to fetch their hash
 keys. Here is the code:
 
  my $benchmarks_iter = dpathi($results)->isearch("//Benchmark");
@@ -768,14 +768,15 @@ Note that we have two iterators, the first one (C<$benchmarks_iter>)
 over the actual benchmark results and the second one
 (C<$ancestors_iter>) over the ancestors relative to one benchmark.
 
-Once you have the searched point, here the ancestors, you get the
-actual data using C<$iterator->value->deref>, as in line B<#(1)>.
+In line B<#(1)> you can see that once you have the searched point,
+here the ancestors, you get the actual data using 
+C<< $iterator->value->deref >>. 
 
 The line B<#(2)> is utilizing the internal data structure to find out
-about the actual hash key under which the point is located. There is
-also an official API to that: C<$ancestor->first_point->attrs->key>,
-but there you need to check for undefined values before calling
-the methods F<attrs> and F<key>.
+about the actual hash key under which the point is located. (There is
+also an official API to that: C<< $ancestor->first_point->attrs->key >>, 
+but there it's neccessary to check for undefined values before
+calling the methods F<attrs> and F<key>, so I went the easy way).
 
 =head1 INTERNAL METHODS
 
@@ -789,6 +790,9 @@ Prepares internal attributes for I<dpath>.
 
 Prepares internal attributes for I<dpathr>.
 
+=head2 build_dpathi
+
+Prepares internal attributes for I<dpathi>.
 
 =head1 AUTHOR
 
