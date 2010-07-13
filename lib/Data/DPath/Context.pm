@@ -5,6 +5,7 @@ use warnings;
 
 use Data::Dumper;
 use aliased 'Data::DPath::Point';
+use aliased 'Data::DPath::Attrs';
 use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 use Data::DPath::Filters;
@@ -81,7 +82,7 @@ sub _any
                         my $key = $_->{key};
                         my $val = $_->{val};
                         my $newpoint = Point->new->ref(\$val)->parent($point);
-                        $newpoint->attrs({ key => $key }) if $key;
+                        $newpoint->attrs( Attrs->new(key => $key)) if $key;
                         push @newout, $newpoint;
                         push @newin,  $newpoint;
                 }
@@ -218,7 +219,7 @@ sub _select_key {
                                                 reftype($$pref) eq HASH
                                                ));
                                 # take point as hash, skip undefs
-                my $attrs = { key => $step->part };
+                my $attrs = Attrs->new(key => $step->part);
                 my $step_points = [ map { Point
                                             ->new
                                               ->ref(\$_)
@@ -244,7 +245,7 @@ sub _select_anystep {
                 if (ref($ref) eq HASH or reftype($ref) eq HASH) {
                         $step_points = [ map {
                                 my $v     = $ref->{$_};
-                                my $attrs = { key => $_ };
+                                my $attrs = Attrs->new(key => $_);
                                 Point->new->ref(\$v)->parent($point)->attrs($attrs)
                         } keys %$ref ];
                 } elsif (ref($ref) eq ARRAY or reftype($ref) eq ARRAY) {
