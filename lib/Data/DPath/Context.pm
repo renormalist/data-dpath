@@ -436,16 +436,26 @@ matched points in the data structure.
 
 Return all data that match the given DPath.
 
-If C<give_references> is set to true value then results are references
-to the matched points in the data structure.
+=head2 isearch( $path_str )
 
-=head2 search( $path )
+Searches a path relative to current context and returns an iterator.
+See L<Iterator style|Data::DPath/"Iterator style"> for usage.
 
-Return new context with path relative to current context.
+=head2 ref()
 
-=head2 match( $path )
+It returns the reference to the actual data from the current context's
+first element. This mostly makes sense on contexts returned by
+iterators as there is only one point there. 
 
-Same as C<< search($path)->all() >>;
+(Having the reference theoretically allows you to even change the data
+on this point. It's not yet clear what impact this has to currently
+active iterators, which B<should> still return the original data but
+that's not yet tested. So don't rely on that behaviour.)
+
+=head2 deref()
+
+This is one dereference step on top of F<ref()>. It gives you the
+actual data found. Most of the time you want this.
 
 =head1 UTILITY SUBS/METHODS
 
