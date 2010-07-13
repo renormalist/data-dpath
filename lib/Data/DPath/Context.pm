@@ -90,7 +90,7 @@ sub _any
         return _any ($out, \@newin, $lookahead_key);
 }
 
-sub all {
+sub _all {
         my ($self) = @_;
 
         no strict 'refs';
@@ -345,10 +345,10 @@ sub _iter {
 sub isearch
 {
         my ($self, $path_str) = @_;
-        $self->search(Data::DPath::Path->new(path => $path_str))->_iter;
+        $self->_search(Data::DPath::Path->new(path => $path_str))->_iter;
 }
 
-sub search
+sub _search
 {
         my ($self, $path) = @_;
 
@@ -403,7 +403,7 @@ sub search
 sub match {
         my ($self, $path) = @_;
 
-        $self->search($path)->all;
+        $self->_search($dpath)->_all;
 }
 
 1;

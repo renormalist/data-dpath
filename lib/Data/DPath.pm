@@ -32,7 +32,7 @@ sub build_dpathi {
                 Data::DPath::Context
                           ->new
                             ->current_points([ Data::DPath::Point->new->ref(\$data) ])
-                              ->search(Data::DPath::Path->new(path => "/"))
+                              ->_search(Data::DPath::Path->new(path => "/"))
                                 ->_iter
                                   ->value; # there is always exactly one root "/"
         };
@@ -45,11 +45,6 @@ use Sub::Exporter -setup => {
                                         ],
                              groups  => { all   => [ 'dpath', 'dpathr' ] },
                             };
-
-sub get_context {
-        my ($class, $data, $path_str) = @_;
-        Data::DPath::Context->new(path => $path_str);
-}
 
 sub match {
         my ($class, $data, $path_str) = @_;
