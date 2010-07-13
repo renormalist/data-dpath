@@ -351,13 +351,13 @@ sub isearch
 
 sub _search
 {
-        my ($self, $path) = @_;
+        my ($self, $dpath) = @_;
 
         no strict 'refs';
         no warnings 'uninitialized';
 
         my $current_points = $self->current_points;
-        my $steps = $path->_steps;
+        my $steps = $dpath->_steps;
         for (my $i = 0; $i < @$steps; $i++) {
                 my $step = $steps->[$i];
                 my $lookahead = $steps->[$i+1];
@@ -402,7 +402,7 @@ sub _search
 }
 
 sub match {
-        my ($self, $path) = @_;
+        my ($self, $dpath) = @_;
 
         $self->_search($dpath)->_all;
 }
