@@ -457,6 +457,17 @@ that's not yet tested. So don't rely on that behaviour.)
 This is one dereference step on top of F<ref()>. It gives you the
 actual data found. Most of the time you want this.
 
+=head2 first_point
+
+On a current context consisting on a set of points it returns the
+first point. This makes most sense with Iterator style API when the
+current iterator contains exactly one point.
+
+=head2 all_points
+
+On a current context consisting on a set of points it returns all
+those. This method is a functional complement to F<first_point>.
+
 =head1 UTILITY SUBS/METHODS
 
 =head2 _all
