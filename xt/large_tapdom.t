@@ -38,7 +38,7 @@ foreach my $usebitsets (0..1) {
         my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
         my $n = $t->[5];
         my $throughput = $n / $t->[0];
-        diag Dumper($resultlist);
+        #diag Dumper($resultlist);
         ok(1, "benchmark -- usebitsets = $usebitsets");
         print "  ---\n";
         print "  benchmark:\n";

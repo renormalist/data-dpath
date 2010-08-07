@@ -71,6 +71,25 @@ sub _splice_threads {
     return \@result;
 }
 
+sub filter_lookahead {
+        my ($lookahead_key, @in) = @_;
+
+        no warnings 'uninitialized';
+
+        my $ref;
+        my $reftype;
+        # print scalar keys %{$$ref}, "\n";
+        return grep {
+                # speed optimization: only consider a key if lookahead looks promising
+                not defined $lookahead_key
+                or $_->{key} eq $lookahead_key
+                or ($ref = ref($_->{val}))         eq HASH
+                or $ref                            eq ARRAY
+                or ($reftype = reftype $_->{val})  eq HASH
+                or $reftype                        eq ARRAY
+            } @in;
+}
+
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
 sub _any
@@ -83,27 +102,21 @@ sub _any
         return @$out unless @$in;
 
         my @newin;
-        my @newout;
-        my $ref;
-        my $reftype;
+        #my @newout;
+        #my $ref;
+        #my $reftype;
 
         foreach my $point (@$in) {
                 my @values;
                 my $ref = $point->ref;
 
+                #PARALLEL1
                 # speed optimization: first try faster ref, then reftype
                 if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
-                        @values =
-                            grep {
-                                    # speed optimization: only consider a key if lookahead looks promising
-                                    not defined $lookahead_key
-                                    or $_->{key} eq $lookahead_key
-                                    or ($ref = ref($_->{val}))         eq HASH
-                                    or $ref                            eq ARRAY
-                                    or ($reftype = reftype($_->{val})) eq HASH
-                                    or $reftype                        eq ARRAY
-                            } map { { val => $$ref->{$_}, key => $_ } }
-                                keys %{$$ref};
+                        #@values = map_with_lookahead($ref, $lookahead_key);
+                        @values = filter_lookahead $lookahead_key,
+                                  map { { val => $$ref->{$_}, key => $_ } }
+                                  keys %{$$ref};
                 }
                 elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
                         @values = map { { val => $_ } } @{$$ref}
@@ -111,18 +124,20 @@ sub _any
                 else {
                         next
                 }
+                #END_PARALLEL1
 
-                foreach (@values)
+                foreach (@values) # for faster than foreach? Don't google the question, Moss!
                 {
                         my $key = $_->{key};
                         my $val = $_->{val};
                         my $newpoint = Point->new->ref(\$val)->parent($point);
                         $newpoint->attrs( Attrs->new(key => $key)) if $key;
-                        push @newout, $newpoint;
+                        #push @newout, $newpoint;
+                        push @$out, $newpoint;
                         push @newin,  $newpoint;
                 }
         }
-        push @$out, @newout;
+        #push @$out, @newout;
         return _any ($out, \@newin, $lookahead_key);
 }
 
@@ -222,7 +237,7 @@ sub _select_root {
 # //
 # anywhere in the tree
 sub _select_anywhere {
-        my ($self, $step, $current_points, $lookahead, $new_points) = @_;
+        my ($self, $step, $current_points, $new_points, $lookahead) = @_;
 
         # speed optimization: only useful points added
         my $lookahead_key;
@@ -397,39 +412,16 @@ sub _search
                 my $step = $steps->[$i];
                 my $lookahead = $steps->[$i+1];
                 my $new_points = [];
-
-                if ($step->kind eq ROOT)
                 {
-                        $self->_select_root($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq ANYWHERE)
-                {
-                        $self->_select_anywhere($step, $current_points, $lookahead, $new_points);
-                }
-                elsif ($step->kind eq KEY)
-                {
-                        $self->_select_key($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq ANYSTEP)
-                {
-                        $self->_select_anystep($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq NOSTEP)
-                {
-                        $self->_select_nostep($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq PARENT)
-                {
-                        $self->_select_parent($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq ANCESTOR)
-                {
-                        $self->_select_ancestor($step, $current_points, $new_points);
-                }
-                elsif ($step->kind eq ANCESTOR_OR_SELF)
-                {
-                        $self->_select_ancestor_or_self($step, $current_points, $new_points);
-                }
+                    ROOT             => sub { $self->_select_root             ($step, $current_points, $new_points) },
+                    ANYWHERE         => sub { $self->_select_anywhere         ($step, $current_points, $new_points, $lookahead) },
+                    KEY              => sub { $self->_select_key              ($step, $current_points, $new_points) },
+                    ANYSTEP          => sub { $self->_select_anystep          ($step, $current_points, $new_points) },
+                    NOSTEP           => sub { $self->_select_nostep           ($step, $current_points, $new_points) },
+                    PARENT           => sub { $self->_select_parent           ($step, $current_points, $new_points) },
+                    ANCESTOR         => sub { $self->_select_ancestor         ($step, $current_points, $new_points) },
+                    ANCESTOR_OR_SELF => sub { $self->_select_ancestor_or_self ($step, $current_points, $new_points) }
+                }->{$step->kind}->();
                 $current_points = $new_points;
         }
         $self->current_points( $current_points );
