@@ -8,7 +8,7 @@ all_from 'lib/Data/DPath.pm';
 requires 'perl'                       => 5.008;
 requires 'parent'                     => 0;
 requires 'aliased'                    => 0;
-requires 'Class::XSAccessor'          => 0;
+requires 'Class::XSAccessor'          => '1.05';
 requires 'Class::XSAccessor::Array'   => 0;
 requires 'Scalar::Util'               => 0;
 requires 'List::MoreUtils'            => 0;
