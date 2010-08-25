@@ -10,6 +10,9 @@ use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 use Data::DPath::Filters;
 use Iterator::Util;
+use List::Util 'min';
+
+our $THREADCOUNT = _num_cpus();
 
 # print "use $]\n" if $] >= 5.010; # allow new-school Perl inside filter expressions
 # eval "use $]" if $] >= 5.010; # allow new-school Perl inside filter expressions
@@ -34,6 +37,42 @@ use constant { HASH             => 'HASH',
                ANCESTOR         => 'ANCESTOR',
                ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
            };
+
+# parallelization utils
+sub _num_cpus
+{
+    my $cpus = 0;
+    if (open my $fh, '<', '/proc/cpuinfo') {
+        while (<$fh>) {
+            $cpus++ if /^processor[\s]+:/
+        }
+        close $fh;
+    }
+    return $cpus || 1;
+}
+
+sub _splice_threads {
+    my ($cargo) = @_;
+
+    my $nr_cargo    = @$cargo;
+
+    return [[]] unless $nr_cargo;
+
+    my $threadcount = $THREADCOUNT || 1;
+    my $rest        =      $nr_cargo % $threadcount ;
+    my $blocksize   = int ($nr_cargo / $threadcount);
+    $blocksize++ if $rest;
+
+    my @result;
+    for my $i ( 0 .. $threadcount-1) {
+        my $first =  $i    * $blocksize;
+        my $last  = min(($i+1) * $blocksize - 1, $nr_cargo-1);
+        my @cargo_slice = @$cargo[$first .. $last];
+        #print STDERR "$first - $last (".join(",", @$cargo[$first .. $last]).")\n" if @cargo_slice;
+        push @result, \@cargo_slice if @cargo_slice;
+    }
+    return \@result;
+}
 
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
