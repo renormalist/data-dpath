@@ -5,7 +5,6 @@ use warnings;
 
 use Test::More;
 use Data::DPath::Context;
-use Data::Dumper;
 use List::Util 'min';
 
 BEGIN {
@@ -25,15 +24,15 @@ local $Data::DPath::Context::THREADCOUNT = 2;
 my $nr_chunks;
 my $expected;
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6)]);
+$chunks = Data::DPath::Context::_splice_threads([1..6]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6 7)]);
+$chunks = Data::DPath::Context::_splice_threads([1..7]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6 7 8)]);
+$chunks = Data::DPath::Context::_splice_threads([1..8]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
@@ -41,15 +40,15 @@ is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::
 
 local $Data::DPath::Context::THREADCOUNT = 3;
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6)]);
+$chunks = Data::DPath::Context::_splice_threads([1..6]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6 7)]);
+$chunks = Data::DPath::Context::_splice_threads([1..7]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
-$chunks = Data::DPath::Context::_splice_threads([qw(1 2 3 4 5 6 7 8)]);
+$chunks = Data::DPath::Context::_splice_threads([1..8]);
 $nr_chunks = scalar @$chunks;
 is($nr_chunks, $Data::DPath::Context::THREADCOUNT, "threads/chunks == ". $Data::DPath::Context::THREADCOUNT);
 
