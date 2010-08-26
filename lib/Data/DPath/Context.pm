@@ -11,6 +11,7 @@ use Scalar::Util 'reftype';
 use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
+use POSIX;
 
 our $THREADCOUNT = _num_cpus();
 
@@ -59,18 +60,14 @@ sub _splice_threads {
     return [[]] unless $nr_cargo;
 
     my $threadcount = $THREADCOUNT || 1;
-    my $rest        =      $nr_cargo % $threadcount ;
-    my $blocksize   = int ($nr_cargo / $threadcount);
-    $blocksize++ if $rest;
+    my $blocksize   = ceil ($nr_cargo / $threadcount);
 
-    my @result;
-    for my $i ( 0 .. $threadcount-1) {
-        my $first =  $i    * $blocksize;
-        my $last  = min(($i+1) * $blocksize - 1, $nr_cargo-1);
-        my @cargo_slice = @$cargo[$first .. $last];
-        #print STDERR "$first - $last (".join(",", @$cargo[$first .. $last]).")\n" if @cargo_slice;
-        push @result, \@cargo_slice if @cargo_slice;
-    }
+    my @result = map {
+        my $first =  $_ * $blocksize;
+        my $last  = min(($_+1) * $blocksize - 1, $nr_cargo-1);
+        ($first <= $last) ? [ @$cargo[$first .. $last]] : ();
+    } 0 .. $threadcount-1;
+
     return \@result;
 }
 
