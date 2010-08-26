@@ -23,12 +23,14 @@ my $tap;
         close TAP;
 }
 
-#my $path          = '//is_has[ print(((value & $TAP::DOM::IS_PLAN) ? 1 : 0)."\n") ; value & $TAP::DOM::HAS_TODO & $TAP::DOM::IS_ACTUAL_OK ]/..';
-my $path          = '//is_has[ print value."\n" ]/..';
+use TAP::DOM ':constants';
+
+my $path          = '//is_has[ print(((value & $IS_ACTUAL_OK) ? "1" : "0")."\n") ; value & $HAS_TODO & $IS_ACTUAL_OK ]/..';
+#my $path          = '//is_has[ print value."\n" ]/..';
 #my $expected      = "2";
 
 foreach my $usebitsets (0..1) {
-        my $huge_data = new TAP::DOM( tap => $tap, usebitsets => $usebitsets );
+        my $huge_data = TAP::DOM->new( tap => $tap, usebitsets => $usebitsets );
 
         my $resultlist;
 
