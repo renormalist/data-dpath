@@ -71,7 +71,7 @@ sub _splice_threads {
     return \@result;
 }
 
-sub filter_lookahead {
+sub _filter_lookahead {
         my ($lookahead_key, @in) = @_;
 
         no warnings 'uninitialized';
@@ -114,7 +114,7 @@ sub _any
                 # speed optimization: first try faster ref, then reftype
                 if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
                         #@values = map_with_lookahead($ref, $lookahead_key);
-                        @values = filter_lookahead $lookahead_key,
+                        @values = _filter_lookahead $lookahead_key,
                                   map { { val => $$ref->{$_}, key => $_ } }
                                   keys %{$$ref};
                 }
