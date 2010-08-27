@@ -18,4 +18,3 @@ xt/alltest.t
 xt/large_data.t
 xt/pod-coverage.t
 xt/pod.t
-

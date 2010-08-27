@@ -121,9 +121,6 @@ sub _any
                 elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
                         @values = map { { val => $_ } } @{$$ref}
                 }
-                else {
-                        next
-                }
                 #END_PARALLEL1
 
                 foreach (@values) # for faster than foreach? Don't google the question, Moss!
