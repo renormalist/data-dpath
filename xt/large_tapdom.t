@@ -23,9 +23,8 @@ my $tap;
         close TAP;
 }
 
-use TAP::DOM ':constants';
-
-my $path          = '//is_has[ print(((value & $IS_ACTUAL_OK) ? "1" : "0")."\n") ; value & $HAS_TODO & $IS_ACTUAL_OK ]/..';
+my $path          = '//is_has[ print(((value & $TAP::DOM::IS_ACTUAL_OK) ? "1" : "0")."\n") ; value & $TAP::DOM::HAS_TODO & $TAP::DOM::IS_ACTUAL_OK ]/..';
+#my $path          = qq|//is_has[ print(((value & $IS_ACTUAL_OK) ? "1" : "0")."\n") ; value & $HAS_TODO & $IS_ACTUAL_OK ]/..|;
 #my $path          = '//is_has[ print value."\n" ]/..';
 #my $expected      = "2";
 
