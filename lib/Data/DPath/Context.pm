@@ -12,6 +12,25 @@ use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
 use POSIX;
+use Safe;
+
+# run filter expressions in own Safe.pm compartment
+our $COMPARTMENT;
+BEGIN {
+        package Data::DPath::Filters;
+        $COMPARTMENT = Safe->new;
+        $COMPARTMENT->permit(qw":base_core");
+        # map DPath filter functions into new namespace
+        $COMPARTMENT->share(qw(affe
+                               idx
+                               size
+                               key
+                               value
+                               isa
+                               reftype
+                               is_reftype
+                             ));
+}
 
 our $THREADCOUNT = _num_cpus();
 
@@ -168,8 +187,14 @@ sub _filter_points_eval
                                        if ( defined $pref ) {
                                                $_ = $$pref;
                                                # 'uninitialized' values are the norm
-                                               no warnings 'uninitialized';
-                                               $res = eval $filter;
+                                               # but "no warnings 'uninitialized'" does
+                                               # not work in this restrictive Safe.pm config, so
+                                               # we deactivate warnings completely by localizing $^W
+                                               if ($Data::DPath::USE_SAFE) {
+                                                       $res = $COMPARTMENT->reval('local $^W;'.$filter);
+                                               } else {
+                                                       $res = eval($filter);
+                                               }
                                                print STDERR ($@, "\n") if $@;
                                        } else {
                                                $res = 0;

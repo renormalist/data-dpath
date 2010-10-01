@@ -7,6 +7,7 @@ use warnings;
 our $VERSION = '0.40';
 
 our $DEBUG = 0;
+our $USE_SAFE = 1;
 
 use Data::DPath::Path;
 use Data::DPath::Context;
