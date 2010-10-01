@@ -92,19 +92,18 @@ sub _filter_lookahead {
 
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
+our $recursion = 0;
 sub _any
 {
         my ($out, $in, $lookahead_key) = @_;
 
+        local $recursion = $recursion + 1;
         no warnings 'uninitialized';
 
         $in = defined $in ? $in : [];
         return @$out unless @$in;
 
         my @newin;
-        #my @newout;
-        #my $ref;
-        #my $reftype;
 
         foreach my $point (@$in) {
                 my @values;
@@ -123,18 +122,17 @@ sub _any
                 }
                 #END_PARALLEL1
 
+                print STDERR "($recursion) count values: ".scalar(@values)."\n";
                 foreach (@values) # for faster than foreach? Don't google the question, Moss!
                 {
                         my $key = $_->{key};
                         my $val = $_->{val};
                         my $newpoint = Point->new->ref(\$val)->parent($point);
                         $newpoint->attrs( Attrs->new(key => $key)) if $key;
-                        #push @newout, $newpoint;
                         push @$out, $newpoint;
                         push @newin,  $newpoint;
                 }
         }
-        #push @$out, @newout;
         return _any ($out, \@newin, $lookahead_key);
 }
 
