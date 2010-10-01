@@ -320,8 +320,14 @@ B<Watch out!> This module C<eval>s parts of provided dpaths (in
 particular: the filter expressions). Don't use it if you don't trust
 your paths.
 
-Maybe I will provide a switch-off-complex-filtering option in a later
-version. Tell me what you think or when you need it.
+Since v0.41 the filter expressions are secured using L<Safe.pm|Safe>
+to only allow basic Perl core ops. To unrestrict this to pre-v0.41 raw
+C<eval> behaviour you can set C<$Data::DPath::USE_SAFE> to False:
+
+  local $Data::DPath::USE_SAFE;
+  # dpath '//CCC//*[ unsecure_perl_expression ]'
+
+Read L<Safe.pm|Safe> to understand how secure this is.
 
 =head1 FUNCTIONS
 

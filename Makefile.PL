@@ -15,6 +15,7 @@ requires 'List::MoreUtils'            => 0;
 requires 'Sub::Exporter'              => 0;
 requires 'Text::Balanced'             => '2.02';
 requires 'Iterator::Util'             => 0;
+requires 'Safe'                       => 0;
 
 test_requires 'Test::More'            => 0.88;
 test_requires 'Test::Aggregate::Nested';
