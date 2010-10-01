@@ -6,8 +6,8 @@
 	- restrict filter expression syntax with Safe.pm
 	- set local $Data::DPath::USE_STRICT = 0 to enable old eval again
 
-	* Refactoring to later hopefully easier parallelization, currently
-	slightly slower
+	* Refactoring for easier code and later hopefully easier
+	parallelization. Currently slightly slower.
 
 2010-07-13  Steffen Schwigon  <ss5@renormalist.net>
 
