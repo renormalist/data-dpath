@@ -6,6 +6,12 @@
 	- restrict filter expression syntax with Safe.pm
 	- set local $Data::DPath::USE_STRICT = 0 to enable old eval again
 
+	* Bugfixes:
+	- The optimization for '//' (ANYWHERE) had skipped ARRAYs that
+	  were blessed. It now checks them, too.
+	- Hash entry values of 0 or undef were filtered away. Now
+	  fixed. (spotted by Dirk Melchers)
+
 	* Refactoring for easier code and later hopefully easier
 	parallelization. Currently slightly slower.
 
