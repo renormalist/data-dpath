@@ -282,8 +282,7 @@ sub _select_key {
                 my $attrs = Attrs->new(key => $step->part);
                 my $step_points = [];
                 if (exists $$pref->{$step->part}) {
-                        my $val = $$pref->{$step->part};
-                        $step_points = [ Point->new->ref(\$val)->parent($point)->attrs($attrs) ];
+                        $step_points = [ Point->new->ref(\($$pref->{$step->part}))->parent($point)->attrs($attrs) ];
                 }
                 push @$new_points, @{$self->_filter_points($step, $step_points)};
         }
