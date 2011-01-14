@@ -214,24 +214,14 @@ sub _filter_points {
         no warnings 'uninitialized';
 
         return [] unless @$points;
-
         my $filter = $step->filter;
         return $points unless defined $filter;
 
-        $filter =~ s/^\[\s*(.*?)\s*\]$/$1/; # strip brackets and whitespace
-
-        if ($filter =~ /^-?\d+$/)
-        {
-                return _filter_points_index($filter, $points); # simple array index
-        }
-        elsif ($filter =~ /\S/)
-        {
-                return _filter_points_eval($filter, $points); # full condition
-        }
-        else
-        {
-                return $points;
-        }
+        return {
+                index    => sub { _filter_points_index($filter, $points) },
+                eval     => sub { _filter_points_eval($filter, $points) },
+                nofilter => sub { $points },
+               }->{$step->filter_type}->();
 }
 
 # the root node

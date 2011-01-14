@@ -10,6 +10,7 @@ use Class::XSAccessor::Array
                     kind   => 0,
                     part   => 1,
                     filter => 2,
+                    filter_type => 3,
                    };
 
 1;

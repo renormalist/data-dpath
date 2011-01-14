@@ -120,7 +120,22 @@ sub _build__steps {
                 elsif ($plain_part eq '::ancestor-or-self') { $kind ||= ANCESTOR_OR_SELF   }
                 else                                        { $kind ||= KEY      }
 
-                push @steps, Step->new->part($plain_part)->kind($kind)->filter($filter);
+                $filter =~ s/^\[\s*(.*?)\s*\]$/$1/ if defined $filter; # strip brackets and whitespace
+                my $filter_type;
+                if ($filter =~ /^-?\d+$/)
+                {
+                        $filter_type = "index";
+                }
+                elsif ($filter =~ /\S/)
+                {
+                        $filter_type = "eval";
+                }
+                else
+                {
+                        $filter_type = "nofilter";
+                }
+
+                push @steps, Step->new->part($plain_part)->kind($kind)->filter($filter)->filter_type($filter_type);
         }
         pop @steps if $steps[-1]->kind eq ANYWHERE; # ignore final '/'
         $self->_steps( \@steps );
