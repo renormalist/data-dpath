@@ -440,7 +440,7 @@ $huge_data->{$_}  = clone ( $base_data ) foreach 1..$multi;
 diag "Data size: ".total_size ($huge_data);
 
 diag "Running benchmark. Can take some time ...";
-my $count = 3;
+my $count = 1;
 my $t = timeit ($count, sub { $resultlist = [ dpath($path)->match($huge_data) ] });
 my $n = $t->[5];
 my $throughput = $n / $t->[0];
