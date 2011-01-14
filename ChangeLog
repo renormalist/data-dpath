@@ -9,7 +9,7 @@
 
 	* Incompatible changes:
 	- restrict filter expression syntax with Safe.pm
-	- set local $Data::DPath::USE_STRICT = 0 to enable old eval again
+	- set local $Data::DPath::USE_SAFE = 0 to enable old eval again
 
 	* Bugfixes:
 	- The optimization for '//' (ANYWHERE) had skipped ARRAYs that

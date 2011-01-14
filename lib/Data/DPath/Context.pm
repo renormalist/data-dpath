@@ -118,9 +118,9 @@ sub _any
                                     not defined $lookahead_key
                                     or $_->{key} eq $lookahead_key
                                     or ($ref = ref(${$_->{val_ref}}))         eq HASH
-                                    or $ref                            eq ARRAY
+                                    or $ref                                   eq ARRAY
                                     or ($reftype = reftype(${$_->{val_ref}})) eq HASH
-                                    or $reftype                        eq ARRAY
+                                    or $reftype                               eq ARRAY
                             } map { { val_ref => \($$ref->{$_}), key => $_ } }
                                 keys %{$$ref};
                 }
