@@ -79,6 +79,8 @@ diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
 my $old = $data->{goal};
 my $new = 17;
 
+# --------------------------------------------------
+
 is($data->{goal}, $old, "ANYWHERE/KEY -- value before change");
 $res = $data ~~ dpathr "//goal";
 ${$res->[0]} = $new;
@@ -89,11 +91,6 @@ ${$res->[0]} = $old;
 is($data->{goal}, $old, "ANYWHERE/KEY[FILTER] -- value changed back to orig");
 $res = $data ~~ dpathr "//goal[ value eq $old]";
 is(${$res->[0]}, $old, "ANYWHERE/KEY[FILTER] -- found again with orig value");
-
-# --------------------------------------------------
-
-my $old = $data->{goal};
-my $new = 17;
 
 # --------------------------------------------------
 
