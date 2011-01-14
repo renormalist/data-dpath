@@ -160,7 +160,7 @@ sub _all {
 
 # filter current results by array index
 sub _filter_points_index {
-        my ($self, $index, $points) = @_;
+        my ($index, $points) = @_;
 
         return $points ? [$points->[$index]] : [];
 }
@@ -168,7 +168,7 @@ sub _filter_points_index {
 # filter current results by condition
 sub _filter_points_eval
 {
-        my ($self, $filter, $points) = @_;
+        my ($filter, $points) = @_;
 
         return [] unless @$points;
         return $points unless defined $filter;
@@ -208,7 +208,7 @@ sub _filter_points_eval
 }
 
 sub _filter_points {
-        my ($self, $step, $points) = @_;
+        my ($step, $points) = @_;
 
         no strict 'refs';
         no warnings 'uninitialized';
@@ -222,11 +222,11 @@ sub _filter_points {
 
         if ($filter =~ /^-?\d+$/)
         {
-                return $self->_filter_points_index($filter, $points); # simple array index
+                return _filter_points_index($filter, $points); # simple array index
         }
         elsif ($filter =~ /\S/)
         {
-                return $self->_filter_points_eval($filter, $points); # full condition
+                return _filter_points_eval($filter, $points); # full condition
         }
         else
         {
@@ -237,9 +237,9 @@ sub _filter_points {
 # the root node
 # (only makes sense at first step, but currently not asserted)
 sub _select_root {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
-        my $step_points = $self->_filter_points($step, $current_points);
+        my $step_points = _filter_points($step, $current_points);
         push @$new_points, @$step_points;
 }
 
@@ -247,7 +247,7 @@ sub _select_root {
 # //
 # anywhere in the tree
 sub _select_anywhere {
-        my ($self, $step, $current_points, $lookahead, $new_points) = @_;
+        my ($step, $current_points, $lookahead, $new_points) = @_;
 
         # speed optimization: only useful points added
         my $lookahead_key;
@@ -259,14 +259,14 @@ sub _select_anywhere {
         # all hash/array nodes of a data structure
         foreach my $point (@$current_points) {
                 my $step_points = [_any([], [ $point ], $lookahead_key), $point];
-                push @$new_points, @{$self->_filter_points($step, $step_points)};
+                push @$new_points, @{_filter_points($step, $step_points)};
         }
 }
 
 # /key
 # the value of a key
 sub _select_key {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@$current_points) {
                 no warnings 'uninitialized';
@@ -278,20 +278,20 @@ sub _select_key {
                                                 ref($$pref)     eq HASH or
                                                 reftype($$pref) eq HASH
                                                ));
-                                # take point as hash, skip undefs
+                # take point as hash, skip undefs
                 my $attrs = Attrs->new(key => $step->part);
                 my $step_points = [];
                 if (exists $$pref->{$step->part}) {
                         $step_points = [ Point->new->ref(\($$pref->{$step->part}))->parent($point)->attrs($attrs) ];
                 }
-                push @$new_points, @{$self->_filter_points($step, $step_points)};
+                push @$new_points, @{_filter_points($step, $step_points)};
         }
 }
 
 # '*'
 # all leaves of a data tree
 sub _select_anystep {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         no warnings 'uninitialized';
         foreach my $point (@$current_points) {
@@ -318,36 +318,36 @@ sub _select_anystep {
                                 ]; # } $ref ];
                         }
                 }
-                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                push @$new_points, @{ _filter_points($step, $step_points) };
         }
 }
 
 # '.'
 # no step (neither up nor down), just allow filtering
 sub _select_nostep {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
                 my $step_points = [$point];
-                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                push @$new_points, @{ _filter_points($step, $step_points) };
         }
 }
 
 # '..'
 # the parent
 sub _select_parent {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
                 my $step_points = [$point->parent];
-                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                push @$new_points, @{ _filter_points($step, $step_points) };
         }
 }
 
 # '::ancestor'
 # all ancestors (parent, grandparent, etc.) of the current node
 sub _select_ancestor {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
                 my $step_points = [];
@@ -355,14 +355,14 @@ sub _select_ancestor {
                 while ($parent = $parent->parent) {
                         push @$step_points, $parent; # order matters
                 }
-                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                push @$new_points, @{ _filter_points($step, $step_points) };
         }
 }
 
 # '::ancestor-or-self'
 # all ancestors (parent, grandparent, etc.) of the current node and the current node itself
 sub _select_ancestor_or_self {
-        my ($self, $step, $current_points, $new_points) = @_;
+        my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
                 my $step_points = [$point];
@@ -370,7 +370,7 @@ sub _select_ancestor_or_self {
                 while ($parent = $parent->parent) {
                         push @$step_points, $parent; # order matters
                 }
-                push @$new_points, @{ $self->_filter_points($step, $step_points) };
+                push @$new_points, @{ _filter_points($step, $step_points) };
         }
 }
 
@@ -423,35 +423,35 @@ sub _search
 
                 if ($step->kind eq ROOT)
                 {
-                        $self->_select_root($step, $current_points, $new_points);
+                        _select_root($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYWHERE)
                 {
-                        $self->_select_anywhere($step, $current_points, $lookahead, $new_points);
+                        _select_anywhere($step, $current_points, $lookahead, $new_points);
                 }
                 elsif ($step->kind eq KEY)
                 {
-                        $self->_select_key($step, $current_points, $new_points);
+                        _select_key($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANYSTEP)
                 {
-                        $self->_select_anystep($step, $current_points, $new_points);
+                        _select_anystep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq NOSTEP)
                 {
-                        $self->_select_nostep($step, $current_points, $new_points);
+                        _select_nostep($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq PARENT)
                 {
-                        $self->_select_parent($step, $current_points, $new_points);
+                        _select_parent($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANCESTOR)
                 {
-                        $self->_select_ancestor($step, $current_points, $new_points);
+                        _select_ancestor($step, $current_points, $new_points);
                 }
                 elsif ($step->kind eq ANCESTOR_OR_SELF)
                 {
-                        $self->_select_ancestor_or_self($step, $current_points, $new_points);
+                        _select_ancestor_or_self($step, $current_points, $new_points);
                 }
                 $current_points = $new_points;
         }
