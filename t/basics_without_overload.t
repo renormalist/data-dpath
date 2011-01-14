@@ -802,38 +802,33 @@ cmp_bag($resultlist, [
                       \($data7->[4]{hot}{stuff}{ahead}),
                      ], "ANYWHERE + NOSTEP + FILTER int (REFERENCES)" );
 
-TODO: {
-        local $TODO = "deferred";
+${$resultlist->[0]} = [ qw(one two three four) ];
+${$resultlist->[1]} = "there once was an array in LA";
+${$resultlist->[2]} = { affe => "tiger",
+                        fink => "star",
+                      };
 
-        ${$resultlist->[0]} = [ qw(one two three four) ];
-        ${$resultlist->[1]} = "there once was an array in LA";
-        ${$resultlist->[2]} = { affe => "tiger",
-                                fink => "star",
-                              };
+my $data7_expected_change = [
+                             [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
+                             [ 'one', 'two', 'three', 'four' ],
+                             "there once was an array in LA",
+                             [ 11, 22, 33 ],
+                             {
+                              hot => {
+                                      stuff => {
+                                                ahead => { affe => "tiger",
+                                                           fink => "star" },
+                                                ""    => "some value on empty key",
+                                               }
+                                     }
+                             },
+                            ];
 
-        my $data7_expected_change = [
-                                     [ 2, 3, 5, 7, 11, 13, 17, 19, 23 ],
-                                     [ 'one', 'two', 'three', 'four' ],
-                                     "there once was an array in LA",
-                                     [ 11, 22, 33 ],
-                                     {
-                                      hot => {
-                                              stuff => {
-                                                        ahead => { affe => "tiger",
-                                                                   fink => "star" },
-                                                        ""    => "some value on empty key",
-                                                       }
-                                             }
-                                     },
-                                    ];
+# diag Dumper($resultlist);
+# diag Dumper($data7_expected_change);
+# diag Dumper($data7);
 
-        # diag Dumper($resultlist);
-        # diag Dumper($data7_expected_change);
-        # diag Dumper($data7);
-
-        cmp_bag($data7, $data7_expected_change, "ANYWHERE + NOSTEP + FILTER int (REFERENCES CHANGED)" );
-
-};
+cmp_bag($data7, $data7_expected_change, "ANYWHERE + NOSTEP + FILTER int (REFERENCES CHANGED)" );
 
 my $data8 = {
              AAA  => { BBB   => { CCC  => [ qw/ XXX YYY ZZZ / ] },
