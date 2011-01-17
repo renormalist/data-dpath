@@ -11,6 +11,7 @@ use Benchmark ':all', ':hireswallclock';
 use Devel::Size 'total_size';
 
 # local $Data::DPath::DEBUG = 1;
+local $Data::DPath::USE_SAFE = 0;
 
 BEGIN {
         print "TAP Version 13\n";
