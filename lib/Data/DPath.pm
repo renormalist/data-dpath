@@ -321,8 +321,9 @@ particular: the filter expressions). Don't use it if you don't trust
 your paths.
 
 Since v0.41 the filter expressions are secured using L<Safe.pm|Safe>
-to only allow basic Perl core ops. To unrestrict this to pre-v0.41 raw
-C<eval> behaviour you can set C<$Data::DPath::USE_SAFE> to False:
+to only allow basic Perl core ops. This provides more safety but is
+also significantly slower. To unrestrict this to pre-v0.41 raw C<eval>
+behaviour you can set C<$Data::DPath::USE_SAFE> to False:
 
   local $Data::DPath::USE_SAFE;
   # dpath '//CCC//*[ unsecure_perl_expression ]'

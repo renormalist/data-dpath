@@ -103,8 +103,9 @@ sub _any
 
         my @newin;
         my @newout;
-        my $ref;
-        my $reftype;
+        my $tmp_ref;
+        my $tmp_deref;
+        my $tmp_reftype;
 
         foreach my $point (@$in) {
                 my @values;
@@ -113,15 +114,17 @@ sub _any
                 # speed optimization: first try faster ref, then reftype
                 if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
                         @values =
+                            map { { val_ref => \($$ref->{$_}), key => $_ } }
                             grep {
                                     # speed optimization: only consider a key if lookahead looks promising
                                     not defined $lookahead_key
-                                    or $_->{key} eq $lookahead_key
-                                    or ($ref = ref(${$_->{val_ref}}))         eq HASH
-                                    or $ref                                   eq ARRAY
-                                    or ($reftype = reftype(${$_->{val_ref}})) eq HASH
-                                    or $reftype                               eq ARRAY
-                            } map { { val_ref => \($$ref->{$_}), key => $_ } }
+                                    or $_ eq $lookahead_key
+                                    or ($tmp_ref = ref($tmp_deref =$$ref->{$_}))         eq HASH
+                                    or $tmp_ref                                   eq ARRAY
+                                    or ($tmp_reftype = reftype($tmp_deref)) eq HASH
+                                    or $tmp_reftype                               eq ARRAY
+                                    # or HASH_or_ARRAY(\($$ref->{$_}))
+                            }
                                 keys %{$$ref};
                 }
                 elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
