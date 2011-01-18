@@ -64,6 +64,13 @@ cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
                           'zomtec',
                         ], "KEYs + PARENT + ANYWHERE" );
 
+# here only CCC that is 2 levels above leafs are expected, affe/zomtec do not match for a valid reason
+@resultlist = dpath('//../../CCC')->match($data);
+#print Dumper(\@resultlist);
+cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
+                          [ qw/ RR1 RR2 RR3 / ],
+                        ], "KEYs + TOO MANY PARENT + ANYWHERE" );
+
 @resultlist = dpath('//./.././CCC/.')->match($data);
 #print Dumper(\@resultlist);
 cmp_bag(\@resultlist, [ [ qw/ XXX YYY ZZZ / ],
