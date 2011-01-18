@@ -56,7 +56,11 @@ use constant { HASH             => 'HASH',
                PARENT           => 'PARENT',
                ANCESTOR         => 'ANCESTOR',
                ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
-           };
+               # auxiliary
+               KIND_OF_HASH     => 1,
+               KIND_OF_ARRAY    => 2,
+               KIND_OF_OTHER    => 3,
+};
 
 # parallelization utils
 sub _num_cpus
@@ -90,6 +94,49 @@ sub _splice_threads {
     return \@result;
 }
 
+
+my $TMP_ref;
+my $TMP_deref;
+my $TMP_reftype;
+
+my %HASH_ARRAY;
+# XXX: this as XS?
+sub HASH_or_ARRAY
+{
+        no warnings 'uninitialized';
+        # strange punctuation for
+        my $A = shift;
+        (exists( $HASH_ARRAY{$A})
+            ? $HASH_ARRAY{$A}
+            : ($HASH_ARRAY{$A} = (
+                                  (($TMP_ref = ref($ {$A }))            eq HASH)
+                                  or ($TMP_ref                          eq ARRAY)
+                                  or (($TMP_reftype = reftype($ {$A} )) eq HASH)
+                                  or ($TMP_reftype                      eq ARRAY)
+                                 )
+              )
+        )
+         ;
+}
+
+# sub HASH_or_ARRAY_TYPE
+# {
+#         no warnings 'uninitialized';
+#         # strange punctuation for
+#         my $A = shift;
+#         (exists( $HASH_ARRAY{$A})
+#             ? $HASH_ARRAY{$A}
+#             : ($HASH_ARRAY{$A} = (
+#                                   (  (($TMP_ref     = ref($ {$A }))     eq HASH)
+#                                   or (($TMP_reftype = reftype($ {$A} )) eq HASH) )
+#                                        ? KIND_OF_HASH
+#                                        : ((   ($TMP_ref     eq ARRAY)
+#                                            or ($TMP_reftype eq ARRAY) )
+#                                               ? KIND_OF_ARRAY
+#                                               : KIND_OF_OTHER))))
+#          ;
+# }
+
 # only finds "inner" values; if you need the outer start value
 # then just wrap it into one more level of array brackets.
 sub _any
@@ -119,11 +166,23 @@ sub _any
                                     # speed optimization: only consider a key if lookahead looks promising
                                     not defined $lookahead_key
                                     or $_ eq $lookahead_key
+                                    #
                                     or ($tmp_ref = ref($tmp_deref =$$ref->{$_}))         eq HASH
                                     or $tmp_ref                                   eq ARRAY
                                     or ($tmp_reftype = reftype($tmp_deref)) eq HASH
                                     or $tmp_reftype                               eq ARRAY
+                                    #
                                     # or HASH_or_ARRAY(\($$ref->{$_}))
+                                     # or (exists( $HASH_ARRAY{\($$ref->{$_})})
+                                     #  ? $HASH_ARRAY{\($$ref->{$_})}
+                                     #  : ($HASH_ARRAY{\($$ref->{$_})} = (
+                                     #                        (($TMP_ref = ref($ {\($$ref->{$_})}))            eq HASH)
+                                     #                        or ($TMP_ref                          eq ARRAY)
+                                     #                        or (($TMP_reftype = reftype($ {\($$ref->{$_})} )) eq HASH)
+                                     #                        or ($TMP_reftype                      eq ARRAY)
+                                     #                       )
+                                     #    )
+                                     # )
                             }
                                 keys %{$$ref};
                 }
