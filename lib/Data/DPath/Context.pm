@@ -109,6 +109,7 @@ sub _any
 
         foreach my $point (@$in) {
                 my @values;
+                next unless defined $point;
                 my $ref = $point->ref;
 
                 # speed optimization: first try faster ref, then reftype
@@ -332,6 +333,7 @@ sub _select_parent {
         my ($step, $current_points, $new_points) = @_;
 
         foreach my $point (@{$current_points}) {
+                next unless defined $point;
                 my $step_points = [$point->parent];
                 push @$new_points, @{ _filter_points($step, $step_points) };
         }
