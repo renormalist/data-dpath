@@ -61,13 +61,15 @@ use constant { HASH             => 'HASH',
 # parallelization utils
 sub _num_cpus
 {
+    open my $fh, '<', '/proc/cpuinfo'
+        or return 1;
+
     my $cpus = 0;
-    if (open my $fh, '<', '/proc/cpuinfo') {
-        while (<$fh>) {
-            $cpus++ if /^processor[\s]+:/
-        }
-        close $fh;
+    while (defined(my $line = <$fh>)) {
+        $cpus++ if $line =~ /^processor[\s]+:/
     }
+    close $fh;
+
     return $cpus || 1;
 }
 
