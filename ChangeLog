@@ -1,3 +1,20 @@
+2011-04-16  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.43
+
+	* Mainly a maintenance release
+
+	* Bugfixes
+	- allow "too many" parent(/..) steps
+	- Avoid clobbering $_ [contributed by FLORA]
+	- fix bug with dpathr()
+	- Code Æsthetics
+
+	* Speed
+	- some speed improvement
+	- docs: hint to more slowness with Safe.pm
+	- run xt/ benchmarks without Safe.pm
+
 2011-01-04  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.42
