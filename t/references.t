@@ -24,49 +24,49 @@ my $res;
 
 $res = [ dpath('/goal')->match($data) ];
 isnt("".\($data->{goal}), "".\($res->[0]), "ROOT/KEY - references are to copies");
-diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
-diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
+# diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
 
 $res = [ dpathr('/goal')->match($data) ];
 is("".\($data->{goal}), "".$res->[0], "ROOT/KEY - references are the same");
-diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
-diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
+# diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
 
 # --------------------------------------------------
 
 $res = [ dpath('//goal')->match($data) ];
 isnt("".\($data->{goal}), "".\($res->[0]), "ANYWHERE/KEY - references are to copies");
-diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
-diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
+# diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
 
 $res = [ dpathr('//goal')->match($data) ];
 is("".\($data->{goal}), "".$res->[0], "ANYWHERE/KEY - references are the same");
-diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
-diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
+# diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
 
 # --------------------------------------------------
 
 $res = [ dpath('/*')->match($data) ];
 isnt("".\($data->{goal}), "".\($res->[0]), "ROOT/ANYSTEP - references are to copies");
-diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
-diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
+# diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
 
 $res = [ dpathr('/*')->match($data) ];
 is("".\($data->{goal}), "".$res->[0], "ROOT/ANYSTEP - references are the same");
-diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
-diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
+# diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
 
 # --------------------------------------------------
 
 $res = [ dpath('//*')->match($data) ];
 isnt("".\($data->{goal}), "".\($res->[0]), "ANYWHERE/ANYSTEP - references are to copies");
-diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
-diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
+# diag "orig:    " . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpath:   " . $res->[0]     . " -- " . \($res->[0]);
 
 $res = [ dpathr('//*')->match($data) ];
 is("".\($data->{goal}), "".$res->[0], "ANYWHERE/ANYSTEP - references are the same");
-diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
-diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
+# diag "orig:   \\" . $data->{goal} . " -- " . \($data->{goal});
+# diag "dpathr: \\" . ${$res->[0]}  . " -- " . $res->[0];
 
 # --------------------------------------------------
 
