@@ -192,13 +192,15 @@ sub _filter_points_eval
                                        my $pref = $p->ref;
                                        if ( defined $pref ) {
                                                $_ = $$pref;
-                                               # 'uninitialized' values are the norm
-                                               # but "no warnings 'uninitialized'" does
-                                               # not work in this restrictive Safe.pm config, so
-                                               # we deactivate warnings completely by localizing $^W
                                                if ($Data::DPath::USE_SAFE) {
+                                                       # 'uninitialized' values are the norm
+                                                       # but "no warnings 'uninitialized'" does
+                                                       # not work in this restrictive Safe.pm config, so
+                                                       # we deactivate warnings completely by localizing $^W
                                                        $res = $COMPARTMENT->reval('local $^W;'.$filter);
                                                } else {
+                                                       # 'uninitialized' values are the norm
+                                                       no warnings 'uninitialized';
                                                        $res = eval($filter);
                                                }
                                                print STDERR ($@, "\n") if $@;
