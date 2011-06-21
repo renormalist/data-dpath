@@ -27,14 +27,16 @@ my $data = {
     },
 };
 
-diag 'hash address: ' . $data->{aHash};
-# local $Data::DPath::USE_SAFE;
-# my $res = $data ~~ dpath '//*[ no warnings; if (value =~ /i/) { print "("; print value;  print ")\n" } value =~ /i/ ]';
 my $res = $data ~~ dpath '//*[ value =~ /i/ ]';
 my $expected = [ qw/split pie ii chips fries fish&chips/ ];
 unlike ($data->{aHash}, qr/i/, "aHash does not match the regex");
 cmp_deeply($res, $expected, "elements with letter 'i' but not aHash");
-diag "res      = ".Dumper($res);
-diag "expected = ".Dumper($expected);
+# diag "res      = ".Dumper($res);
+# diag "expected = ".Dumper($expected);
+
+local $Data::DPath::USE_SAFE;
+$res = $data ~~ dpath '//*[ value =~ /i/ ]';
+unlike ($data->{aHash}, qr/i/, "aHash does not match the regex - again without Safe.pm");
+cmp_deeply($res, $expected, "elements with letter 'i' but not aHash - again without Safe.pm");
 
 done_testing;
