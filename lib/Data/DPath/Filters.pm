@@ -49,13 +49,8 @@ sub value()
         no warnings 'uninitialized';
 
         # optimization: first try faster ref, then reftype
-        # ref
-        return (values %$_)[0] if (defined $_ and ref  $_ eq HASH);
         return $_              if (defined $_ and ref \$_ eq SCALAR);
-        # reftype
-        return (values %$_)[0] if (defined $_ and Scalar::Util::reftype  $_ eq HASH);
         return $_              if (defined $_ and Scalar::Util::reftype \$_ eq SCALAR);
-        # else
         return undef;
 }
 
