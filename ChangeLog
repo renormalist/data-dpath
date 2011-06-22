@@ -1,3 +1,10 @@
+2011-06-22  Steffen Schwigon  <ss5@renormalist.net>
+
+	* v0.44
+
+	* fix RT#68882 - the value() filter function worked odd
+	  [reported by Alexei "RUSSOZ" Znamensky]
+
 2011-04-16  Steffen Schwigon  <ss5@renormalist.net>
 
 	* v0.43

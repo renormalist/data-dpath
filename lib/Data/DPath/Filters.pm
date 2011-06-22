@@ -113,7 +113,7 @@ Returns the value of the current element.
 
 =head2 isa
 
-Frontend to UNIVERSAL::isa. True if the current elemt is_a given
+Frontend to UNIVERSAL::isa. True if the current element is_a given
 class.
 
 =head2 reftype
