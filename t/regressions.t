@@ -29,14 +29,26 @@ my $data = {
 
 my $res = $data ~~ dpath '//*[ value =~ /i/ ]';
 my $expected = [ qw/split pie ii chips fries fish&chips/ ];
-unlike ($data->{aHash}, qr/i/, "aHash does not match the regex");
-cmp_deeply($res, $expected, "elements with letter 'i' but not aHash");
+unlike ($data->{aHash}, qr/i/, "RT-68882 - aHash does not match the regex");
+cmp_deeply($res, $expected, "RT-68882 - elements with letter 'i' but not aHash");
 # diag "res      = ".Dumper($res);
 # diag "expected = ".Dumper($expected);
 
 local $Data::DPath::USE_SAFE;
 $res = $data ~~ dpath '//*[ value =~ /i/ ]';
-unlike ($data->{aHash}, qr/i/, "aHash does not match the regex - again without Safe.pm");
-cmp_deeply($res, $expected, "elements with letter 'i' but not aHash - again without Safe.pm");
+unlike ($data->{aHash}, qr/i/, "RT-68882 - aHash does not match the regex - again without Safe.pm");
+cmp_deeply($res, $expected, "RT-68882 - elements with letter 'i' but not aHash - again without Safe.pm");
+
+# To clarify confusion I once had here:
+#  $data is not found with '//*' because
+#  the '*' always gets a *sub* element and
+#  therefore can never be the root element.
+$res = $data ~~ dpath '//*[ Scalar::Util::reftype(value) eq "HASH" ]';
+$expected = [ $data->{aHash} ];
+cmp_deeply($res, $expected, "RT-68882 related - value filter function still works for hash");
+
+$res = $data ~~ dpath '//*[ Scalar::Util::reftype(value) eq "ARRAY" ]';
+$expected = [ $data->{aList}, $data->{aHash}{potato} ];
+cmp_bag($res, $expected, "RT-68882 related - value filter function still works for array");
 
 done_testing;
