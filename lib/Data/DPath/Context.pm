@@ -280,12 +280,12 @@ sub _select_key {
                 no warnings 'uninitialized';
                 next unless defined $point;
                 my $pref = $point->ref;
-                next unless (defined $point && (
-                                                # speed optimization:
-                                                # first try faster ref, then reftype
-                                                ref($$pref)     eq HASH or
-                                                reftype($$pref) eq HASH
-                                               ));
+                next unless (
+                             # speed optimization:
+                             # first try faster ref, then reftype
+                             ref($$pref)     eq HASH or
+                             reftype($$pref) eq HASH
+                             );
                                 # take point as hash, skip undefs
                 my $attrs = Attrs->new(key => $step->part);
                 my $step_points = [];
