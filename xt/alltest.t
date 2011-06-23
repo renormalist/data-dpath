@@ -11,6 +11,8 @@ use Data::DPath;
 use Data::Dumper;
 use Benchmark ':all', ':hireswallclock';
 
+local $Data::DPath::USE_SAFE = 0;
+
 #DB::enable_profile();
 
 my $tests = Test::Aggregate::Nested->new
