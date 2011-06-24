@@ -24,15 +24,16 @@ sub size()
 {
         no warnings 'uninitialized';
 
+        return -1 unless defined $_;
         # speed optimization: first try faster ref, then reftype
         # ref
-        return scalar @$_      if (defined $_ and ref $_  eq ARRAY);
-        return scalar keys %$_ if (defined $_ and ref $_  eq HASH);
-        return  1              if (defined $_ and ref \$_ eq SCALAR);
+        return scalar @$_      if ref $_  eq ARRAY;
+        return scalar keys %$_ if ref $_  eq HASH;
+        return  1              if ref \$_ eq SCALAR;
         # reftype
-        return scalar @$_      if (defined $_ and Scalar::Util::reftype $_  eq ARRAY);
-        return scalar keys %$_ if (defined $_ and Scalar::Util::reftype $_  eq HASH);
-        return  1              if (defined $_ and Scalar::Util::reftype \$_ eq SCALAR);
+        return scalar @$_      if Scalar::Util::reftype $_  eq ARRAY;
+        return scalar keys %$_ if Scalar::Util::reftype $_  eq HASH;
+        return  1              if Scalar::Util::reftype \$_ eq SCALAR;
         # else
         return -1;
 }
