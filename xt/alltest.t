@@ -13,6 +13,10 @@ use Benchmark ':all', ':hireswallclock';
 
 local $Data::DPath::USE_SAFE = 0;
 
+BEGIN {
+        print "TAP Version 13\n";
+}
+
 #DB::enable_profile();
 
 my $tests = Test::Aggregate::Nested->new
@@ -25,7 +29,6 @@ my $count = 1;
 my $t = timeit ($count, sub { $tests->run });
 my $n = $t->[5];
 my $throughput = $n / $t->[0];
-diag Dumper($t);
 print "  ---\n";
 print "  benchmark:\n";
 print "    timestr:    ".timestr($t), "\n";
