@@ -8,6 +8,7 @@ our $VERSION = '0.45';
 
 our $DEBUG = 0;
 our $USE_SAFE = 1;
+our $PARALLELIZE = 0;
 
 use Data::DPath::Path;
 use Data::DPath::Context;

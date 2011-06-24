@@ -11,12 +11,17 @@ use Scalar::Util 'reftype';
 use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
+use Sys::CPU;
 use POSIX;
 use Safe;
 
 # run filter expressions in own Safe.pm compartment
 our $COMPARTMENT;
+our $THREADCOUNT;
+
 BEGIN {
+        $THREADCOUNT = $Data::DPath::PARALLELIZE ? Sys::CPU::cpu_count : 1;
+        print "THREADCOUNT: $THREADCOUNT\n";
         package Data::DPath::Filters;
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
@@ -31,8 +36,6 @@ BEGIN {
                                is_reftype
                              ));
 }
-
-our $THREADCOUNT = _num_cpus();
 
 # print "use $]\n" if $] >= 5.010; # allow new-school Perl inside filter expressions
 # eval "use $]" if $] >= 5.010; # allow new-school Perl inside filter expressions
@@ -57,21 +60,6 @@ use constant { HASH             => 'HASH',
                ANCESTOR         => 'ANCESTOR',
                ANCESTOR_OR_SELF => 'ANCESTOR_OR_SELF',
            };
-
-# parallelization utils
-sub _num_cpus
-{
-    open my $fh, '<', '/proc/cpuinfo'
-        or return 1;
-
-    my $cpus = 0;
-    while (defined(my $line = <$fh>)) {
-        $cpus++ if $line =~ /^processor[\s]+:/
-    }
-    close $fh;
-
-    return $cpus || 1;
-}
 
 sub _splice_threads {
     my ($cargo) = @_;
