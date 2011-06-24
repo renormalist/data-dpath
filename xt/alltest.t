@@ -4,7 +4,7 @@ eval "use Test::Aggregate::Nested";
 
 if ($@) {
         use Test::More;
-        plan skip_all => "Test::Aggregate required for testing aggregated";
+        plan skip_all => "Test::Aggregate::Nested required for testing aggregated";
 }
 
 use Data::DPath;
