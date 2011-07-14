@@ -7,7 +7,7 @@ use Data::Dumper;
 use aliased 'Data::DPath::Point';
 use aliased 'Data::DPath::Attrs';
 use List::MoreUtils 'uniq';
-use Scalar::Util 'reftype';
+use Scalar::Util::reftype::Inline;
 use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
