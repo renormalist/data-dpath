@@ -15,7 +15,7 @@ requires 'List::MoreUtils'            => 0;
 requires 'Sub::Exporter'              => 0;
 requires 'Text::Balanced'             => '2.02';
 requires 'Iterator::Util'             => 0;
-requires 'Safe'                       => '2.29';
+requires 'Safe'                       => '2.30';
 requires 'Sys::CPU'                   => 0;
 
 test_requires 'Test::More'            => 0.88;
