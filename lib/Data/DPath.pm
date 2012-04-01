@@ -421,7 +421,7 @@ this step, all starting at the root of the data structure.
 
 =over 4
 
-=item * C<//>
+=item C<//>
 
 Anchors to any hash or array inside the data structure below the
 currently found points (or the root).
@@ -437,26 +437,26 @@ but can also happen inside paths to skip middle parts:
 
 This allows any way between C<BBB> and C<FARAWAY>.
 
-=item * C<*>
+=item C<*>
 
 Matches one step of any value relative to the current points (or the
 root). This step might be any hash key or all values of an array in
 the step before.
 
-=item * C<..>
+=item C<..>
 
 Matches the parent element relative to the current points.
 
-=item * C<::ancestor>
+=item C<::ancestor>
 
 Matches all ancestors (parent, grandparent, etc.) of the current node.
 
-=item * C<::ancestor-or-self>
+=item C<::ancestor-or-self>
 
 Matches all ancestors (parent, grandparent, etc.) of the current node
 and the current node itself.
 
-=item * C<.>
+=item C<.>
 
 A "no step". This keeps passively at the current points, but allows
 incrementally attaching filters to points or to otherwise hard to
@@ -473,7 +473,7 @@ killer expression and can more easily maintain them.
 
 See L<Filters|Filters> for more details on filters.
 
-=item * If you need those special elements to be not special but as
+=item If you need those special elements to be not special but as
 key names, just quote them:
 
  /"*"/
@@ -830,19 +830,19 @@ You can also look for information at:
 
 =over 4
 
-=item * RT: CPAN's request tracker
+=item RT: CPAN's request tracker
 
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Data-DPath>
 
-=item * AnnoCPAN: Annotated CPAN documentation
+=item AnnoCPAN: Annotated CPAN documentation
 
 L<http://annocpan.org/dist/Data-DPath>
 
-=item * CPAN Ratings
+=item CPAN Ratings
 
 L<http://cpanratings.perl.org/d/Data-DPath>
 
-=item * Search CPAN
+=item Search CPAN
 
 L<http://search.cpan.org/dist/Data-DPath>
 
