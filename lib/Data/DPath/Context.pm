@@ -14,7 +14,7 @@ use Iterator::Util;
 use List::Util 'min';
 use Sys::CPU;
 use POSIX;
-use Safe;
+use Safe 2.30;
 
 # run filter expressions in own Safe.pm compartment
 our $COMPARTMENT;
