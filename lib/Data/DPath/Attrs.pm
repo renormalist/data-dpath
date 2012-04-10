@@ -1,4 +1,5 @@
 package Data::DPath::Attrs;
+# ABSTRACT: Abstraction for internal attributes attached to a point
 
 use strict;
 use warnings;
@@ -11,10 +12,6 @@ use Class::XSAccessor # ::Array
 1;
 
 __END__
-
-=head1 NAME
-
-Data::DPath::Attrs - Abstraction for internal attributes attached to a point
 
 =head1 INTERNAL METHODS
 

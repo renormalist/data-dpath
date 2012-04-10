@@ -1,4 +1,5 @@
 package Data::DPath::Context;
+# ABSTRACT: Abstraction for a current context that enables incremental searches
 
 use strict;
 use warnings;
@@ -466,10 +467,6 @@ sub match {
 
 __END__
 
-=head1 NAME
-
-Data::DPath::Context - Abstraction for a current context that enables incremental searches.
-
 =head1 API METHODS
 
 =head2 new ( %args )
@@ -561,16 +558,5 @@ modules.
 =head2 Point
 
 =head2 Step
-
-=head1 AUTHOR
-
-Steffen Schwigon, C<< <schwigon at cpan.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008-2011 Steffen Schwigon.
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut

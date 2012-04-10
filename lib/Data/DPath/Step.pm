@@ -1,4 +1,5 @@
 package Data::DPath::Step;
+# ABSTRACT: Abstraction for a single Step through a Path
 
 use strict;
 use warnings;
@@ -16,9 +17,7 @@ use Class::XSAccessor::Array
 
 __END__
 
-=head1 NAME
-
-Data::DPath::Step - Abstraction for a single Step through a Path.
+=head1 ABOUT
 
 When a DPath is evaluated it executes these B<Step>s of a B<Path>.
 

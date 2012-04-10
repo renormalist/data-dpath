@@ -1,4 +1,5 @@
 package Data::DPath::Path;
+# ABSTRACT: Abstraction for a DPath
 
 use strict;
 use warnings;
@@ -7,7 +8,7 @@ use Data::Dumper;
 use aliased 'Data::DPath::Step';
 use aliased 'Data::DPath::Point';
 use aliased 'Data::DPath::Context';
-use Text::Balanced 'extract_delimited', 'extract_codeblock';
+use Text::Balanced 2.02 'extract_delimited', 'extract_codeblock';
 
 use Class::XSAccessor
     chained     => 1,
@@ -140,9 +141,7 @@ sub match {
 
 __END__
 
-=head1 NAME
-
-Data::DPath::Path - Abstraction for a DPath.
+=head1 ABOUT
 
 Take a string description, parse it, provide frontend methods.
 
@@ -213,16 +212,5 @@ modules.
 =head2 Point
 
 =head2 Step
-
-=head1 AUTHOR
-
-Steffen Schwigon, C<< <schwigon at cpan.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008-2011 Steffen Schwigon.
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut

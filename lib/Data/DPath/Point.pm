@@ -1,4 +1,5 @@
 package Data::DPath::Point;
+# ABSTRACT: Abstraction for a single reference (a "point") in the datastructure
 
 use strict;
 use warnings;
@@ -15,10 +16,7 @@ use Class::XSAccessor # ::Array
 
 __END__
 
-=head1 NAME
-
-Data::DPath::Point - Abstraction for a single reference (a "point") in
-the datastructure
+=head1 ABOUT
 
 Intermediate steps during execution are lists of currently covered
 references in the data structure, i.e., lists of such B<Point>s. The

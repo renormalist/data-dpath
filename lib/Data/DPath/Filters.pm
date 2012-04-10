@@ -1,4 +1,5 @@
 package Data::DPath::Filters;
+# ABSTRACT: Magic functions available inside filter conditions
 
 use strict;
 use warnings;
@@ -72,12 +73,6 @@ sub is_reftype($) {
 
 __END__
 
-=pod
-
-=head1 NAME
-
-Data::DPath::Filters - Magic functions available inside filter conditions
-
 =head1 API METHODS
 
 =head2 affe
@@ -131,17 +126,6 @@ Frontend to Scalar::Util::reftype.
 
 Checks whether Scalar::Util::reftype of current element $_ equals the
 provided argument $EXPECTED_TYPE and returns true/false.
-
-=head1 AUTHOR
-
-Steffen Schwigon, C<< <schwigon at cpan.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008-2011 Steffen Schwigon.
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut
 
