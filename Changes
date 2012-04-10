@@ -8,6 +8,7 @@ Revision history for {{$dist->name}}
 
   * Bugfixes
   - RT#69042: use module Sys::CPU to figure # of processors
+    (but deactivated completely for now)
   - RT#72059: incorrect POD syntax : =item * <text>
   - RT#76016: Please depend on Safe 2.30
 
@@ -266,5 +267,3 @@ Revision history for {{$dist->name}}
 	* initial CPAN version
 
 	* basic paths, parents, placeholders
-
-

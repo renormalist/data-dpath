@@ -12,7 +12,7 @@ use Scalar::Util 'reftype';
 use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
-use Sys::CPU;
+#use Sys::CPU;
 use POSIX;
 use Safe 2.30;
 
@@ -21,8 +21,8 @@ our $COMPARTMENT;
 our $THREADCOUNT;
 
 BEGIN {
-        $THREADCOUNT = $Data::DPath::PARALLELIZE ? Sys::CPU::cpu_count : 1;
-        print "THREADCOUNT: $THREADCOUNT\n";
+        #$THREADCOUNT = $Data::DPath::PARALLELIZE ? Sys::CPU::cpu_count : 1;
+        #print "THREADCOUNT: $THREADCOUNT\n";
         package Data::DPath::Filters;
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
