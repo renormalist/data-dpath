@@ -1,14 +1,21 @@
-2011-06-22  Steffen Schwigon  <ss5@renormalist.net>
+Revision history for {{$dist->name}}
 
-	* v0.44
+{{$NEXT}}
+  * Maintenance
+  - use Dist::Zilla for building
+  - xt/ benchmarks without Safe.pm
+  - small optimizations [by Alexei Znamensky]
 
-	* fix RT#68882 - the value() filter function worked odd
+  * Bugfixes
+  - RT#69042: use module Sys::CPU to figure # of processors
+  - RT#72059: incorrect POD syntax : =item * <text>
+  - RT#76016: Please depend on Safe 2.30
+
+0.44   2011-06-22
+  - fix RT#68882 - the value() filter function worked odd
 	  [reported by Alexei "RUSSOZ" Znamensky]
 
-2011-04-16  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.43
-
+0.43   2011-04-16
 	* Mainly a maintenance release
 
 	* Bugfixes
@@ -22,15 +29,10 @@
 	- docs: hint to more slowness with Safe.pm
 	- run xt/ benchmarks without Safe.pm
 
-2011-01-04  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.42
+0.42  2011-01-04
 	- dependency to Safe.pm raised
 
-2010-10-01  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.41
-
+0.41 2010-10-01
 	* Incompatible changes:
 	- restrict filter expression syntax with Safe.pm
 	- set local $Data::DPath::USE_SAFE = 0 to enable old eval again
@@ -44,10 +46,7 @@
 	* Refactoring for easier code and later hopefully easier
 	parallelization. Currently slightly slower.
 
-2010-07-13  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.40
-
+0.40 2010-07-13
 	* Incompatible API changes!
 
 	* Cleanup iterator style API and document it. It now consists of:
@@ -61,19 +60,13 @@
 
 	* Make accessing internal point attributes ("attrs") a public API
 
-2010-07-10  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.37
-
+0.37 2010-07-10
 	* Introduce Iterator style context usage
 	- dpathi($data, $path_str) returns an iterator on which you can
 	  do incremental searches using isearch($path_str)
 	- API still experimental
 
-2010-07-09  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.36
-
+0.36 2010-07-09
 	* New axis ::ancestor
         - selects all ancestors (parent, grandparent, etc.) of the current node
 
@@ -86,22 +79,13 @@
 	- this might make the code a bit slower again, but I hope it helps
 	  profiling and optimizing on encapsulated small parts in the long run
 
-2010-04-07  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.35
-
+0.35 2010-04-07
 	* Bummer! Fixed stupid perl version checking in tests.
 
-2010-03-27  Steffen Schwigon  <ss5@vinyl.webit.de>
-
-	* v0.34
-
+0.34 2010-03-27
 	* solve some CPAN testing issues
 
-2010-03-24  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.33
-
+0.33 2010-03-24
 	* Fix regression that sneaked in with the //KEY-look-ahead
 	optimization
 
@@ -111,23 +95,14 @@
 	- comparison with Data::Path reworked
 	- more verbose array semantics described
 
-2009-09-25  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.32
-
+0.32 2009-09-25
 	* I cannot believe that I forgot to define the dependency to
 	Text::Balanced! Let's see if this fixes some FAIL reports.
 
-2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.31
-
+0.31 2009-09-22
 	* fix docs and changelog of 0.30 which appeared rather incomplete
 
-2009-09-22  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.30
-
+0.30 2009-09-22
 	* Yet more speed optimizations:
 	- switch from Object::Tiny::RW to Class::XSAccessor::Array
 	- try fast ref() before falling back to slower reftype()
@@ -151,10 +126,7 @@
 	- //ZOMTEC[ reftype eq "Foo::Bar"  ]   # reftype just returns value
 	- //ZOMTEC[ is_reftype("Foo::Bar") ]   # is_reftype checks against arg
 
-2009-09-17  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.21
-
+0.21 2009-09-17
 	* even more aggressive speed optimizations:
 
 	* dropped Moose and MX::Declare completely in favor of
@@ -172,10 +144,7 @@
 
 	* thanks to Devel::NYTProf which helped a lot profiling this
 
-2009-09-16  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.20
-
+0.20 2009-09-16
 	* aggressive speed optimizations, needed @ work:
 
 	* the ANYSTEP "//" not looks ahead to the following step and
@@ -188,26 +157,17 @@
 
 	* partially this led to more dirty code, I try to fix this later
 
-2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.17
-
+0.17 2009-08-11
 	* understand even more strange perl'oid filter expressions by
 	using extract_codeblock instead of extract_bracketed
 
 	* tests for this
 
-2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.16
-
+0.16 2009-08-11
 	* filter expressions can now contain slashes (just as you would
 	naturally expect)
 
-2009-08-11  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.15
-
+0.15 2009-08-11
 	* fix semantics of filter function key(). It now provides the key
 	under which the value is associated.
 
@@ -217,10 +177,7 @@
 
 	* moved distro and development tests under xt/
 
-2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.14
-
+0.14 2009-07-14
 	* The overloaded smartmatch "~~" does not work commutative anymore
 	in bleadperl and Perl 5.10.1.
 
@@ -228,50 +185,30 @@
 
 	* minor additions to the comparison section
 
-2009-07-14  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.13
-
+0.13 2009-07-14
 	* comparison matrix Data::DPath vs. Data::Path, requested in
 	RT#47540, http://rt.cpan.org/Public/Bug/Display.html?id=47540
 
-2009-06-26  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.12
-
+0.12 2009-06-26
 	* allow returning references into original data structure via new
 	frontend function "dpathr" instead of "dpath"
 
-2009-05-15  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.11
-
+0.11 2009-05-15
 	* Dependencies raised to current MooseX stuff
 
-2009-04-16  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.10
-
-	* fix forgotten "use" for standalone using of ::Path
-
+0.10 2009-04-16
 	* new path step: nostep "." (for filter chaining and on difficult
 	elements, like root node)
 
 	* documentation improvements
 
-2009-02-12  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.09
-
+0.09 2009-02-12
 	* Quoted special chars ("*", "//", "..") now work as keys
 
 	* compatibility with newest MooseX::Method::Signatures on class
 	methods [Florian Ragwitz]
 
-2009-02-11  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.08
-
+0.08 2009-02-11
 	* Fix missing dependency to Test::Deep. Thanks, CPAN testers.
 
 	* v0.07
@@ -285,25 +222,16 @@
 
 	* "package" statements to help the CPAN indexer.
 
-2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.05
-
+0.05 2009-02-10
 	* more docs
 
 	* tests for negative array indexes
 
-2009-02-10  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.04
-
+0.04 2009-02-10
 	* Fix $VERSION inside MoosX::Declare'd class not recognized by
 	CPAN indexer
 
-2009-02-09  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.03
-
+0.03 2009-02-09
 	* The first useful release, see test suite for many examples!
 
 	* much improved path tokenizer
@@ -334,10 +262,7 @@
 
 	* tests do not depend on result order
 
-2008-11-26  Steffen Schwigon  <ss5@renormalist.net>
-
-	* v0.01
-
+0.01 2008-11-26
 	* initial CPAN version
 
 	* basic paths, parents, placeholders
