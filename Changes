@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.46      2012-04-11
+  [micro fixes only]
+  - fix broken links
+  - changelog conforms to CPAN::Changes::Spec
+
 0.45      2012-04-11
   [Maintenance]
   - use Dist::Zilla for building
