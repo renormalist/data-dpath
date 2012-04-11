@@ -804,44 +804,6 @@ Steffen Schwigon, C<< <schwigon at cpan.org> >>
 
 Florian Ragwitz (cleaner exports, $_ scoping, general perl consultant)
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-data-dpath at
-rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-DPath>. I will
-be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Data::DPath
-
-
-You can also look for information at:
-
-=over 4
-
-=item RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Data-DPath>
-
-=item AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Data-DPath>
-
-=item CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Data-DPath>
-
-=item Search CPAN
-
-L<http://search.cpan.org/dist/Data-DPath>
-
-=back
-
-
 =head1 SEE ALSO
 
 There are other modules on CPAN which are related to finding elements
@@ -851,26 +813,22 @@ in data structures.
 
 =item Data::Path
 
-http://search.cpan.org/dist/Data-Path
+http://metacpan.org/release/Data-Path
 
 =item XML::XPathEngine
 
-http://search.cpan.org/dist/XML-XPathEngine
+http://metacpan.org/release/XML-XPathEngine
 
 =item Tree::XPathEngine
 
-http://search.cpan.org/dist/Tree-XPathEngine
+http://metacpan.org/release/Tree-XPathEngine
 
 =item Class::XPath
 
-http://search.cpan.org/dist/Class-XPath
+http://metacpan.org/release/Class-XPath
 
 =item Hash::Path
 
-http://search.cpan.org/dist/Hash-Path
+http://metacpan.org/release/Hash-Path
 
 =back
-
-=cut
-
-# End of Data::DPath
