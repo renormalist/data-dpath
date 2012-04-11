@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.45      2012-04-11 10:14:02 Europe/Berlin
   * Maintenance
   - use Dist::Zilla for building
   - xt/ benchmarks without Safe.pm
