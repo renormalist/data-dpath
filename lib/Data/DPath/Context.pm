@@ -497,7 +497,7 @@ See L<Iterator style|Data::DPath/"Iterator style"> for usage.
 
 It returns the reference to the actual data from the current context's
 first element. This mostly makes sense on contexts returned by
-iterators as there is only one point there. 
+iterators as there is only one point there.
 
 (Having the reference theoretically allows you to even change the data
 on this point. It's not yet clear what impact this has to currently
