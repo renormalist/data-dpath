@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - set dependency to Safe.pm 2.30 only in meta but do not require it
+    at runtime. This relaxes it for older Perls where newer Safe breaks
+    but the corresponding older Safe works good enough.
 
 0.46      2012-04-11
   [micro fixes only]
