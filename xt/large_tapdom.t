@@ -2,7 +2,8 @@
 
 use strict;
 use warnings;
-use Test::More;
+use Test::TAPv13 ":all";
+use Test::More tests => 3;
 use Data::DPath 'dpath';
 use Data::Dumper;
 use Benchmark ':all', ':hireswallclock';
@@ -10,8 +11,6 @@ use Devel::Size 'total_size';
 use TAP::DOM;
 
 BEGIN {
-        print "TAP Version 13\n";
-        plan tests => 3;
         use_ok( 'Data::DPath' );
 }
 
@@ -43,14 +42,14 @@ foreach my $usebitsets (0..1) {
         my $throughput = $n / $t->[0];
         diag Dumper($resultlist);
         ok(1, "benchmark -- usebitsets = $usebitsets");
-        print "  ---\n";
-        print "  benchmark:\n";
-        print "    timestr:    ".timestr($t), "\n";
-        print "    wallclock:  $t->[0]\n";
-        print "    usr:        $t->[1]\n";
-        print "    sys:        $t->[2]\n";
-        print "    throughput: $throughput\n";
-        print "  ...\n";
+        tap13_yaml({ benchmark => {
+                                   timestr    => timestr($t),
+                                   wallclock  => $t->[0],
+                                   usr        => $t->[1],
+                                   sys        => $t->[2],
+                                   throughput => $throughput,
+                                  }
+                   });
 }
 
 done_testing;

@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
+use Test::TAPv13 ":all";
 use Test::Deep;
-use Test::More;
+use Test::More tests => 3;
 use Data::DPath 'dpath';
 use Data::Dumper;
 use Clone 'clone';
@@ -14,8 +15,6 @@ use Devel::Size 'total_size';
 local $Data::DPath::USE_SAFE = 0;
 
 BEGIN {
-        print "TAP Version 13\n";
-        plan tests => 3;
         use_ok( 'Data::DPath' );
 }
 
@@ -450,11 +449,11 @@ my $throughput = $n / $t->[0];
 # diag Dumper($resultlist);
 diag Dumper($t);
 cmp_deeply $resultlist, [ @huge_expected ], "huge_data";
-print "  ---\n";
-print "  benchmark:\n";
-print "    timestr:    ".timestr($t), "\n";
-print "    wallclock:  $t->[0]\n";
-print "    usr:        $t->[1]\n";
-print "    sys:        $t->[2]\n";
-print "    throughput: $throughput\n";
-print "  ...\n";
+tap13_yaml({ benchmark => {
+                           timestr    => timestr($t),
+                           wallclock  => $t->[0],
+                           usr        => $t->[1],
+                           sys        => $t->[2],
+                           throughput => $throughput,
+                          },
+           });
