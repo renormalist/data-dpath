@@ -631,7 +631,7 @@ There are 4 special characters: the slash C</>, paired brackets C<[]>,
 the double-quote C<"> and the backslash C<\>. They are needed and
 explained in a logical order.
 
-Path parts are divided by the slash </>.
+Path parts are divided by the slash C</>.
 
 A path part can be extended by a filter with appending an expression
 in brackets C<[]>.
