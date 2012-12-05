@@ -1,6 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  [Maintenance]
+  - fix POD (pdl++)
+  - use Test::TAPv13 in xt tests
+
+  [Bugfixes]
+  - fix tests to work with Perl 5.17.6+
 
 0.47      2012-05-23
   - set dependency to Safe.pm 2.30 only in meta but do not require it
