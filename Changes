@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Bummer! Uploaded 0.48 as wrong user - too many identities...
+      The Creature: "Who am I?"
+      Victor Frankenstein: "You? I don't know."
 
 0.48      2012-12-05
   [Maintenance]
