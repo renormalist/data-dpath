@@ -90,7 +90,7 @@ sub _any
         no warnings 'uninitialized';
 
         $in = defined $in ? $in : [];
-        return @$out unless @$in;
+        return $out unless @$in;
 
         my @newin;
         my @newout;
@@ -255,8 +255,8 @@ sub _select_anywhere {
         # '//'
         # all hash/array nodes of a data structure
         foreach my $point (@$current_points) {
-                my $step_points = [_any([], [ $point ], $lookahead_key), $point];
-                push @$new_points, @{$self->_filter_points($step, $step_points)};
+                my @step_points = (@{_any([], [ $point ], $lookahead_key)}, $point);
+                push @$new_points, @{$self->_filter_points($step, \@step_points)};
         }
 }
 
