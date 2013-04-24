@@ -69,10 +69,10 @@ __END__
              };
  
  # Perl 5.8 style
- @resultlist = dpath('/AAA/*/CCC')->match($data);   # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
+ my @resultlist = dpath('/AAA/*/CCC')->match($data); # ( ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] )
  
  # Perl 5.10 style using overloaded smartmatch operator
- $resultlist = $data ~~ dpath '/AAA/*/CCC';         # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
+ my $resultlist = $data ~~ dpath '/AAA/*/CCC';        # [ ['XXX', 'YYY', 'ZZZ'], [ 'RR1', 'RR2', 'RR3' ] ]
 
 Note that the C<match()> function returns an array but the overloaded
 C<~~> operator returns an array reference (that's a limitation of
