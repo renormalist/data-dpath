@@ -464,7 +464,7 @@ or chain filters:
 This way you do not need to stuff many filters together into one huge
 killer expression and can more easily maintain them.
 
-See L<Filters|Filters> for more details on filters.
+See L<Filters|Data::DPath::Filters> for more details on filters.
 
 =item If you need those special elements to be not special but as
 key names, just quote them:
