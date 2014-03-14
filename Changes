@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.50      2014-03-14
         - micro optimization: _any() saves a dereference
 
 0.49      2012-12-05
