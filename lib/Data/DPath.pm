@@ -707,6 +707,26 @@ the first escaped double-quote is ok to be a single backslash.
 All strange, isn't it? At least it's (hopefully) consistent with
 something you know (Perl, Shell, etc.).
 
+=head2 XPath idioms
+
+Here are some typical XPath use-cases that can be achieved with
+Data::DPath, although a bit differently.
+
+=head3 Attribute access
+
+In XPath it's quite common to use a filter with attributes like this:
+
+ //AAA/BBB/*[@CCC="DDD"]
+
+A naive user could translate such a construct for Data::DPath like
+this:
+
+ //AAA/BBB/*[CCC eq "DDD"]
+
+except that it does not work. What works is this:
+
+ //AAA/BBB/*[key eq "CCC" && value eq "DDD"]
+
 =head1 Iterator style
 
 The I<iterator style> approach is an alternative to the already
