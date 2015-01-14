@@ -2,3 +2,4 @@
 !.gitignore
 Data-DPath-*
 Debian_CPANTS.txt
+nytprof*
