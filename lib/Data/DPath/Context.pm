@@ -93,7 +93,6 @@ sub _any
         return $out unless @$in;
 
         my @newin;
-        my @newout;
         my $tmp_ref;
         my $tmp_deref;
         my $tmp_reftype;
@@ -105,8 +104,15 @@ sub _any
 
                 # speed optimization: first try faster ref, then reftype
                 if (ref($$ref) eq HASH or reftype($$ref) eq HASH) {
-                        @values =
-                            map { { val_ref => \($$ref->{$_}), key => $_ } }
+                        push @$out,
+                            map {
+                                 my $newpoint = Point->new
+                                                     ->ref(\($$ref->{$_}))
+                                                     ->parent($point)
+                                                     ->attrs(Attrs->new(key => $_));
+                                 push @newin, $newpoint; # remember added points
+                                 $newpoint;
+                            }
                             grep {
                                     # speed optimization: only consider a key if lookahead looks promising
                                     not defined $lookahead_key
@@ -120,23 +126,18 @@ sub _any
                                 keys %{$$ref};
                 }
                 elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
-                        @values = map { { val_ref => \$_ } } @{$$ref}
+                        push @$out,
+                            map {
+                                my $newpoint = Point->new->ref($_->{val_ref})->parent($point);
+                                push @newin, $newpoint; # remember added points
+                                $newpoint;
+                            }
+                            map { { val_ref => \$_ } } @{$$ref}
                 }
                 else {
                         next
                 }
-
-                foreach (@values)
-                {
-                        my $key = $_->{key};
-                        my $val_ref = $_->{val_ref};
-                        my $newpoint = Point->new->ref($val_ref)->parent($point);
-                        $newpoint->attrs( Attrs->new(key => $key)) if $key;
-                        push @newout, $newpoint;
-                        push @newin,  $newpoint;
-                }
         }
-        push @$out, @newout;
         return _any ($out, \@newin, $lookahead_key);
 }
 
