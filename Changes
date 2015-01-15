@@ -2,8 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+  - docs: howto XPath-like attributes access [Slaven Rezić]
+  - mitigate new warning with perl 5.21+ via "aliased" [Doug Bell]
+  - speed optimizations [Reini Urban]
+
 0.50      2014-03-14
-        - micro optimization: _any() saves a dereference
+  - micro optimization: _any() saves a dereference
 
 0.49      2012-12-05
   - Bummer! Uploaded 0.48 as wrong user - too many identities...
