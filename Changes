@@ -2,9 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
-  - docs: howto XPath-like attributes access [Slaven Rezić]
-  - mitigate new warning with perl 5.21+ via "aliased" [Doug Bell]
-  - speed optimizations [Reini Urban]
+  - docs: how to do XPath-like attributes access (RT#94211) [Slaven Rezić]
+  - avoid warning with perl 5.21+ via newer "aliased" [Doug Bell]
+  - speed optimizations (5%) [Reini Urban]
 
 0.50      2014-03-14
   - micro optimization: _any() saves a dereference
