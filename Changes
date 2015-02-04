@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.51      2015-02-04
+
   - docs: how to do XPath-like attributes access (RT#94211) [Slaven Rezić]
   - avoid warning with perl 5.21+ via newer "aliased" [Doug Bell]
   - speed optimizations (5%) [Reini Urban]
