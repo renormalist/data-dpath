@@ -91,9 +91,9 @@ defined order if resulting from anything else than arrays.
 
 =head2 size
 
-Returns the size of the current element. If it is a hash ref it
-returns number of elements, if hashref it returns number of keys, if
-scalar it returns 1, everything else returns -1.
+Returns the size of the current element. If it is an array ref it
+returns the number of elements, if it is a hash ref it returns number of keys,
+if it is a scalar it returns 1, everything else returns -1.
 
 =head2 key
 
