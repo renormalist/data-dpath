@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Make sure feature.pm is only "test.recommends", as is optional prior
+    to 5.10 (GH #4, kentnl)
 
 0.51      2015-02-04
 
