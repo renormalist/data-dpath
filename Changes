@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.52      2015-02-27
   - Make sure feature.pm is only "test.recommends", as is optional prior
     to 5.10 (GH #4, kentnl)
   - skip NYTProf files in dist (GH #6) [kentnl]
