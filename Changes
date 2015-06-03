@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - no import from POSIX (RT#104914) [reported by ether]
 
 0.52      2015-02-27
   - Make sure feature.pm is only "test.recommends", as is optional prior
