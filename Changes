@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.53      2015-06-03
   - no import from POSIX (RT#104914) [reported by ether]
 
 0.52      2015-02-27
