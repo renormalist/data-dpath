@@ -13,7 +13,7 @@ use Data::DPath::Filters;
 use Iterator::Util;
 use List::Util 'min';
 #use Sys::CPU;
-use POSIX;
+use POSIX ();
 use Safe;
 
 # run filter expressions in own Safe.pm compartment
@@ -70,7 +70,7 @@ sub _splice_threads {
     return [[]] unless $nr_cargo;
 
     my $threadcount = $THREADCOUNT || 1;
-    my $blocksize   = ceil ($nr_cargo / $threadcount);
+    my $blocksize   = POSIX::ceil ($nr_cargo / $threadcount);
 
     my @result = map {
         my $first =  $_ * $blocksize;
