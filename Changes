@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.54      2015-09-02
   - new function matchr() which returns results as hashref
     instead of hash (RT#106515) [requested by djerius@cpan.org]
 
