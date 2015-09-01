@@ -501,7 +501,11 @@ matched points in the data structure.
 
 =head2 match( $dpath )
 
-Return all data that match the given DPath.
+Return array of all data that match the given DPath.
+
+=head2 matchr( $dpath )
+
+Return array ref of all data that match the given DPath.
 
 =head2 isearch( $path_str )
 

@@ -364,6 +364,10 @@ See chapter L<Iterator style|/"Iterator style"> below for details.
 
 Returns an array of all values in C<$data> that match the C<$path>.
 
+=head2 matchr( $data, $path )
+
+Returns an array ref of all values in C<$data> that match the C<$path>.
+
 =head1 OPERATOR
 
 =head2 ~~

@@ -172,6 +172,10 @@ matched points in the data structure.
 
 Returns an array of all values in C<$data> that match the Path object.
 
+=head2 matchr( $data )
+
+Returns an array ref of all values in C<$data> that match the Path object.
+
 =head1 INTERNAL METHODS
 
 =head2 op_match( $self, $data )
