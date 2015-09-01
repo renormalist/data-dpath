@@ -144,14 +144,21 @@ sub _any
 sub _all {
         my ($self) = @_;
 
+        return @{$self->_all_ref};
+}
+
+sub _all_ref {
+        my ($self) = @_;
+
         no strict 'refs';
         no warnings 'uninitialized';
 
-        return
-          map { $self->give_references ? $_ : $$_ }
-          uniq
-          map { defined $_ ? $_->ref : () }
-          @{$self->current_points};
+        return [
+                map { $self->give_references ? $_ : $$_ }
+                uniq
+                map { defined $_ ? $_->ref : () }
+                @{$self->current_points}
+            ];
 }
 
 # filter current results by array index
