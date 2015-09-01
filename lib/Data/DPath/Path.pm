@@ -57,7 +57,7 @@ eval 'use overload "~~" => \&op_match' if $] >= 5.010;
 sub op_match {
         my ($self, $data, $rhs) = @_;
 
-        return [ $self->match( $data ) ];
+        return $self->matchr( $data );
 }
 
 # essentially the Path parser
@@ -130,11 +130,17 @@ sub _build__steps {
 sub match {
         my ($self, $data) = @_;
 
+        return @{$self->matchr($data)};
+}
+
+sub matchr {
+        my ($self, $data) = @_;
+
         my $context = Context
             ->new
                 ->current_points([ Point->new->ref(\$data) ])
                     ->give_references($self->give_references);
-        return $context->match($self);
+        return $context->matchr($self);
 }
 
 1;

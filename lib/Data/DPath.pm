@@ -52,6 +52,11 @@ sub match {
         Data::DPath::Path->new(path => $path_str)->match($data);
 }
 
+sub matchr {
+        my ($class, $data, $path_str) = @_;
+        Data::DPath::Path->new(path => $path_str)->matchr($data);
+}
+
 # ------------------------------------------------------------
 
 1;

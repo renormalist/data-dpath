@@ -472,6 +472,12 @@ sub match {
         $self->_search($dpath)->_all;
 }
 
+sub matchr {
+        my ($self, $dpath) = @_;
+
+        $self->_search($dpath)->_all_ref;
+}
+
 1;
 
 __END__
