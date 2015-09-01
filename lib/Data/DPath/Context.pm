@@ -24,6 +24,7 @@ BEGIN {
         #$THREADCOUNT = $Data::DPath::PARALLELIZE ? Sys::CPU::cpu_count : 1;
         #print "THREADCOUNT: $THREADCOUNT\n";
         package Data::DPath::Filters;
+
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
         # map DPath filter functions into new namespace
