@@ -3,8 +3,8 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
 
 0.54      2015-09-02
-  - new function matchr() which returns results as hashref
-    instead of hash (RT#106515) [requested by djerius@cpan.org]
+  - new function matchr() which returns results as arrayref
+    instead of array (RT#106515) [requested by djerius@cpan.org]
 
 0.53      2015-06-03
   - no import from POSIX (RT#104914) [reported by ether]
