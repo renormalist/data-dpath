@@ -806,7 +806,7 @@ C<< $iterator->value->deref >>.
 The line B<#(2)> is utilizing the internal data structure to find out
 about the actual hash key under which the point is located. (There is
 also an official API to that: C<< $ancestor->first_point->attrs->key >>, 
-but there it's neccessary to check for undefined values before
+but there it's necessary to check for undefined values before
 calling the methods F<attrs> and F<key>, so I went the easy way).
 
 =head1 INTERNAL METHODS
