@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.55      2015-09-16
   - spelling error, sync with Debian [Lucas Kanashiro]
 
 0.54      2015-09-02
