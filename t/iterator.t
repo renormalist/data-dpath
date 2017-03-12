@@ -102,29 +102,44 @@ while ($benchmarks->isnt_exhausted)
         $i++;
         my @keys;
         my $benchmark = $benchmarks->value;
-        my $ancestors = $benchmark->isearch ("/::ancestor");
 
-        my $j = 0;
-        while ($ancestors->isnt_exhausted) {
+	{
+	    my $copy = Data::DPath::Context->new->current_points( $benchmark->current_points );
+	    my $ancestors = $copy->isearch ("/::ancestor");
+
+	    my $j = 0;
+	    while ($ancestors->isnt_exhausted) {
                 $j++;
                 my $ancestor = $ancestors->value;
                 my $key = $ancestor->first_point->{attrs}{key};
                 push @keys, $key if defined $key;
                 if ($key) {
-                        is ($key, $ancestor->first_point->attrs->key, "accessor methods $i.$j");
+		    is ($key, $ancestor->first_point->attrs->key, "accessor methods $i.$j");
                 }
-        }
+	    }
+	}
 
-	# test idx attribute for step->kind eq ANYSTEP; can't figure
-	# out how to test step->kind eq ANYWHERE.
-	my $idx_exp = $j = 0;
-	my $iter = $benchmark->isearch( '/Benchmark/*' );
-	while( $iter->isnt_exhausted ) {
-	    my $idx_got = $iter->value->first_point->attrs->{idx};
-	    is( $idx_got, $idx_exp, "idx attr $i.$j" );
-	}  continue {
-	    ++$idx_exp;
-	    ++$j;
+	{
+	    for my $test ( [ ANYSTEP => '/*' ],
+			   [ ANYWHERE => '//.[! is_reftype( "ARRAY" )]' ] ) {
+
+		my ( $label, $path )  = @$test;
+		subtest $label => sub {
+		    my $copy = Data::DPath::Context->new->current_points( $benchmark->current_points );
+		    my $idx_exp = 0;
+		    my $iter = $copy->isearch( $path );
+
+		    my $j = 0;
+		    while ( $iter->isnt_exhausted ) {
+			my $idx_got = $iter->value->first_point->attrs->{idx};
+			is( $idx_got, $idx_exp, "idx attr $i.$j" );
+		    }
+		    continue {
+			++$idx_exp;
+			++$j;
+		    }
+		};
+	    }
 	}
 
         pop @keys;
