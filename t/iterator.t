@@ -114,6 +114,19 @@ while ($benchmarks->isnt_exhausted)
                         is ($key, $ancestor->first_point->attrs->key, "accessor methods $i.$j");
                 }
         }
+
+	# test idx attribute for step->kind eq ANYSTEP; can't figure
+	# out how to test step->kind eq ANYWHERE.
+	my $idx_exp = $j = 0;
+	my $iter = $benchmark->isearch( '/Benchmark/*' );
+	while( $iter->isnt_exhausted ) {
+	    my $idx_got = $iter->value->first_point->attrs->{idx};
+	    is( $idx_got, $idx_exp, "idx attr $i.$j" );
+	}  continue {
+	    ++$idx_exp;
+	    ++$j;
+	}
+
         pop @keys;
         push @all_keys, join(".", reverse @keys);
 }

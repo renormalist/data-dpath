@@ -127,11 +127,15 @@ sub _any
                                 keys %{$$ref};
                 }
                 elsif (ref($$ref) eq ARRAY or reftype($$ref) eq ARRAY) {
+                        my $idx = 0;
                         push @$out,
                             map {
-                                my $newpoint = Point->new->ref($_->{val_ref})->parent($point);
-                                push @newin, $newpoint; # remember added points
-                                $newpoint;
+                                 my $newpoint = Point->new
+                                                     ->ref($_->{val_ref})
+                                                     ->parent($point)
+                                                     ->attrs(Attrs->new(idx => $idx++));
+                                 push @newin, $newpoint; # remember added points
+                                 $newpoint;
                             }
                             map { { val_ref => \$_ } } @{$$ref}
                 }
@@ -313,8 +317,10 @@ sub _select_anystep {
                                 Point->new->ref($v_ref)->parent($point)->attrs($attrs)
                         } keys %$ref ];
                 } elsif (ref($ref) eq ARRAY or reftype($ref) eq ARRAY) {
+                        my $idx = 0;
                         $step_points = [ map {
-                                Point->new->ref(\$_)->parent($point)
+                                my $attrs = Attrs->new(idx => $idx++);
+                                Point->new->ref(\$_)->parent($point)->attrs($attrs)
                         } @$ref ];
                 } else {
                         if (ref($pref) eq SCALAR or reftype($pref) eq SCALAR) {
