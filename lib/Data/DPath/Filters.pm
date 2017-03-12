@@ -66,6 +66,7 @@ sub reftype() {
 }
 
 sub is_reftype($) {
+        no warnings 'uninitialized';
         return (Scalar::Util::reftype($_) eq shift);
 }
 
