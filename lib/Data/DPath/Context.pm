@@ -205,6 +205,7 @@ sub _filter_points_eval
                                                } else {
                                                        # 'uninitialized' values are the norm
                                                        no warnings 'uninitialized';
+						       no if $] >= 5.018, warnings => 'experimental::smartmatch';
                                                        $res = eval($filter);
                                                }
                                                print STDERR ($@, "\n") if $@;
