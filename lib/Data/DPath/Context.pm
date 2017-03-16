@@ -201,7 +201,7 @@ sub _filter_points_eval
                                                        # on later Perls, ^W doesn't do the whole trick, so explicitly turn
                                                        # all warnings off.  need to do this in a BEGIN, as some warnings
                                                        # are compile time only.
-                                                       $res = $COMPARTMENT->reval('BEGIN{ local $^W; warnings->unimport}'.$filter);
+                                                       $res = $COMPARTMENT->reval('BEGIN{ warnings->unimport}; local $^W;'.$filter);
                                                } else {
                                                        # 'uninitialized' values are the norm
                                                        no warnings 'uninitialized';
