@@ -28,6 +28,9 @@ BEGIN {
 
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
+        $COMPARTMENT->permit(qw":load");
+        $COMPARTMENT->reval( 'no warnings;' ); # just so warnings is loaded
+        $COMPARTMENT->deny(qw":load");
         # map DPath filter functions into new namespace
         $COMPARTMENT->share(qw(affe
                                idx
@@ -199,11 +202,15 @@ sub _filter_points_eval
                                                        # 'uninitialized' values are the norm
                                                        # but "no warnings 'uninitialized'" does
                                                        # not work in this restrictive Safe.pm config, so
-                                                       # we deactivate warnings completely by localizing $^W
-                                                       $res = $COMPARTMENT->reval('local $^W;'.$filter);
+                                                       # we deactivate warnings completely by localizing $^W.
+                                                       # on later Perls, ^W doesn't do the whole trick, so explicitly turn
+                                                       # all warnings off.  need to do this in a BEGIN, as some warnings
+                                                       # are compile time only.
+                                                       $res = $COMPARTMENT->reval('BEGIN{ warnings->unimport}; local $^W;'.$filter);
                                                } else {
                                                        # 'uninitialized' values are the norm
                                                        no warnings 'uninitialized';
+						       no if $] >= 5.018, warnings => 'experimental::smartmatch';
                                                        $res = eval($filter);
                                                }
                                                print STDERR ($@, "\n") if $@;
