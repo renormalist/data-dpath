@@ -808,6 +808,8 @@ about the actual hash key under which the point is located. (There is
 also an official API to that: C<< $ancestor->first_point->attrs->key >>, 
 but there it's necessary to check for undefined values before
 calling the methods F<attrs> and F<key>, so I went the easy way).
+There's an equivalent attribute (C<idx>) for the array index of a point
+stored in an array.
 
 =head1 INTERNAL METHODS
 
