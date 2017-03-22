@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - no warnings: 'uninitialized'; Safe compartments; smartmatch operator usage [Diab Jerius]
+  - introduce Point attribute 'idx' to be used in array filters [Diab Jerius]
+  - Dist::Zilla distro polishing [Diab Jerius]
 
 0.55      2015-09-16
   - spelling error, sync with Debian [Lucas Kanashiro]
