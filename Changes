@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.56      2017-03-22
   - no warnings: 'uninitialized'; Safe compartments; smartmatch operator usage [Diab Jerius]
   - introduce Point attribute 'idx' to be used in array filters [Diab Jerius]
   - Dist::Zilla distro polishing [Diab Jerius]
