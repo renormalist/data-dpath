@@ -28,9 +28,9 @@ BEGIN {
 
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
-        $COMPARTMENT->permit(qw":load");
+        $COMPARTMENT->permit(qw"require dofile caller runcv");
         $COMPARTMENT->reval( 'no warnings;' ); # just so warnings is loaded
-        $COMPARTMENT->deny(qw":load");
+        $COMPARTMENT->deny(qw"require dofile caller runcv");
         # map DPath filter functions into new namespace
         $COMPARTMENT->share(qw(affe
                                idx
