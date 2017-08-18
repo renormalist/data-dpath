@@ -29,7 +29,11 @@ BEGIN {
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
         $COMPARTMENT->reval( 'no warnings;' ); # just so warnings is loaded
-        $COMPARTMENT->deny(qw"require dofile caller runcv");
+        if ($] >= 5.010) {
+            $COMPARTMENT->deny(qw":load");
+        } else {
+            $COMPARTMENT->deny(qw"require dofile caller");
+        }
         # map DPath filter functions into new namespace
         $COMPARTMENT->share(qw(affe
                                idx
