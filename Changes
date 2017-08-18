@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.57      2017-08-18
   - polished Safe.pm handling to cooperate with older Perl and other modules
     in particular Test::Exception [Doug Bell, Jonathan William Taylor]
 
