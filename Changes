@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - polished Safe.pm handling to cooperate with older Perl and other modules
+    in particular Test::Exception [Doug Bell, Jonathan William Taylor]
 
 0.56      2017-03-22
   - no warnings: 'uninitialized'; Safe compartments; smartmatch operator usage [Diab Jerius]
