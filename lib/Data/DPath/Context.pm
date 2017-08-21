@@ -7,11 +7,10 @@ use warnings;
 use Data::Dumper;
 use aliased 'Data::DPath::Point';
 use aliased 'Data::DPath::Attrs';
-use List::MoreUtils 'uniq';
 use Scalar::Util 'reftype';
 use Data::DPath::Filters;
 use Iterator::Util;
-use List::Util 'min';
+use List::Util 1.45 'min', 'uniqnum';
 #use Sys::CPU;
 use POSIX ();
 use Safe;
@@ -167,7 +166,7 @@ sub _all_ref {
 
         return [
                 map { $self->give_references ? $_ : $$_ }
-                uniq
+                uniqnum
                 map { defined $_ ? $_->ref : () }
                 @{$self->current_points}
             ];
