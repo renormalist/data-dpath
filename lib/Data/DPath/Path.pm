@@ -39,8 +39,8 @@ sub unescape {
         my ($str) = @_;
 
         return unless defined $str;
-        $str =~ s/(?<!\\)\\(["'])/$1/g; # '"$
         $str =~ s/\\{2}/\\/g;
+        $str =~ s/\\(["'])/$1/g; # '"$
         return $str;
 }
 
