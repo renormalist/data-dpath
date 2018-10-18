@@ -184,7 +184,7 @@ benchmarked.)
  
  allows special       no                   YES
  chars of own
- path syntax in                            you can quoting everything
+ path syntax in                            you can quote everything
  hash keys
  ("/[]|*.")
  
