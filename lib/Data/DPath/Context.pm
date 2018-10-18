@@ -566,7 +566,8 @@ to the matched points in the data structure.
 
 =head2 _search( $dpath )
 
-Return new context for a DPath relative to current context.
+Update current points of invoking object and return it.
+This does not create a new context, updates existing one.
 
 =head2 _filter_points
 

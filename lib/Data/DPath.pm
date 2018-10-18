@@ -754,8 +754,8 @@ Initialize a DPath iterator on a data structure using:
 
  my $root = dpathi($data);
 
-Create a new iterator context, with the path relative to current
-root context:
+Update current_points of invoking object and return it:
+(This does not create a new context, updates existing one)
 
  my $affe_iter = $root->isearch("//anywhere/affe");
 
