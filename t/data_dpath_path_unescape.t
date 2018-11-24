@@ -8,7 +8,7 @@ use Test::More tests => 6;
 
 use_ok('Data::DPath::Path');
 
-my $FIXTURES = [
+my $FIXTURE = [
     {
         name   => 'double quote',
         string => '\\"',
@@ -36,6 +36,6 @@ my $FIXTURES = [
     },
 ];
 
-foreach my $test (@$FIXTURES) {
+foreach my $test (@$FIXTURE) {
     is(Data::DPath::Path::unescape($test->{'string'}), $test->{'result'}, $test->{'name'});
 }
