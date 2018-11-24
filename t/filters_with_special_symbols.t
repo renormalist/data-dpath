@@ -18,70 +18,28 @@ my $value = 'aaa[bbb/ccc]ddd"eee\'fff';
 my $data = {map {$_ => $value} @fields};
 
 my $FIXTURES = [
-    {
-        path   => q!/simpleFild[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/simpleFild[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
-    {
-        path   => q!/fieldWithBackSlash\\[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/fieldWithBackSlash\\[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
-    {
-        path   => q!/'fieldWithQoute'[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/'fieldWithQoute'[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
+    q!/simpleFild[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/simpleFild[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/fieldWithBackSlash\\\\[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/fieldWithBackSlash\\\\[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/'fieldWithQoute'[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/'fieldWithQoute'[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
     #
     # If the key contains square brackets, slash or double quotes, it must be enclosed in double quotes.
     #
-    {
-        path   => q!/"]fieldWithSquareBrackets["[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/"]fieldWithSquareBrackets["[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
-    {
-        path   => q!/"[fieldWithSquareBrackets]"[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/"[fieldWithSquareBrackets]"[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
-    {
-        path   => q!/"\"fieldWithDoubleQoute\""[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/"\"fieldWithDoubleQoute\""[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
-    {
-        path   => q!/"fieldWithSlash/"[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-        result => $value,
-    },
-    {
-        path   => q!/"fieldWithSlash/"[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-        result => $value,
-    },
+    q!/"]fieldWithSquareBrackets["[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/"]fieldWithSquareBrackets["[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/"[fieldWithSquareBrackets]"[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/"[fieldWithSquareBrackets]"[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/"\"fieldWithDoubleQoute\""[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/"\"fieldWithDoubleQoute\""[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/"fieldWithSlash/"[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/"fieldWithSlash/"[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
 ];
 
-foreach my $test (@$FIXTURES) {
-    my @result = dpath($test->{'path'})->match($data);
+foreach my $path (@$FIXTURES) {
+    my @result = dpath($path)->match($data);
 
     ok(@result == 1);
-    is($result[0], $test->{'result'}, $test->{'path'});
+    is($result[0], $value, $path);
 }
