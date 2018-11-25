@@ -20,8 +20,8 @@ my $data = {map {$_ => $value} @fields};
 my $FIXTURES = [
     q!/simpleFild[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
     q!/simpleFild[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
-    q!/fieldWithBackSlash\\\\[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
-    q!/fieldWithBackSlash\\\\[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
+    q!/fieldWithBackSlash\\[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
+    q!/fieldWithBackSlash\\[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
     q!/'fieldWithQoute'[value eq 'aaa[bbb/ccc]ddd"eee\'fff']!,
     q!/'fieldWithQoute'[value eq "aaa[bbb/ccc]ddd\"eee'fff"]!,
     #
