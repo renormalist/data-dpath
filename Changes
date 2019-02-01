@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+  - 'idx' attribute added in 0.56 was not added to Data::DPath::Attrs,
+    so didn't acquire an accessor.
+
 0.57      2017-08-18
   - polished Safe.pm handling to cooperate with older Perl and other modules
     in particular Test::Exception [Doug Bell, Jonathan William Taylor]
