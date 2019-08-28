@@ -26,4 +26,11 @@ Attribute / accessor.
 The key actual hash key under which the point is located in case it's
 the value of a hash entry.
 
+=head2 idx
+
+Attribute / accessor.
+
+The key actual array index under which the point is located in case it's
+the value of a array entry.
+
 =cut
