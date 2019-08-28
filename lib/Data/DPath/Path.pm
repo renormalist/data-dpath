@@ -95,7 +95,7 @@ sub _build__steps {
                                 # - 2) use the part before "["
                                 # - 3) unshift the rest to remaining
                                 # - 4) extract_codeblock() explicitely
-                                if ($extracted =~ /(.*)((?<!\\)\[.*)/ and $extracted !~ m|\]/\s*$|) {
+                                if ($extracted =~ /(.*?)(\[.*)/ and $extracted !~ m|\]/\s*$|) {
                                         $remaining_path =  $2 . $remaining_path;
                                         ( $plain_part   =  $1 ) =~ s|^/||;
                                         ($filter, $remaining_path) = extract_codeblock($remaining_path, "[]");
