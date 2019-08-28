@@ -108,7 +108,7 @@ sub _build__steps {
                         ($plain_part, $filter) = $extracted =~ m,^/              # leading /
                                                                  (.*?)           # path part
                                                                  (\[.*\])?$      # optional filter
-                                                                ,xg unless $filter_already_extracted;
+                                                                ,xsg unless $filter_already_extracted;
                         $plain_part = unescape $plain_part;
                 }
 
