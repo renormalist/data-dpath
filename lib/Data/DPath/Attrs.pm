@@ -7,7 +7,7 @@ use warnings;
 use Class::XSAccessor # ::Array
     chained     => 1,
     constructor => 'new',
-    accessors   => [qw( key )];
+    accessors   => [qw( key idx )];
 
 1;
 
