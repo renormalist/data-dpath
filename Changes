@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.58      2019-08-28
   - fix filter expressions containing newlines [reported by David Schmidt]
   - fix quote escaping (please check your edge cases) [Igor Sverdlov]
   - replace List::MoreUtil with List::Util [Dan Book, Igor Sverdlov]
