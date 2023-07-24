@@ -27,7 +27,6 @@ BEGIN {
 
         $COMPARTMENT = Safe->new;
         $COMPARTMENT->permit(qw":base_core");
-        $COMPARTMENT->reval( 'no warnings;' ); # just so warnings is loaded
         if ($] >= 5.010) {
             $COMPARTMENT->deny(qw":load");
         } else {
@@ -208,7 +207,7 @@ sub _filter_points_eval
                                                        # on later Perls, ^W doesn't do the whole trick, so explicitly turn
                                                        # all warnings off.  need to do this in a BEGIN, as some warnings
                                                        # are compile time only.
-                                                       $res = $COMPARTMENT->reval('BEGIN{ warnings->unimport}; local $^W;'.$filter);
+                                                       $res = $COMPARTMENT->reval('BEGIN{ ${^WARNING_BITS} = "" }; local $^W;'.$filter);
                                                } else {
                                                        # 'uninitialized' values are the norm
                                                        no warnings 'uninitialized';
