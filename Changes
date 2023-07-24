@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - don't use warnings.pm inside Safe container [GH #28, Graham Knop]
+    (needed for Perl v5.39+)
 
 0.58      2019-08-28
   - fix filter expressions containing newlines [reported by David Schmidt]
