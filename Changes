@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - avoid deprecated smartmatch for most tests [GH #29, Graham Knop]
 
 0.59      2023-07-24
   - don't use warnings.pm inside Safe container [GH #28, Graham Knop]
